@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { Product } from '../types';
-import { products as mockProducts } from '../data';
+import { migrateDemoProducts } from '../utils/migrateProducts';
 
 export function useProducts(activeTab?: string) {
   const [products, setProducts] = useState<Product[]>([]);
@@ -11,18 +11,11 @@ export function useProducts(activeTab?: string) {
   useEffect(() => {
     async function fetchProducts() {
       if (!isSupabaseConfigured || !supabase) {
-        console.warn('Supabase is not configured. Falling back to mock data so the UI does not break.');
-        let filteredMock = mockProducts;
-        if (activeTab) {
-          // Simply simulate filtering for mock data
-          // In real app, you might map tabs to specific flags (is_new_arrival, etc)
-          filteredMock = mockProducts.filter(p => p.category === 'Top Picks'); 
-        }
-        setProducts(filteredMock);
+        console.warn('Supabase is not configured.');
+        setProducts([]);
         setLoading(false);
         return;
       }
-
       try {
         let query = supabase
           .from('products')
@@ -37,11 +30,20 @@ export function useProducts(activeTab?: string) {
           if (activeTab === 'DISCOUNTED') query = query.not('compare_at_price', 'is', null);
         }
 
-        const { data, error } = await query;
-
+        let { data, error } = await query;
         if (error) throw error;
 
         if (data) {
+          if (data.length === 0 && !activeTab) {
+             // Auto migrate
+             const success = await migrateDemoProducts();
+             if (success) {
+               const { data: retryData } = await query;
+               if (retryData) {
+                  data = retryData;
+               }
+             }
+          }
           const formattedProducts: Product[] = data.map((item: any) => ({
             id: item.id,
             name: item.name,
@@ -50,22 +52,15 @@ export function useProducts(activeTab?: string) {
             category: item.category_id || 'Top Picks'
           }));
           
-          if (formattedProducts.length === 0) {
-            // Provide mock data if table is empty for visual purposes in dev
-             setProducts(mockProducts);
-          } else {
-             setProducts(formattedProducts);
-          }
+          setProducts(formattedProducts);
         }
       } catch (err: any) {
-        // Silent catch for expected fallback
         setError(err.message);
-        setProducts(mockProducts);
+        setProducts([]);
       } finally {
         setLoading(false);
       }
     }
-
     fetchProducts();
   }, [activeTab]);
 

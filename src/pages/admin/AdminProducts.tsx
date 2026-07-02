@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Search, Filter, Box, Loader2, Image as ImageIcon } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
+import { migrateDemoProducts } from '../../utils/migrateProducts';
 import { motion } from 'motion/react';
 
 export function AdminProducts() {
@@ -12,16 +13,50 @@ export function AdminProducts() {
     fetchProducts();
   }, []);
 
+  const [migrating, setMigrating] = useState(false);
+  
+  const handleMigrate = async () => {
+    setMigrating(true);
+    try {
+      await migrateDemoProducts();
+      await fetchProducts();
+      alert("Migration complete! Demo products are now in the database.");
+    } catch (err) {
+      console.error(err);
+      alert("Migration failed.");
+    } finally {
+      setMigrating(false);
+    }
+  };
+
   const fetchProducts = async () => {
     try {
       setLoading(true);
       if (!isSupabaseConfigured || !supabase) return;
-      const { data, error } = await supabase
+      let { data, error } = await supabase
         .from('products')
         .select('*, product_images(image_url)')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
+
+      if (!data || data.length === 0) {
+        // Automatically migrate if empty
+        console.log("No products found, starting automatic migration...");
+        setMigrating(true);
+        const success = await migrateDemoProducts();
+        setMigrating(false);
+        
+        if (success) {
+          // fetch again
+          const retry = await supabase
+            .from('products')
+            .select('*, product_images(image_url)')
+            .order('created_at', { ascending: false });
+          data = retry.data;
+        }
+      }
+
       setProducts(data || []);
     } catch (err) {
       console.error('Error fetching products:', err);

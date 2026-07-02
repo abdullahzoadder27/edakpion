@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
-import { products as mockProducts } from '../data';
+
 
 export interface CartItem {
   id: string;
@@ -57,17 +57,37 @@ export function useCart() {
     }
     
     // Enhance local items with product details if missing
-    items = items.map(item => {
-      if (!item.products) {
-         const mockProd = mockProducts.find(p => p.id === item.product_id);
-         if (mockProd) {
-            item.products = mockProd;
-         } else {
-            item.products = { name: 'Unknown Product', price: 0 };
-         }
+    if (supabase) {
+      const localItemsWithoutProducts = items.filter(i => !i.products);
+      if (localItemsWithoutProducts.length > 0) {
+        const productIds = localItemsWithoutProducts.map(i => i.product_id);
+        try {
+          const { data: productsData } = await supabase
+            .from('products')
+            .select('*, product_images(image_url)')
+            .in('id', productIds);
+            
+          if (productsData) {
+            items = items.map(item => {
+              if (!item.products) {
+                const prod = productsData.find(p => p.id === item.product_id);
+                if (prod) {
+                  item.products = {
+                    ...prod,
+                    images: prod.product_images?.map((img: any) => img.image_url) || []
+                  };
+                } else {
+                  item.products = { name: 'Unknown Product', price: 0 };
+                }
+              }
+              return item;
+            });
+          }
+        } catch (err) {
+          // silent fail
+        }
       }
-      return item;
-    });
+    }
     
     setCartItems(items);
     setLoading(false);
