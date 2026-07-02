@@ -79,6 +79,7 @@ export function Checkout() {
     if (!user || !supabase || cartItems.length === 0) return;
     
     let finalAddressId = selectedAddressId;
+    let finalAddress = addresses.find(a => a.id === selectedAddressId);
 
     if (!finalAddressId) {
       if (!newAddress.full_name || !newAddress.phone || !newAddress.address_line1 || !newAddress.city) {
@@ -88,22 +89,26 @@ export function Checkout() {
       
       setPlacingOrder(true);
       try {
-        const { data: addressData, error: addressError } = await supabase
-          .from('addresses')
-          .insert({
+        const addressToInsert = {
             user_id: user.id,
-
             full_name: newAddress.full_name,
             phone_number: newAddress.phone,
             street_address: newAddress.address_line1 + (newAddress.notes ? `, Notes: ${newAddress.notes}` : ''),
             area: newAddress.area || newAddress.city,
             district: newAddress.district || newAddress.city,
             is_default: addresses.length === 0
-          })
-          .select('id');
+        };
+
+        const { data: addressData, error: addressError } = await supabase
+          .from('addresses')
+          .insert(addressToInsert)
+          .select('*')
+          .single();
           
         if (addressError) throw addressError;
-        finalAddressId = addressData?.[0]?.id;
+        
+        finalAddress = addressData;
+        finalAddressId = addressData?.id;
         
         if (!finalAddressId) {
           throw new Error("Could not retrieve the saved address ID");
@@ -118,21 +123,39 @@ export function Checkout() {
     }
     
     setPlacingOrder(true);
+    
+    console.log("Before request:", {
+        customerData: user,
+        cartItems: cartItems,
+        totalPrice: total,
+        deliveryCharge: delivery,
+        paymentMethod: paymentMethod
+    });
+
     try {
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert({
+      const orderPayload = {
           user_id: user.id,
           order_number: `ORD-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 1000)}`,
           total_amount: total,
+          subtotal: subtotal,
+          tax_amount: tax,
           status: 'pending',
-          shipping_address: finalAddressId,
-          delivery_charge: selectedDeliveryChargeId || null,
+          shipping_address: finalAddress || { id: finalAddressId },
+          billing_address: finalAddress || { id: finalAddressId },
+          delivery_charge: delivery,
           payment_method: paymentMethod
-        })
+      };
+      
+      console.log("Payload sent:", orderPayload);
+
+      const { data: order, error: orderError } = await supabase
+        .from('orders')
+        .insert(orderPayload)
         .select('id')
         .single();
         
+      console.log("Supabase response (order):", { data: order, error: orderError });
+      
       if (orderError) throw orderError;
       
       const orderItemsToInsert = cartItems.map(item => ({
@@ -145,7 +168,12 @@ export function Checkout() {
         product_name: item.products.name
       }));
       
-      const { error: itemsError } = await supabase.from('order_items').insert(orderItemsToInsert);
+      console.log("Payload sent (items):", orderItemsToInsert);
+      
+      const { data: itemsData, error: itemsError } = await supabase.from('order_items').insert(orderItemsToInsert).select();
+      
+      console.log("Supabase response (items):", { data: itemsData, error: itemsError });
+      
       if (itemsError) throw itemsError;
       
       await clearCart();
@@ -155,9 +183,10 @@ export function Checkout() {
         navigate('/orders');
       }, 3000);
       
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error placing order:", err);
-      alert("Failed to place order. Please try again.");
+      console.error("Order Insert Error Object:", err);
+      alert("Failed to place order: " + (err.message || JSON.stringify(err))); 
     } finally {
       setPlacingOrder(false);
     }

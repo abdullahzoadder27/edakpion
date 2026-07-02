@@ -1,26 +1,42 @@
 const fs = require('fs');
-let content = fs.readFileSync('src/hooks/useProductDetails.ts', 'utf8');
+let content = fs.readFileSync('src/pages/Checkout.tsx', 'utf8');
 
-const targetFallback = `      } catch (err: any) {
-        // Silent catch for expected fallback
-        setError(err.message);
-        // Fallback
-        setProduct(mockProductDetails[id] || mockProductDetails['1']);
-        setReviews(mockReviews);
-      } finally {`;
+const oldConsoleLog = `      console.log("Creating order with payload:", orderPayload);
 
-const replacementFallback = `      } catch (err: any) {
-        // Silent catch for expected fallback
-        setError(err.message);
-        // Fallback
-        setProduct(mockProductDetails[id] || {
-          ...mockProductDetails['1'],
-          id,
-          name: 'Generic Product ' + id
-        });
-        setReviews(mockReviews);
-      } finally {`;
+      const { data: order, error: orderError } = await supabase
+        .from('orders')
+        .insert(orderPayload)
+        .select('id')
+        .single();`;
 
-content = content.replace(targetFallback, replacementFallback);
+const newConsoleLog = `      console.log("Before request:", {
+        customerData: user,
+        cartItems: cartItems,
+        totalPrice: total,
+        deliveryCharge: delivery,
+        paymentMethod: paymentMethod
+      });
+      console.log("Payload sent:", orderPayload);
 
-fs.writeFileSync('src/hooks/useProductDetails.ts', content);
+      const { data: order, error: orderError } = await supabase
+        .from('orders')
+        .insert(orderPayload)
+        .select('id')
+        .single();
+        
+      console.log("Supabase response (order):", { data: order, error: orderError });`;
+
+content = content.replace(oldConsoleLog, newConsoleLog);
+
+const oldConsoleItemsLog = `      console.log("Creating order items:", orderItemsToInsert);
+      
+      const { error: itemsError } = await supabase.from('order_items').insert(orderItemsToInsert);`;
+
+const newConsoleItemsLog = `      console.log("Creating order items:", orderItemsToInsert);
+      
+      const { data: itemsData, error: itemsError } = await supabase.from('order_items').insert(orderItemsToInsert).select();
+      console.log("Supabase response (items):", { data: itemsData, error: itemsError });`;
+
+content = content.replace(oldConsoleItemsLog, newConsoleItemsLog);
+
+fs.writeFileSync('src/pages/Checkout.tsx', content);
