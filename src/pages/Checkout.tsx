@@ -68,9 +68,11 @@ export function Checkout() {
     full_name: '',
     phone: '',
     address_line1: '',
+    area: '',
     city: '',
-    state: '',
-    postal_code: ''
+    district: '',
+    postal_code: '',
+    notes: ''
   });
 
   const handlePlaceOrder = async () => {
@@ -91,18 +93,27 @@ export function Checkout() {
           .insert({
             user_id: user.id,
             title: 'Home',
-            ...newAddress,
+            full_name: newAddress.full_name,
+            phone: newAddress.phone,
+            address_line1: newAddress.address_line1 + (newAddress.area ? `, ${newAddress.area}` : ''),
+            address_line2: newAddress.notes || '',
+            city: newAddress.city,
+            state: newAddress.district,
+            postal_code: newAddress.postal_code,
             is_default: addresses.length === 0
           })
-          .select('id')
-          .single();
+          .select('id');
           
         if (addressError) throw addressError;
-        finalAddressId = addressData.id;
+        finalAddressId = addressData?.[0]?.id;
+        
+        if (!finalAddressId) {
+          throw new Error("Could not retrieve the saved address ID");
+        }
         setSelectedAddressId(finalAddressId);
       } catch (err) {
         console.error("Error creating address:", err);
-        alert("Failed to save address. Please try again.");
+        alert(`Failed to save address: ${err.message || JSON.stringify(err)}`);
         setPlacingOrder(false);
         return;
       }
@@ -114,6 +125,7 @@ export function Checkout() {
         .from('orders')
         .insert({
           user_id: user.id,
+          order_number: `ORD-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 1000)}`,
           total_amount: total,
           status: 'pending',
           shipping_address_id: finalAddressId,
@@ -233,25 +245,33 @@ export function Checkout() {
                       <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Full Name *</label>
                       <input type="text" className="w-full px-4 py-3 premium-input text-sm" placeholder="John Doe" value={newAddress.full_name} onChange={e => setNewAddress({...newAddress, full_name: e.target.value})} />
                     </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Phone *</label>
+                      <input type="tel" className="w-full px-4 py-3 premium-input text-sm" placeholder="+880 1..." value={newAddress.phone} onChange={e => setNewAddress({...newAddress, phone: e.target.value})} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">City *</label>
+                      <input type="text" className="w-full px-4 py-3 premium-input text-sm" placeholder="Khulna" value={newAddress.city} onChange={e => setNewAddress({...newAddress, city: e.target.value})} />
+                    </div>
                     <div className="sm:col-span-2">
                       <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Address *</label>
                       <input type="text" className="w-full px-4 py-3 premium-input text-sm" placeholder="123 Main St, Apt 4B" value={newAddress.address_line1} onChange={e => setNewAddress({...newAddress, address_line1: e.target.value})} />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">District / City *</label>
-                      <input type="text" className="w-full px-4 py-3 premium-input text-sm" placeholder="Dhaka" value={newAddress.city} onChange={e => setNewAddress({...newAddress, city: e.target.value})} />
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Area</label>
+                      <input type="text" className="w-full px-4 py-3 premium-input text-sm" placeholder="Nirala" value={newAddress.area} onChange={e => setNewAddress({...newAddress, area: e.target.value})} />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">State / Division</label>
-                      <input type="text" className="w-full px-4 py-3 premium-input text-sm" placeholder="Dhaka" value={newAddress.state} onChange={e => setNewAddress({...newAddress, state: e.target.value})} />
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">District</label>
+                      <input type="text" className="w-full px-4 py-3 premium-input text-sm" placeholder="Khulna" value={newAddress.district} onChange={e => setNewAddress({...newAddress, district: e.target.value})} />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Postal Code</label>
-                      <input type="text" className="w-full px-4 py-3 premium-input text-sm" placeholder="1205" value={newAddress.postal_code} onChange={e => setNewAddress({...newAddress, postal_code: e.target.value})} />
+                      <input type="text" className="w-full px-4 py-3 premium-input text-sm" placeholder="9100" value={newAddress.postal_code} onChange={e => setNewAddress({...newAddress, postal_code: e.target.value})} />
                     </div>
-                    <div>
-                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Phone *</label>
-                      <input type="tel" className="w-full px-4 py-3 premium-input text-sm" placeholder="+880 1..." value={newAddress.phone} onChange={e => setNewAddress({...newAddress, phone: e.target.value})} />
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Notes</label>
+                      <input type="text" className="w-full px-4 py-3 premium-input text-sm" placeholder="Any special instructions..." value={newAddress.notes} onChange={e => setNewAddress({...newAddress, notes: e.target.value})} />
                     </div>
                   </form>
                 )}

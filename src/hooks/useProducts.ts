@@ -34,7 +34,7 @@ export function useProducts(activeTab?: string) {
           if (activeTab === 'BEST SELLER') query = query.eq('is_best_seller', true);
           if (activeTab === 'TRENDING') query = query.eq('is_trending', true);
           if (activeTab === 'PREMIUM') query = query.eq('is_featured', true);
-          if (activeTab === 'DISCOUNTED') query = query.not('sale_price', 'is', null);
+          if (activeTab === 'DISCOUNTED') query = query.not('compare_at_price', 'is', null);
         }
 
         const { data, error } = await query;
