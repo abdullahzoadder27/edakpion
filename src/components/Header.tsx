@@ -162,17 +162,17 @@ export function Header() {
           </nav>
 
           {/* Right Side: Icons */}
-          <div className="flex items-center justify-end gap-4 sm:gap-6 flex-1 md:flex-none">
-            <Link to="/shop" className={`hidden sm:block p-1 transition-all duration-300 ${isHome && !isScrolled ? 'text-gray-900 hover:text-gray-600 hover:-translate-y-0.5' : 'text-white hover:text-gray-300 hover:-translate-y-0.5'}`}>
+          <div className="hidden md:flex items-center justify-end gap-4 sm:gap-6 flex-1 md:flex-none">
+            <Link to="/shop" className={`p-1 transition-all duration-300 ${isHome && !isScrolled ? 'text-gray-900 hover:text-gray-600 hover:-translate-y-0.5' : 'text-white hover:text-gray-300 hover:-translate-y-0.5'}`}>
               <Search className="w-5 h-5" />
             </Link>
             
-            <Link to="/wishlist" className={`hidden sm:block p-1 transition-all duration-300 relative ${isHome && !isScrolled ? 'text-gray-900 hover:text-gray-600 hover:-translate-y-0.5' : 'text-white hover:text-gray-300 hover:-translate-y-0.5'}`}>
+            <Link to="/wishlist" className={`p-1 transition-all duration-300 relative ${isHome && !isScrolled ? 'text-gray-900 hover:text-gray-600 hover:-translate-y-0.5' : 'text-white hover:text-gray-300 hover:-translate-y-0.5'}`}>
               <Heart className="w-5 h-5" />
               {wishlistCount > 0 && <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-white"></span>}
             </Link>
             
-            <div className="relative hidden sm:block">
+            <div className="relative">
               {user ? (
                 <div 
                   className={`p-1 cursor-pointer transition-all duration-300 ${isHome && !isScrolled ? 'text-gray-900 hover:text-gray-600 hover:-translate-y-0.5' : 'text-white hover:text-gray-300 hover:-translate-y-0.5'}`}
@@ -204,7 +204,7 @@ export function Header() {
               )}
             </div>
 
-            <Link to="/cart" className={`p-1 transition-all duration-300 relative ${isHome && !isScrolled ? 'text-white md:text-gray-900 hover:text-gray-300 md:hover:text-gray-600 hover:-translate-y-0.5' : 'text-white hover:text-gray-300 hover:-translate-y-0.5'}`}>
+            <Link to="/cart" className={`p-1 transition-all duration-300 relative ${isHome && !isScrolled ? 'text-gray-900 hover:text-gray-600 hover:-translate-y-0.5' : 'text-white hover:text-gray-300 hover:-translate-y-0.5'}`}>
               <ShoppingBag className="w-5 h-5" />
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-white text-[var(--color-brand-dark)] text-[10px] font-bold rounded-full flex items-center justify-center border border-gray-200">

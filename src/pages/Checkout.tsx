@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { Loader2, CheckCircle2, MapPin } from 'lucide-react';
+import { useCart } from '../hooks/useCart';
 
 export function Checkout() {
   const { user } = useAuth();
@@ -13,8 +14,7 @@ export function Checkout() {
   const [placingOrder, setPlacingOrder] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   
-  const [cartId, setCartId] = useState<string | null>(null);
-  const [cartItems, setCartItems] = useState<any[]>([]);
+  const { cartItems, clearCart, loading: cartLoading } = useCart();
   const [addresses, setAddresses] = useState<any[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState('cod');
@@ -26,17 +26,6 @@ export function Checkout() {
         return;
       }
       try {
-        // Fetch cart
-        const { data: cart } = await supabase.from('carts').select('id').eq('user_id', user.id).single();
-        if (cart) {
-          setCartId(cart.id);
-          const { data: items } = await supabase
-            .from('cart_items')
-            .select('id, quantity, products(*)')
-            .eq('cart_id', cart.id);
-          setCartItems(items || []);
-        }
-        
         // Fetch addresses
         const { data: userAddresses } = await supabase
           .from('addresses')
@@ -73,7 +62,7 @@ export function Checkout() {
   });
 
   const handlePlaceOrder = async () => {
-    if (!user || !supabase || !cartId || cartItems.length === 0) return;
+    if (!user || !supabase || cartItems.length === 0) return;
     
     let finalAddressId = selectedAddressId;
 
@@ -127,7 +116,7 @@ export function Checkout() {
       // 2. Create order items
       const orderItemsToInsert = cartItems.map(item => ({
         order_id: order.id,
-        product_id: item.products.id,
+        product_id: item.products.id || item.product_id,
         quantity: item.quantity,
         price: item.products.price
       }));
@@ -136,7 +125,7 @@ export function Checkout() {
       if (itemsError) throw itemsError;
       
       // 3. Clear cart
-      await supabase.from('cart_items').delete().eq('cart_id', cartId);
+      await clearCart();
       
       setOrderSuccess(true);
       setTimeout(() => {
@@ -181,7 +170,7 @@ export function Checkout() {
           </div>
         )}
 
-        {loading ? (
+        {loading || cartLoading ? (
           <div className="flex justify-center py-20"><Loader2 className="w-10 h-10 animate-spin text-[var(--color-brand-dark)]" /></div>
         ) : cartItems.length === 0 ? (
           <div className="premium-card p-12 text-center">

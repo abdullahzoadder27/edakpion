@@ -137,29 +137,30 @@ export function DashboardOverview() {
       {/* Main Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {[
-          { label: 'Total Orders', value: stats.totalOrders, icon: Package, color: 'bg-blue-50 text-blue-600' },
-          { label: 'Pending', value: stats.pendingOrders, icon: Clock4, color: 'bg-orange-50 text-orange-600' },
-          { label: 'Delivered', value: stats.deliveredOrders, icon: CheckCircle, color: 'bg-green-50 text-green-600' },
-          { label: 'Wishlist', value: stats.wishlistCount, icon: Heart, color: 'bg-pink-50 text-pink-600' },
-          { label: 'Cart Items', value: stats.cartItems, icon: ShoppingBag, color: 'bg-purple-50 text-purple-600' },
-          { label: 'Addresses', value: stats.savedAddresses, icon: MapPin, color: 'bg-teal-50 text-teal-600' },
-          { label: 'Coupons', value: stats.coupons, icon: Ticket, color: 'bg-indigo-50 text-indigo-600' },
-          { label: 'Reward Pts', value: stats.rewardPoints, icon: Award, color: 'bg-yellow-50 text-yellow-600' },
-          { label: 'Store Credit', value: `৳${stats.storeCredit}`, icon: DollarSign, color: 'bg-emerald-50 text-emerald-600' },
+          { label: 'Total Orders', value: stats.totalOrders, icon: Package, color: 'bg-blue-50 text-blue-600', link: '/orders' },
+          { label: 'Pending', value: stats.pendingOrders, icon: Clock4, color: 'bg-orange-50 text-orange-600', link: '/orders' },
+          { label: 'Delivered', value: stats.deliveredOrders, icon: CheckCircle, color: 'bg-green-50 text-green-600', link: '/orders' },
+          { label: 'Wishlist', value: stats.wishlistCount, icon: Heart, color: 'bg-pink-50 text-pink-600', link: '/wishlist' },
+          { label: 'Cart Items', value: stats.cartItems, icon: ShoppingBag, color: 'bg-purple-50 text-purple-600', link: '/cart' },
+          { label: 'Addresses', value: stats.savedAddresses, icon: MapPin, color: 'bg-teal-50 text-teal-600', link: '/profile/addresses' },
+          { label: 'Coupons', value: stats.coupons, icon: Ticket, color: 'bg-indigo-50 text-indigo-600', link: '/profile/coupons' },
+          { label: 'Reward Pts', value: stats.rewardPoints, icon: Award, color: 'bg-yellow-50 text-yellow-600', link: '/profile' },
+          { label: 'Store Credit', value: `৳${stats.storeCredit}`, icon: DollarSign, color: 'bg-emerald-50 text-emerald-600', link: '/profile' },
         ].map((stat, i) => (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
-            key={i} 
-            className="bg-white rounded-2xl p-4 md:p-6 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col justify-center items-center text-center hover:-translate-y-1 transition-transform"
-          >
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${stat.color}`}>
-              <stat.icon className="w-5 h-5" />
-            </div>
-            <p className="text-xl md:text-2xl font-bold text-gray-900 mb-1">{stat.value}</p>
-            <p className="text-xs md:text-sm font-medium text-gray-500">{stat.label}</p>
-          </motion.div>
+          <Link to={stat.link} key={i}>
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05 }}
+              className="bg-white rounded-2xl p-4 md:p-6 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col justify-center items-center text-center hover:-translate-y-1 transition-transform h-full cursor-pointer"
+            >
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${stat.color}`}>
+                <stat.icon className="w-5 h-5" />
+              </div>
+              <p className="text-xl md:text-2xl font-bold text-gray-900 mb-1">{stat.value}</p>
+              <p className="text-xs md:text-sm font-medium text-gray-500">{stat.label}</p>
+            </motion.div>
+          </Link>
         ))}
       </div>
 
