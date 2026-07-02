@@ -569,8 +569,8 @@ INSERT INTO public.settings (key, value) VALUES
 ON CONFLICT (key) DO NOTHING;
 
 INSERT INTO public.delivery_charges (city, charge) VALUES
-('Dhaka', 60.00),
-('Outside Dhaka', 120.00)
+('Inside Khulna', 60.00),
+('Outside Khulna', 120.00)
 ON CONFLICT (city) DO NOTHING;
 
 INSERT INTO public.homepage_sections (section_name, title, subtitle, is_active, display_order) VALUES

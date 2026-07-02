@@ -80,6 +80,9 @@ function MobileBottomNav() {
 
 import { AdminOrders } from "./pages/admin/AdminOrders";
 import { AdminSupport } from './pages/admin/AdminSupport';
+import { AdminProducts } from './pages/admin/AdminProducts';
+import { AdminCustomers } from './pages/admin/AdminCustomers';
+import { AdminDelivery } from './pages/admin/AdminDelivery';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -132,12 +135,12 @@ function AnimatedRoutes() {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="media" element={<AdminMediaLibrary />} />
           <Route path="cms" element={<AdminPlaceholder title="Homepage CMS" />} />
-          <Route path="products" element={<AdminPlaceholder title="Products" />} />
+          <Route path="products" element={<AdminProducts />} />
           <Route path="orders" element={<AdminOrders />} />
-          <Route path="customers" element={<AdminPlaceholder title="Customers" />} />
+          <Route path="customers" element={<AdminCustomers />} />
           <Route path="support" element={<AdminSupport />} />
           <Route path="coupons" element={<AdminPlaceholder title="Coupons" />} />
-          <Route path="delivery" element={<AdminPlaceholder title="Delivery" />} />
+          <Route path="delivery" element={<AdminDelivery />} />
           <Route path="notifications" element={<AdminNotifications />} />
           <Route path="settings" element={<AdminPlaceholder title="Settings" />} />
         </Route>

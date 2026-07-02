@@ -77,12 +77,12 @@ export function ProfileEdit() {
       const filePath = `${user.id}-${Math.random()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('avatars')
+        .from('users')
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
-      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+      const { data } = supabase.storage.from('users').getPublicUrl(filePath);
       
       const { error: updateError } = await supabase
         .from('profiles')
