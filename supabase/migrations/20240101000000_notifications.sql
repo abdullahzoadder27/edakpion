@@ -26,7 +26,10 @@ CREATE POLICY "Admins can view all notifications"
     USING (true); -- Replace with actual admin check
 
 -- Enable real-time for notifications
-ALTER PUBLICATION supabase_realtime ADD TABLE public.notifications;
+DO $$
+BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE public.notifications;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- Create notification_settings table
 CREATE TABLE IF NOT EXISTS public.notification_settings (
