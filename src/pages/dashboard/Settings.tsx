@@ -51,7 +51,7 @@ export function Settings() {
 
   return (
     <UserDashboardLayout>
-      <div className="bg-white rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-[16px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100/80 overflow-hidden">
         <div className="p-6 border-b border-gray-100">
           <h1 className="text-2xl font-bold text-gray-900">Settings & Security</h1>
           <p className="text-sm text-gray-500 mt-1">Manage your account security and preferences.</p>

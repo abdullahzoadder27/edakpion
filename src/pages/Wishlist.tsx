@@ -95,7 +95,7 @@ export function Wishlist() {
 
   return (
     <UserDashboardLayout>
-      <div className="bg-white rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100 overflow-hidden min-h-[500px] flex flex-col">
+      <div className="bg-white rounded-[16px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100/80 overflow-hidden min-h-[500px] flex flex-col">
         <div className="p-4 md:p-6 border-b border-gray-100 flex items-center justify-between">
           <h1 className="text-xl md:text-2xl font-bold text-gray-900">My Wishlist</h1>
           <span className="text-xs md:text-sm font-medium text-gray-500 bg-gray-50 px-3 py-1 rounded-full">{items.length} Items</span>

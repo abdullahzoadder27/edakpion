@@ -104,14 +104,14 @@ function AnimatedRoutes() {
         <Route path="/policy" element={<PageTransition><div className="p-20 text-center">Policy Page Placeholder</div></PageTransition>} />
         
         {/* Protected Routes (Dashboard) */}
-        <Route path="/profile" element={<ProtectedRoute><UserDashboardLayout><PageTransition><DashboardOverview /></PageTransition></UserDashboardLayout></ProtectedRoute>} />
-        <Route path="/profile/edit" element={<ProtectedRoute><UserDashboardLayout><PageTransition><ProfileEdit /></PageTransition></UserDashboardLayout></ProtectedRoute>} />
-        <Route path="/profile/addresses" element={<ProtectedRoute><UserDashboardLayout><PageTransition><Addresses /></PageTransition></UserDashboardLayout></ProtectedRoute>} />
-        <Route path="/profile/notifications" element={<ProtectedRoute><UserDashboardLayout><PageTransition><Notifications /></PageTransition></UserDashboardLayout></ProtectedRoute>} />
-        <Route path="/profile/coupons" element={<ProtectedRoute><UserDashboardLayout><PageTransition><Coupons /></PageTransition></UserDashboardLayout></ProtectedRoute>} />
-        <Route path="/profile/recently-viewed" element={<ProtectedRoute><UserDashboardLayout><PageTransition><RecentlyViewed /></PageTransition></UserDashboardLayout></ProtectedRoute>} />
-        <Route path="/profile/support" element={<ProtectedRoute><UserDashboardLayout><PageTransition><Support /></PageTransition></UserDashboardLayout></ProtectedRoute>} />
-        <Route path="/profile/settings" element={<ProtectedRoute><UserDashboardLayout><PageTransition><Settings /></PageTransition></UserDashboardLayout></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><PageTransition><DashboardOverview /></PageTransition></ProtectedRoute>} />
+        <Route path="/profile/edit" element={<ProtectedRoute><PageTransition><ProfileEdit /></PageTransition></ProtectedRoute>} />
+        <Route path="/profile/addresses" element={<ProtectedRoute><PageTransition><Addresses /></PageTransition></ProtectedRoute>} />
+        <Route path="/profile/notifications" element={<ProtectedRoute><PageTransition><Notifications /></PageTransition></ProtectedRoute>} />
+        <Route path="/profile/coupons" element={<ProtectedRoute><PageTransition><Coupons /></PageTransition></ProtectedRoute>} />
+        <Route path="/profile/recently-viewed" element={<ProtectedRoute><PageTransition><RecentlyViewed /></PageTransition></ProtectedRoute>} />
+        <Route path="/profile/support" element={<ProtectedRoute><PageTransition><Support /></PageTransition></ProtectedRoute>} />
+        <Route path="/profile/settings" element={<ProtectedRoute><PageTransition><Settings /></PageTransition></ProtectedRoute>} />
         
         <Route path="/checkout" element={<ProtectedRoute><PageTransition><Checkout /></PageTransition></ProtectedRoute>} />
         <Route path="/wishlist" element={<ProtectedRoute><PageTransition><Wishlist /></PageTransition></ProtectedRoute>} />
