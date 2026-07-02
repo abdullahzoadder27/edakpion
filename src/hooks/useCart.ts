@@ -7,6 +7,9 @@ export interface CartItem {
   id: string;
   quantity: number;
   product_id: string;
+  variant_id?: string | null;
+  size?: string;
+  color?: string;
   products: any; // Product details
 }
 
@@ -18,11 +21,11 @@ export function useCart() {
   const loadCart = async () => {
     setLoading(true);
     let items: CartItem[] = [];
-
+    
     // Load from local storage
     const localCart = JSON.parse(localStorage.getItem('edakpion_cart') || '[]');
     items = [...localCart];
-
+    
     // Load from supabase if user
     if (user && supabase) {
       try {
@@ -31,24 +34,28 @@ export function useCart() {
           .select('id')
           .eq('user_id', user.id)
           .single();
-
+          
         if (cart) {
           const { data: dbItems, error } = await supabase
             .from('cart_items')
-            .select('id, quantity, product_id, products(*)')
+            .select('id, quantity, product_id, variant_id, products(*), product_variants(size, color)')
             .eq('cart_id', cart.id)
             .order('created_at', { ascending: true });
             
           if (!error && dbItems) {
-             // merge db items
-             items = [...items, ...dbItems];
+             const mappedDbItems = dbItems.map((item: any) => ({
+                ...item,
+                size: item.product_variants?.size || null,
+                color: item.product_variants?.color || null
+             }));
+             items = [...items, ...mappedDbItems];
           }
         }
       } catch (err) {
         // silent fail
       }
     }
-
+    
     // Enhance local items with product details if missing
     items = items.map(item => {
       if (!item.products) {
@@ -61,7 +68,7 @@ export function useCart() {
       }
       return item;
     });
-
+    
     setCartItems(items);
     setLoading(false);
   };
@@ -70,10 +77,25 @@ export function useCart() {
     loadCart();
   }, [user]);
 
-  const addToCart = async (productId: string, quantity: number = 1) => {
-    // Check if it's a valid UUID
+  const addToCart = async (productId: string, quantity: number = 1, size?: string, color?: string) => {
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(productId);
     
+    let resolvedVariantId = null;
+
+    if (supabase && isUuid && (size || color)) {
+      try {
+        let query = supabase.from('product_variants').select('id').eq('product_id', productId);
+        if (size) query = query.eq('size', size);
+        if (color) query = query.eq('color', color);
+        const { data: variant } = await query.limit(1).single();
+        if (variant) {
+          resolvedVariantId = variant.id;
+        }
+      } catch(e) {
+        // ignore
+      }
+    }
+
     if (user && supabase && isUuid) {
       try {
         let cartId;
@@ -85,42 +107,50 @@ export function useCart() {
           if (cartError) throw cartError;
           cartId = newCart.id;
         }
-
-        const { data: existing } = await supabase.from('cart_items')
-          .select('id, quantity')
-          .eq('cart_id', cartId)
-          .eq('product_id', productId)
-          .single();
+        
+        let query = supabase.from('cart_items').select('id, quantity').eq('cart_id', cartId).eq('product_id', productId);
+        if (resolvedVariantId) {
+            query = query.eq('variant_id', resolvedVariantId);
+        } else {
+            query = query.is('variant_id', null);
+        }
+        
+        const { data: existing } = await query.maybeSingle();
         
         if (existing) {
           await supabase.from('cart_items').update({ quantity: existing.quantity + quantity }).eq('id', existing.id);
         } else {
           await supabase.from('cart_items').insert({ 
-            cart_id: cartId, 
-            product_id: productId, 
-            quantity: quantity 
-          });
+             cart_id: cartId, 
+             product_id: productId, 
+             quantity: quantity,
+             variant_id: resolvedVariantId
+           });
         }
         await loadCart();
         return { success: true };
       } catch (err) {
         console.error("Supabase cart error", err);
-        // fallthrough to local
       }
     }
-
+    
     // Fallback to local storage
     const localCart = JSON.parse(localStorage.getItem('edakpion_cart') || '[]');
-    const existingIndex = localCart.findIndex((i: any) => i.product_id === productId);
+    const existingIndex = localCart.findIndex((i: any) => i.product_id === productId && i.size === size && i.color === color);
+    
     if (existingIndex >= 0) {
       localCart[existingIndex].quantity += quantity;
     } else {
       localCart.push({ 
-        id: 'local-' + Date.now(), 
-        product_id: productId, 
-        quantity: quantity 
-      });
+         id: 'local-' + Date.now(), 
+         product_id: productId, 
+         quantity: quantity,
+         size: size || null,
+         color: color || null,
+         variant_id: resolvedVariantId
+       });
     }
+    
     localStorage.setItem('edakpion_cart', JSON.stringify(localCart));
     await loadCart();
     return { success: true };
@@ -128,7 +158,6 @@ export function useCart() {
 
   const updateQuantity = async (itemId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
-
     if (itemId.startsWith('local-')) {
        const localCart = JSON.parse(localStorage.getItem('edakpion_cart') || '[]');
        const updated = localCart.map((i: any) => i.id === itemId ? { ...i, quantity: newQuantity } : i);
@@ -136,7 +165,6 @@ export function useCart() {
        await loadCart();
        return;
     }
-
     if (supabase) {
        try {
          await supabase.from('cart_items').update({ quantity: newQuantity }).eq('id', itemId);
@@ -155,7 +183,6 @@ export function useCart() {
        await loadCart();
        return;
     }
-
     if (supabase) {
        try {
          await supabase.from('cart_items').delete().eq('id', itemId);

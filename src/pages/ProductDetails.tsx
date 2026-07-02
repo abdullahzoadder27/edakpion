@@ -68,7 +68,7 @@ export function ProductDetails() {
       return;
     }
     
-    await addToCart(product.id, quantity);
+    await addToCart(product.id, quantity, selectedSize);
     alert(`Added ${quantity} ${product?.name} to cart!`);
   };
 
@@ -78,7 +78,7 @@ export function ProductDetails() {
       return;
     }
     
-    await addToCart(product.id, quantity);
+    await addToCart(product.id, quantity, selectedSize);
     navigate('/checkout');
   };
 

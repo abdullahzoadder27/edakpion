@@ -78,6 +78,7 @@ function MobileBottomNav() {
   );
 }
 
+import { AdminOrders } from "./pages/admin/AdminOrders";
 import { AdminSupport } from './pages/admin/AdminSupport';
 
 function AnimatedRoutes() {
@@ -132,7 +133,7 @@ function AnimatedRoutes() {
           <Route path="media" element={<AdminMediaLibrary />} />
           <Route path="cms" element={<AdminPlaceholder title="Homepage CMS" />} />
           <Route path="products" element={<AdminPlaceholder title="Products" />} />
-          <Route path="orders" element={<AdminPlaceholder title="Orders" />} />
+          <Route path="orders" element={<AdminOrders />} />
           <Route path="customers" element={<AdminPlaceholder title="Customers" />} />
           <Route path="support" element={<AdminSupport />} />
           <Route path="coupons" element={<AdminPlaceholder title="Coupons" />} />

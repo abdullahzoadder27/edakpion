@@ -19,6 +19,9 @@ export function Checkout() {
   const [selectedAddressId, setSelectedAddressId] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState('cod');
 
+  const [deliveryCharges, setDeliveryCharges] = useState<any[]>([]);
+  const [selectedDeliveryChargeId, setSelectedDeliveryChargeId] = useState<string>('');
+
   useEffect(() => {
     async function loadCheckoutData() {
       if (!user || !isSupabaseConfigured || !supabase) {
@@ -26,7 +29,6 @@ export function Checkout() {
         return;
       }
       try {
-        // Fetch addresses
         const { data: userAddresses } = await supabase
           .from('addresses')
           .select('*')
@@ -38,6 +40,13 @@ export function Checkout() {
           const defaultAddr = userAddresses.find(a => a.is_default);
           setSelectedAddressId(defaultAddr ? defaultAddr.id : userAddresses[0].id);
         }
+
+        const { data: charges } = await supabase.from('delivery_charges').select('*');
+        setDeliveryCharges(charges || []);
+        if (charges && charges.length > 0) {
+           setSelectedDeliveryChargeId(charges[0].id);
+        }
+
       } catch (err) {
         console.error('Error loading checkout data:', err);
       } finally {
@@ -49,7 +58,10 @@ export function Checkout() {
 
   const subtotal = cartItems.reduce((acc, item) => acc + (item.products?.price || 0) * item.quantity, 0);
   const tax = subtotal * 0.05;
-  const delivery = subtotal > 0 ? 120 : 0;
+  
+  const selectedCharge = deliveryCharges.find(c => c.id === selectedDeliveryChargeId);
+  const delivery = selectedCharge ? Number(selectedCharge.charge) : 0;
+  
   const total = subtotal + tax + delivery;
 
   const [newAddress, setNewAddress] = useState({
@@ -74,7 +86,6 @@ export function Checkout() {
       
       setPlacingOrder(true);
       try {
-        // Create new address
         const { data: addressData, error: addressError } = await supabase
           .from('addresses')
           .insert({
@@ -99,24 +110,25 @@ export function Checkout() {
     
     setPlacingOrder(true);
     try {
-      // 1. Create order
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
           user_id: user.id,
           total_amount: total,
           status: 'pending',
-          shipping_address_id: finalAddressId
+          shipping_address_id: finalAddressId,
+          delivery_charge_id: selectedDeliveryChargeId || null,
+          payment_method: paymentMethod
         })
         .select('id')
         .single();
         
       if (orderError) throw orderError;
       
-      // 2. Create order items
       const orderItemsToInsert = cartItems.map(item => ({
         order_id: order.id,
         product_id: item.products.id || item.product_id,
+        variant_id: item.variant_id || null,
         quantity: item.quantity,
         price: item.products.price
       }));
@@ -124,7 +136,6 @@ export function Checkout() {
       const { error: itemsError } = await supabase.from('order_items').insert(orderItemsToInsert);
       if (itemsError) throw itemsError;
       
-      // 3. Clear cart
       await clearCart();
       
       setOrderSuccess(true);
@@ -245,6 +256,28 @@ export function Checkout() {
                   </form>
                 )}
               </div>
+
+              {/* Delivery Area */}
+              {deliveryCharges.length > 0 && (
+                <div className="premium-card p-4 md:p-6">
+                  <h2 className="text-lg md:text-xl font-bold mb-4 md:mb-6">Delivery Area</h2>
+                  <div className="space-y-3">
+                    {deliveryCharges.map(charge => (
+                      <label key={charge.id} className={`flex items-center p-4 border rounded-xl cursor-pointer transition-colors ${selectedDeliveryChargeId === charge.id ? 'border-[var(--color-brand-dark)] bg-gray-50/50' : 'border-gray-200 hover:border-gray-300'}`}>
+                        <input 
+                          type="radio" 
+                          name="delivery_charge" 
+                          className="mr-3 w-4 h-4 text-[var(--color-brand-dark)] focus:ring-[var(--color-brand-dark)]" 
+                          checked={selectedDeliveryChargeId === charge.id} 
+                          onChange={() => setSelectedDeliveryChargeId(charge.id)} 
+                        />
+                        <span className="font-medium text-sm flex-1">{charge.city}</span>
+                        <span className="font-bold text-sm">৳ {Number(charge.charge).toLocaleString()}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
               
               {/* Payment Info */}
               <div className="premium-card p-4 md:p-6">
@@ -268,16 +301,20 @@ export function Checkout() {
                 <h2 className="text-lg md:text-xl font-bold mb-4 border-b border-gray-100 pb-4">Order Summary</h2>
                 
                 <div className="space-y-4 mb-6 max-h-[300px] overflow-y-auto pr-2">
-                  {cartItems.map(item => (
-                    <div key={item.id} className="flex gap-3 items-start border-b border-gray-50 pb-3">
+                  {cartItems.map((item, idx) => (
+                    <div key={item.id || idx} className="flex gap-3 items-start border-b border-gray-50 pb-3">
                       <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden shrink-0">
                         {item.products?.images?.[0] && <img src={item.products.images[0]} alt="" className="w-full h-full object-cover" />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="text-xs font-bold text-gray-900 line-clamp-1">{item.products?.name}</h4>
-                        <p className="text-[10px] text-gray-500 mt-0.5">Qty: {item.quantity}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <p className="text-[10px] text-gray-500">Qty: {item.quantity}</p>
+                          {item.size && <p className="text-[10px] text-gray-500">Size: {item.size}</p>}
+                          {item.color && <p className="text-[10px] text-gray-500">Color: {item.color}</p>}
+                        </div>
                       </div>
-                      <span className="text-xs font-bold">৳ {(item.products?.price * item.quantity).toLocaleString()}</span>
+                      <span className="text-xs font-bold">৳ {((item.products?.price || 0) * item.quantity).toLocaleString()}</span>
                     </div>
                   ))}
                 </div>
