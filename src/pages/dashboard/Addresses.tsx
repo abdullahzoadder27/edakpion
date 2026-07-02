@@ -258,9 +258,9 @@ export function Addresses() {
                     <p className="text-sm font-medium text-gray-900 mb-1 line-clamp-1">{addr.full_name}</p>
                     <p className="text-sm text-gray-500 mb-1">{addr.phone}</p>
                     <p className="text-sm text-gray-500 leading-relaxed mb-6 h-16 overflow-hidden">
-                      {addr.address_line1} {addr.address_line2 && <><br />{addr.address_line2}</>}<br />
-                      {addr.city}, {addr.state} - {addr.postal_code}<br />
-                      {addr.country}
+                      {addr.street_address} <br />
+                      {addr.area ? addr.area + ', ' : ''}{addr.district}<br />
+                      Bangladesh
                     </p>
                     <div className="flex flex-wrap gap-4 pt-4 border-t border-gray-200 mt-auto">
                       <button onClick={() => handleEdit(addr)} className="text-xs md:text-sm font-bold text-gray-900 hover:text-blue-600 flex items-center gap-1"><Edit2 className="w-4 h-4" /> Edit</button>

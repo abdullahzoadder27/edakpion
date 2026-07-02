@@ -28,16 +28,15 @@ const mockArticle = {
     <h2>3. The French Tuck</h2>
     <p>For a slightly more structured approach, utilize the "French tuck"—tucking only the front center of the shirt into your waistband while letting the rest hang loose. This defines the waistline and prevents the oversized fabric from completely swallowing your frame.</p>
   `,
-  relatedProducts: [
-    { id: '1', name: "Signature Oversized Tee", price: 1200, rating: 5.0, reviewCount: 120, image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=800", hoverImage: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=800" },
-    { id: '3', name: "Relaxed Fit Chino", price: 2800, rating: 4.5, reviewCount: 42, image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&q=80&w=800" },
-    { id: '4', name: "Minimalist Sneaker", price: 4500, rating: 4.9, reviewCount: 210, image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&q=80&w=800" }
-  ]
 };
+
+import { useProducts } from '../hooks/useProducts';
 
 export function FashionArticle() {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const { products } = useProducts('style-guide');
+  const relatedProducts = products.slice(0, 3);
   const article = mockArticle; // In a real app, fetch based on slug
 
   return (
@@ -125,8 +124,15 @@ export function FashionArticle() {
               <div className="mt-16 lg:hidden border-t border-gray-100 pt-16">
                 <h3 className="text-2xl font-bold mb-8">Shop The Story</h3>
                 <div className="grid grid-cols-2 gap-4">
-                  {article.relatedProducts.map((product) => (
-                    <ProductCard key={product.id} {...product} />
+                  {relatedProducts.map((product) => (
+                    <ProductCard 
+                      key={product.id} 
+                      id={product.id}
+                      name={product.name}
+                      price={product.price}
+                      image={product.imageUrl}
+                      hoverImage={product.imageUrl}
+                    />
                   ))}
                 </div>
               </div>
@@ -141,10 +147,10 @@ export function FashionArticle() {
                 </div>
                 
                 <div className="space-y-6">
-                  {article.relatedProducts.map((product) => (
+                  {relatedProducts.map((product) => (
                     <div key={product.id} className="flex gap-4 group bg-white p-3 rounded-xl hover:shadow-md transition-shadow">
                       <Link to={`/product/${product.id}`} className="w-24 h-24 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                        <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       </Link>
                       <div className="flex flex-col justify-center">
                         <Link to={`/product/${product.id}`} className="font-bold text-gray-900 leading-tight mb-1 group-hover:text-gray-600 transition-colors line-clamp-2">
