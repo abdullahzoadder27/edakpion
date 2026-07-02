@@ -1,0 +1,3 @@
+-- 12_admin.sql
+-- Replace with the actual UUID of the user you want to make an admin
+-- INSERT INTO public.admins (id) VALUES ('YOUR-USER-UUID-HERE');

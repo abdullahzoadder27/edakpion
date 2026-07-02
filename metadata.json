@@ -1,0 +1,8 @@
+{
+  "name": "Remix: EDAKPION",
+  "description": "Premium clothing e-commerce store with full shopping features.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,4 @@
+-- 11_admin.sql
+-- Create Single Super Admin
+-- Replace YOUR-USER-UUID-HERE with the UUID from Supabase Auth Dashboard
+-- INSERT INTO public.admins (id) VALUES ('YOUR-USER-UUID-HERE');
