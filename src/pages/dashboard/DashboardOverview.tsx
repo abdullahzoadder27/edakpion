@@ -43,6 +43,18 @@ export function DashboardOverview() {
           }
         };
 
+        const getCartCount = async () => {
+          const { data: cart } = await supabase.from('carts').select('id').eq('user_id', user.id).single();
+          if (!cart) return { count: 0 };
+          return await supabase.from('cart_items').select('id', { count: 'exact', head: true }).eq('cart_id', cart.id);
+        };
+
+        const getWishlistCount = async () => {
+          const { data: wishlist } = await supabase.from('wishlists').select('id').eq('user_id', user.id).single();
+          if (!wishlist) return { count: 0 };
+          return await supabase.from('wishlist_items').select('id', { count: 'exact', head: true }).eq('wishlist_id', wishlist.id);
+        };
+
         const [
           ordersRes,
           wishlistRes,
@@ -52,8 +64,8 @@ export function DashboardOverview() {
           recentViewedRes
         ] = await Promise.all([
           safeQuery(supabase.from('orders').select('id, status, total_amount, created_at', { count: 'exact' }).eq('user_id', user.id).order('created_at', { ascending: false })),
-          safeQuery(supabase.from('wishlists').select('id', { count: 'exact', head: true }).eq('user_id', user.id)),
-          safeQuery(supabase.from('carts').select('id', { count: 'exact', head: true }).eq('user_id', user.id)),
+          safeQuery(getWishlistCount()),
+          safeQuery(getCartCount()),
           safeQuery(supabase.from('addresses').select('id', { count: 'exact', head: true }).eq('user_id', user.id)),
           safeQuery(supabase.from('profiles').select('avatar_url, reward_points, store_credit').eq('id', user.id).single()),
           safeQuery(supabase.from('recently_viewed').select('*, product:products(*)').eq('user_id', user.id).order('viewed_at', { ascending: false }).limit(3))

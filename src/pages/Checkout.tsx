@@ -63,12 +63,49 @@ export function Checkout() {
   const delivery = subtotal > 0 ? 120 : 0;
   const total = subtotal + tax + delivery;
 
+  const [newAddress, setNewAddress] = useState({
+    full_name: '',
+    phone: '',
+    address_line1: '',
+    city: '',
+    state: '',
+    postal_code: ''
+  });
+
   const handlePlaceOrder = async () => {
     if (!user || !supabase || !cartId || cartItems.length === 0) return;
     
-    if (!selectedAddressId) {
-      alert("Please select or add a shipping address.");
-      return;
+    let finalAddressId = selectedAddressId;
+
+    if (!finalAddressId) {
+      if (!newAddress.full_name || !newAddress.phone || !newAddress.address_line1 || !newAddress.city) {
+        alert("Please fill in all required shipping address fields.");
+        return;
+      }
+      
+      setPlacingOrder(true);
+      try {
+        // Create new address
+        const { data: addressData, error: addressError } = await supabase
+          .from('addresses')
+          .insert({
+            user_id: user.id,
+            title: 'Home',
+            ...newAddress,
+            is_default: addresses.length === 0
+          })
+          .select('id')
+          .single();
+          
+        if (addressError) throw addressError;
+        finalAddressId = addressData.id;
+        setSelectedAddressId(finalAddressId);
+      } catch (err) {
+        console.error("Error creating address:", err);
+        alert("Failed to save address. Please try again.");
+        setPlacingOrder(false);
+        return;
+      }
     }
     
     setPlacingOrder(true);
@@ -80,7 +117,7 @@ export function Checkout() {
           user_id: user.id,
           total_amount: total,
           status: 'pending',
-          shipping_address_id: selectedAddressId
+          shipping_address_id: finalAddressId
         })
         .select('id')
         .single();
@@ -192,25 +229,29 @@ export function Checkout() {
                   </div>
                 ) : (
                   <form className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">First Name</label>
-                      <input type="text" className="w-full px-4 py-3 premium-input text-sm" placeholder="John" />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Last Name</label>
-                      <input type="text" className="w-full px-4 py-3 premium-input text-sm" placeholder="Doe" />
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Full Name *</label>
+                      <input type="text" className="w-full px-4 py-3 premium-input text-sm" placeholder="John Doe" value={newAddress.full_name} onChange={e => setNewAddress({...newAddress, full_name: e.target.value})} />
                     </div>
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Address</label>
-                      <input type="text" className="w-full px-4 py-3 premium-input text-sm" placeholder="123 Main St, Apt 4B" />
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Address *</label>
+                      <input type="text" className="w-full px-4 py-3 premium-input text-sm" placeholder="123 Main St, Apt 4B" value={newAddress.address_line1} onChange={e => setNewAddress({...newAddress, address_line1: e.target.value})} />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">District / City</label>
-                      <input type="text" className="w-full px-4 py-3 premium-input text-sm" placeholder="Dhaka" />
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">District / City *</label>
+                      <input type="text" className="w-full px-4 py-3 premium-input text-sm" placeholder="Dhaka" value={newAddress.city} onChange={e => setNewAddress({...newAddress, city: e.target.value})} />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Phone</label>
-                      <input type="tel" className="w-full px-4 py-3 premium-input text-sm" placeholder="+880 1..." />
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">State / Division</label>
+                      <input type="text" className="w-full px-4 py-3 premium-input text-sm" placeholder="Dhaka" value={newAddress.state} onChange={e => setNewAddress({...newAddress, state: e.target.value})} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Postal Code</label>
+                      <input type="text" className="w-full px-4 py-3 premium-input text-sm" placeholder="1205" value={newAddress.postal_code} onChange={e => setNewAddress({...newAddress, postal_code: e.target.value})} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Phone *</label>
+                      <input type="tel" className="w-full px-4 py-3 premium-input text-sm" placeholder="+880 1..." value={newAddress.phone} onChange={e => setNewAddress({...newAddress, phone: e.target.value})} />
                     </div>
                   </form>
                 )}
@@ -273,7 +314,7 @@ export function Checkout() {
                 
                 <button 
                   onClick={handlePlaceOrder}
-                  disabled={placingOrder || (!selectedAddressId && user != null)}
+                  disabled={placingOrder || (user != null && !selectedAddressId && (!newAddress.full_name || !newAddress.phone || !newAddress.address_line1 || !newAddress.city))}
                   className="w-full bg-[var(--color-brand-dark)] text-white py-4 premium-button font-bold tracking-widest hover:bg-[#152e22] disabled:opacity-70 flex justify-center items-center gap-2"
                 >
                   {placingOrder ? (
