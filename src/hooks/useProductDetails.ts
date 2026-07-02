@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { ProductDetail, Review } from '../types';
+import { products as mockProductsList } from '../data';
 
 // Enhanced mock data for details page
 const mockProductDetails: Record<string, ProductDetail> = {
@@ -95,11 +96,24 @@ export function useProductDetails(id?: string) {
       if (!isSupabaseConfigured || !supabase) {
         // Mock fallback
         setTimeout(() => {
-          setProduct(mockProductDetails[id] || {
-            ...mockProductDetails['1'],
-            id,
-            name: 'Generic Product ' + id
-          });
+          const mockItem = mockProductsList.find(p => p.id === id);
+          if (mockItem) {
+             setProduct({
+               ...mockProductDetails['1'],
+               id: mockItem.id,
+               name: mockItem.name,
+               price: mockItem.price,
+               originalPrice: mockItem.price + 200,
+               imageUrl: mockItem.imageUrl,
+               images: [mockItem.imageUrl, mockItem.imageUrl, mockItem.imageUrl]
+             });
+          } else {
+             setProduct(mockProductDetails[id] || {
+               ...mockProductDetails['1'],
+               id,
+               name: 'Generic Product ' + id
+             });
+          }
           setReviews(mockReviews);
           setLoading(false);
         }, 500);
@@ -160,7 +174,26 @@ export function useProductDetails(id?: string) {
         // Silent catch for expected fallback
         setError(err.message);
         // Fallback
-        setProduct(mockProductDetails[id] || mockProductDetails['1']);
+        
+        const mockItem = mockProductsList.find(p => p.id === id);
+        if (mockItem) {
+           setProduct({
+             ...mockProductDetails['1'],
+             id: mockItem.id,
+             name: mockItem.name,
+             price: mockItem.price,
+             originalPrice: mockItem.price + 200,
+             imageUrl: mockItem.imageUrl,
+             images: [mockItem.imageUrl, mockItem.imageUrl, mockItem.imageUrl]
+           });
+        } else {
+           setProduct(mockProductDetails[id] || {
+             ...mockProductDetails['1'],
+             id,
+             name: 'Generic Product ' + id
+           });
+        }
+        
         setReviews(mockReviews);
       } finally {
         setLoading(false);

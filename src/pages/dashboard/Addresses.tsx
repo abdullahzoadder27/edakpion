@@ -69,14 +69,14 @@ export function Addresses() {
   };
 
   const handleEdit = (addr: any) => {
-    setTitle(addr.title || '');
+    setTitle(addr.area || '');
     setFullName(addr.full_name || '');
-    setPhone(addr.phone || '');
-    setAddressLine1(addr.address_line1 || '');
-    setAddressLine2(addr.address_line2 || '');
-    setCity(addr.city || '');
-    setState(addr.state || '');
-    setPostalCode(addr.postal_code || '');
+    setPhone(addr.phone_number || '');
+    setAddressLine1(addr.street_address || '');
+    setAddressLine2('');
+    setCity(addr.district || '');
+    setState('');
+    setPostalCode('');
     setCountry(addr.country || 'Bangladesh');
     setIsDefault(addr.is_default || false);
     setEditingId(addr.id);
@@ -123,16 +123,12 @@ export function Addresses() {
 
       const addressData = {
         user_id: user.id,
-        title,
         full_name: fullName,
-        phone,
-        address_line1: addressLine1,
-        address_line2: addressLine2,
-        city,
-        state,
-        postal_code: postalCode,
-        country,
-        is_default: addresses.length === 0 ? true : isDefault, // Force default if it's the first address
+        phone_number: phone,
+        street_address: addressLine1 + (addressLine2 ? `, ${addressLine2}` : '') + (postalCode ? ` (${postalCode})` : '') + (country !== 'Bangladesh' ? ` - ${country}` : ''),
+        area: title || city,
+        district: state || city,
+        is_default: addresses.length === 0 ? true : isDefault,
       };
 
       if (editingId) {

@@ -92,14 +92,12 @@ export function Checkout() {
           .from('addresses')
           .insert({
             user_id: user.id,
-            title: 'Home',
+
             full_name: newAddress.full_name,
-            phone: newAddress.phone,
-            address_line1: newAddress.address_line1 + (newAddress.area ? `, ${newAddress.area}` : ''),
-            address_line2: newAddress.notes || '',
-            city: newAddress.city,
-            state: newAddress.district,
-            postal_code: newAddress.postal_code,
+            phone_number: newAddress.phone,
+            street_address: newAddress.address_line1 + (newAddress.notes ? `, Notes: ${newAddress.notes}` : ''),
+            area: newAddress.area || newAddress.city,
+            district: newAddress.district || newAddress.city,
             is_default: addresses.length === 0
           })
           .select('id');
@@ -128,8 +126,8 @@ export function Checkout() {
           order_number: `ORD-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 1000)}`,
           total_amount: total,
           status: 'pending',
-          shipping_address_id: finalAddressId,
-          delivery_charge_id: selectedDeliveryChargeId || null,
+          shipping_address: finalAddressId,
+          delivery_charge: selectedDeliveryChargeId || null,
           payment_method: paymentMethod
         })
         .select('id')
@@ -142,7 +140,9 @@ export function Checkout() {
         product_id: item.products.id || item.product_id,
         variant_id: item.variant_id || null,
         quantity: item.quantity,
-        price: item.products.price
+        unit_price: item.products.price,
+        total_price: item.products.price * item.quantity,
+        product_name: item.products.name
       }));
       
       const { error: itemsError } = await supabase.from('order_items').insert(orderItemsToInsert);
