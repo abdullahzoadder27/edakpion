@@ -72,7 +72,7 @@ export function Login() {
               <label className="flex items-center">
                 <input type="checkbox" className="mr-2" /> Remember Me
               </label>
-              <a href="#" className="text-[var(--color-brand-dark)] hover:underline">Forgot Password?</a>
+              <Link to="/forgot-password" className="text-[var(--color-brand-dark)] hover:underline">Forgot Password?</Link>
             </div>
             <button 
               type="submit" 

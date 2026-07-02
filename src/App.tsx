@@ -15,6 +15,8 @@ import { Shop } from './pages/Shop';
 import { Cart } from './pages/Cart';
 import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
+import { ForgotPassword } from './pages/ForgotPassword';
+import { ResetPassword } from './pages/ResetPassword';
 import { DashboardOverview } from './pages/dashboard/DashboardOverview';
 import { ProfileEdit } from './pages/dashboard/ProfileEdit';
 import { Addresses } from './pages/dashboard/Addresses';
@@ -89,6 +91,8 @@ function AnimatedRoutes() {
         <Route path="/cart" element={<PageTransition><Cart /></PageTransition>} />
         <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
         <Route path="/signup" element={<PageTransition><Signup /></PageTransition>} />
+        <Route path="/forgot-password" element={<PageTransition><ForgotPassword /></PageTransition>} />
+        <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
         <Route path="/product/:id" element={<PageTransition><ProductDetails /></PageTransition>} />
         <Route path="/collections" element={<PageTransition><Collections /></PageTransition>} />
         <Route path="/fashion-journal" element={<PageTransition><FashionJournal /></PageTransition>} />
