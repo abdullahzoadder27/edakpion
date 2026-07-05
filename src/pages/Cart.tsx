@@ -99,10 +99,27 @@ export default function Cart() {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
               <h2 className="text-xl font-bold mb-6 pb-4 border-b">ORDER SUMMARY</h2>
               
+              {/* Coupon Code */}
+              <div className="mb-6 pb-6 border-b border-[#E8E4DE]">
+                <label className="block text-sm font-bold text-gray-700 mb-2">Have a coupon?</label>
+                <div className="flex gap-2">
+                  <input type="text" placeholder="Coupon Code" className="flex-1 border border-[#E8E4DE] rounded-xl p-3 outline-none focus:border-[#0F3D2E]" />
+                  <button className="bg-black text-white px-6 py-3 rounded-xl font-bold text-xs tracking-widest uppercase hover:bg-gray-800 transition-colors">Apply</button>
+                </div>
+              </div>
+              
               <div className="space-y-4 text-sm mb-6">
                 <div className="flex justify-between">
                   <span className="text-gray-500">Subtotal</span>
                   <span className="font-bold">{formatPrice(subtotal)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">VAT (0%)</span>
+                  <span className="font-bold">৳0</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Coupon Discount</span>
+                  <span className="font-bold text-red-500">- ৳0</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Delivery Charge</span>

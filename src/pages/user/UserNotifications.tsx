@@ -21,7 +21,7 @@ export default function UserNotifications() {
       if (error) throw error;
       setNotifications(data || []);
     } catch (err) {
-      // console.error('Error fetching notifications:', err);
+      // console.warn('Error fetching notifications:', err);
     } finally {
       setLoading(false);
     }
@@ -37,7 +37,7 @@ export default function UserNotifications() {
       if (error) throw error;
       setNotifications(notifications.map(n => n.id === id ? { ...n, is_read: true } : n));
     } catch (err) {
-      console.error('Error marking as read:', err);
+      console.warn('Error marking as read:', err);
     }
   };
 
@@ -47,7 +47,7 @@ export default function UserNotifications() {
       if (error) throw error;
       setNotifications(notifications.map(n => ({ ...n, is_read: true })));
     } catch (err) {
-      console.error('Error marking all as read:', err);
+      console.warn('Error marking all as read:', err);
     }
   };
 

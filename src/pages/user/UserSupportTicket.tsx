@@ -36,7 +36,7 @@ export default function UserSupportTicket() {
       if (messagesError) throw messagesError;
       setMessages(messagesData || []);
     } catch (err) {
-      // console.error('Error fetching ticket details:', err);
+      // console.warn('Error fetching ticket details:', err);
     } finally {
       setLoading(false);
     }

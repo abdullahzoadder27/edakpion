@@ -100,7 +100,7 @@ export function useAdminStats() {
         });
 
       } catch (err: any) {
-        // console.error('Error fetching admin stats:', err);
+        // console.warn('Error fetching admin stats:', err);
         setError(err);
       } finally {
         setIsLoading(false);

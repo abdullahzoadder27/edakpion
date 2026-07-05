@@ -41,7 +41,7 @@ export default function OrderDetailAdmin() {
       if (error) throw error;
       setOrder(data);
     } catch (err) {
-      // console.error('Error fetching order:', err);
+      // console.warn('Error fetching order:', err);
     } finally {
       setLoading(false);
     }
@@ -53,7 +53,7 @@ export default function OrderDetailAdmin() {
       if (error) throw error;
       setOrder({ ...order, status: newStatus });
     } catch (err) {
-      console.error('Error updating status:', err);
+      console.warn('Error updating status:', err);
       alert('Failed to update status');
     }
   };

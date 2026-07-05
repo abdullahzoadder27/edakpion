@@ -22,7 +22,7 @@ export default function CategoriesManage() {
       if (error) throw error;
       setCategories(data || []);
     } catch (err) {
-      // console.error('Error fetching categories:', err);
+      // console.warn('Error fetching categories:', err);
     } finally {
       setLoading(false);
     }
@@ -38,7 +38,7 @@ export default function CategoriesManage() {
       setCategories([...categories, data]);
       setNewName('');
     } catch (err: any) {
-      console.error('Error adding category:', err);
+      console.warn('Error adding category:', err);
       if (err.code === '42501') {
         alert("Database Permission Denied (RLS): Your user does not have admin role in the database. Please create a new account with 'admin' in the email, or run an SQL update in Supabase to set your role to 'admin'.");
       } else {
@@ -60,7 +60,7 @@ export default function CategoriesManage() {
       setCategories(categories.map(c => c.id === id ? data : c));
       setIsEditing(null);
     } catch (err) {
-      console.error('Error updating category:', err);
+      console.warn('Error updating category:', err);
       alert('Failed to update category');
     }
   };
@@ -72,7 +72,7 @@ export default function CategoriesManage() {
       if (error) throw error;
       setCategories(categories.filter(c => c.id !== id));
     } catch (err) {
-      console.error('Error deleting category:', err);
+      console.warn('Error deleting category:', err);
       alert('Failed to delete category (might be in use by products)');
     }
   };

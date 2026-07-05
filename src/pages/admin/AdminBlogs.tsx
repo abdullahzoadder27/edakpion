@@ -34,7 +34,7 @@ export default function AdminBlogs() {
       alert('Blog deleted successfully');
       fetchBlogs();
     } catch (err) {
-      console.error(err);
+      console.warn(err);
       alert('Failed to delete blog');
     }
   };
@@ -53,7 +53,7 @@ export default function AdminBlogs() {
       if (error) throw error;
       fetchBlogs();
     } catch (err) {
-      console.error(err);
+      console.warn(err);
       alert('Failed to update status');
     }
   };

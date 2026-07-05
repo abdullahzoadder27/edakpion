@@ -1,15 +1,21 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useCartStore } from '../lib/store';
 import { formatPrice } from '../lib/utils';
 import { supabase } from '../lib/supabase';
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { items, getSubtotal, clearCart } = useCartStore();
+  const { items: cartItems, getSubtotal, clearCart } = useCartStore();
+  const location = useLocation();
+  const buyNowItem = location.state?.buyNowItem;
+  
+  const items = buyNowItem ? [buyNowItem] : cartItems;
   const [loading, setLoading] = useState(false);
   
-  const subtotal = getSubtotal();
+  const subtotal = buyNowItem 
+    ? (buyNowItem.product.price * buyNowItem.quantity) 
+    : getSubtotal();
   const deliveryCharge = 100;
   const total = subtotal + deliveryCharge;
 
@@ -78,12 +84,14 @@ export default function Checkout() {
 
       if (itemsError) throw itemsError;
 
-      // 4. Clear cart and redirect
-      clearCart();
+      // 4. Clear cart if not buy now
+      if (!buyNowItem) {
+        clearCart();
+      }
       navigate(`/order-success/${order.id}`);
 
     } catch (error) {
-      console.error('Checkout error:', error);
+      console.warn('Checkout error:', error);
       alert('There was an error placing your order. Please try again.');
     } finally {
       setLoading(false);

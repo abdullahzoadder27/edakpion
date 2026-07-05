@@ -63,7 +63,7 @@ export default function SettingsManage() {
         setSelectedUser(currentSuper);
       }
     } catch (err) {
-      console.error('Error fetching users:', err);
+      console.warn('Error fetching users:', err);
     } finally {
       setLoading(false);
     }
@@ -127,7 +127,7 @@ export default function SettingsManage() {
       })));
       
     } catch (err: any) {
-      console.error('Error assigning admin:', err);
+      console.warn('Error assigning admin:', err);
       setMessage({ text: err.message || 'Failed to assign Super Admin.', type: 'error' });
     } finally {
       setActionLoading(false);

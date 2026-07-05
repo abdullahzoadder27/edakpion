@@ -34,7 +34,7 @@ export default function OrdersManage() {
       if (error) throw error;
       setOrders(data || []);
     } catch (err) {
-      // console.error('Error fetching orders:', err);
+      // console.warn('Error fetching orders:', err);
     } finally {
       setLoading(false);
     }
@@ -46,7 +46,7 @@ export default function OrdersManage() {
       if (error) throw error;
       setOrders(orders.map(o => o.id === id ? { ...o, status: newStatus } : o));
     } catch (err) {
-      console.error('Error updating status:', err);
+      console.warn('Error updating status:', err);
       alert('Failed to update status');
     }
   };

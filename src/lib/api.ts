@@ -9,13 +9,13 @@ export async function getProducts(): Promise<Product[]> {
       .eq('is_active', true);
       
     if (error) {
-      console.error('Error fetching products:', error);
+      console.warn('Supabase not configured, returning empty products list.');
       return []; 
     }
     
     return (data || []) as Product[];
   } catch (error) {
-    console.error('Exception fetching products:', error);
+    console.warn('Supabase exception, returning empty products list.');
     return [];
   }
 }
@@ -35,7 +35,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     
     return data as Product;
   } catch (error) {
-    console.error('Exception fetching product:', error);
+    console.warn('Supabase exception, returning null product.');
     return null;
   }
 }
@@ -56,7 +56,7 @@ export async function getPublishedBlogs(limit?: number) {
     if (error) throw error;
     return data || [];
   } catch (error) {
-    console.error('Error fetching blogs:', error);
+    console.warn('Supabase not configured, returning empty blogs list.');
     return [];
   }
 }
@@ -73,7 +73,7 @@ export async function getBlogBySlug(slug: string) {
     if (error) throw error;
     return data;
   } catch (error) {
-    console.error('Error fetching blog:', error);
+    console.warn('Supabase not configured, returning null blog.');
     return null;
   }
 }

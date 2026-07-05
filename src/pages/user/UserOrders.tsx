@@ -33,7 +33,7 @@ export default function UserOrders() {
           }
         }
       } catch (err) {
-        // console.error('Error fetching orders:', err);
+        // console.warn('Error fetching orders:', err);
       } finally {
         setLoading(false);
       }

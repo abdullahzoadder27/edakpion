@@ -32,7 +32,7 @@ export default function UserRecentlyViewed() {
           setItems(mapped);
         }
       } catch (err) {
-        // console.error('Error fetching recently viewed:', err);
+        // console.warn('Error fetching recently viewed:', err);
       } finally {
         setLoading(false);
       }

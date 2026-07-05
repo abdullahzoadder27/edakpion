@@ -58,7 +58,7 @@ export default function AdminProductForm() {
         setFeatures(data.features?.length ? data.features : ['']);
       }
     } catch (err) {
-      // console.error('Error fetching product:', err);
+      // console.warn('Error fetching product:', err);
       alert('Error fetching product details');
     } finally {
       setInitialLoading(false);
@@ -120,7 +120,7 @@ export default function AdminProductForm() {
       
       navigate('/admin/products');
     } catch (err: any) {
-      console.error('Error saving product:', err);
+      console.warn('Error saving product:', err);
       alert(err.message || 'Failed to save product');
     } finally {
       setLoading(false);

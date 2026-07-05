@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
+import { useCartStore } from '../lib/store';
 
 export interface UserProfile {
   id: string;
@@ -30,13 +31,14 @@ export function useAuth() {
         if (session?.user) {
           setUser(session.user);
           await fetchProfile(session.user.id, session.user.email);
+          useCartStore.getState().syncCart();
         } else {
           setUser(null);
           setProfile(null);
           setRole('guest');
         }
       } catch (err) {
-        console.error('Error fetching session:', err);
+        console.warn('Error fetching session:', err);
       } finally {
         setIsLoading(false);
       }
@@ -50,6 +52,7 @@ export function useAuth() {
       if (session?.user) {
         setUser(session.user);
         await fetchProfile(session.user.id, session.user.email);
+        useCartStore.getState().syncCart();
       } else {
         setUser(null);
         setProfile(null);
@@ -112,7 +115,7 @@ export function useAuth() {
         setRole(data.role || 'user');
       }
     } catch (err) {
-      // console.error('Error fetching profile:', err);
+      // console.warn('Error fetching profile:', err);
     }
   };
 
@@ -124,7 +127,7 @@ export function useAuth() {
       setRole('guest');
       navigate('/login');
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.warn('Error signing out:', error);
     }
   };
 

@@ -31,7 +31,7 @@ export default function Home() {
         setEmail('');
       }
     } catch (err) {
-      console.error('Subscription error:', err);
+      console.warn('Subscription error:', err);
     }
   };
 

@@ -25,7 +25,7 @@ export default function ProductsManage() {
       if (error) throw error;
       setProducts(data || []);
     } catch (err) {
-      // console.error('Error fetching products:', err);
+      // console.warn('Error fetching products:', err);
     } finally {
       setLoading(false);
     }
@@ -39,7 +39,7 @@ export default function ProductsManage() {
       if (error) throw error;
       setProducts(products.filter(p => p.id !== id));
     } catch (err) {
-      console.error('Error deleting product:', err);
+      console.warn('Error deleting product:', err);
       alert('Failed to delete product. It might be referenced by orders.');
     }
   };
@@ -51,7 +51,7 @@ export default function ProductsManage() {
       if (error) throw error;
       setProducts(products.map(p => p.id === id ? { ...p, status: newStatus } : p));
     } catch (err) {
-      console.error('Error updating status:', err);
+      console.warn('Error updating status:', err);
     }
   };
 

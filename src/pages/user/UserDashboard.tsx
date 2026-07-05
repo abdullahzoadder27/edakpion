@@ -43,7 +43,7 @@ export default function UserDashboard() {
         
         setRecentOrders(orders || []);
       } catch (error) {
-        // console.error('Error fetching dashboard data:', error);
+        // console.warn('Error fetching dashboard data:', error);
       } finally {
         setLoading(false);
       }

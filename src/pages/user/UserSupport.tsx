@@ -45,7 +45,7 @@ export default function UserSupport() {
           
         if (ordersData) setOrders(ordersData);
       } catch (err) {
-        // console.error('Error fetching support tickets:', err);
+        // console.warn('Error fetching support tickets:', err);
       } finally {
         setLoading(false);
       }

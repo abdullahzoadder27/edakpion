@@ -110,7 +110,7 @@ export default function AdminBlogForm() {
       }
       navigate('/admin/blogs');
     } catch (err: any) {
-      console.error(err);
+      console.warn(err);
       alert('Error saving blog: ' + err.message);
     } finally {
       setSaving(false);

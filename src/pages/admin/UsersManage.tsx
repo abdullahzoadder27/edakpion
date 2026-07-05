@@ -23,7 +23,7 @@ export default function UsersManage() {
       if (error) throw error;
       setUsers(data || []);
     } catch (err) {
-      // console.error('Error fetching users:', err);
+      // console.warn('Error fetching users:', err);
     } finally {
       setLoading(false);
     }
@@ -35,7 +35,7 @@ export default function UsersManage() {
       if (error) throw error;
       setUsers(users.map(u => u.id === id ? { ...u, role: newRole } : u));
     } catch (err) {
-      console.error('Error updating role:', err);
+      console.warn('Error updating role:', err);
       alert('Failed to update user role');
     }
   };

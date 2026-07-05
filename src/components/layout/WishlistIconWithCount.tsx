@@ -26,7 +26,7 @@ export default function WishlistIconWithCount() {
           setCount(count);
         }
       } catch (err) {
-        // console.error('Error fetching wishlist count:', err);
+        // console.warn('Error fetching wishlist count:', err);
       }
     };
 

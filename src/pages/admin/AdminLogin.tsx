@@ -29,7 +29,7 @@ export default function AdminLogin() {
         if (error) throw error;
         setRoles(data || []);
       } catch (err: any) {
-        console.error('Error fetching roles:', err.message);
+        console.warn('Error fetching roles:', err.message);
         setError('Failed to load admin roles. Please check database connection.');
         setRoles([]);
       } finally {

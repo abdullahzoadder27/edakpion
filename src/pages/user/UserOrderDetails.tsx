@@ -35,7 +35,7 @@ export default function UserOrderDetails() {
         if (itemsError) throw itemsError;
         setItems(itemsData);
       } catch (err) {
-        // console.error('Error fetching order details:', err);
+        // console.warn('Error fetching order details:', err);
       } finally {
         setLoading(false);
       }

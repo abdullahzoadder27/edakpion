@@ -37,7 +37,7 @@ export default function UserAddresses() {
       if (error) throw error;
       setAddresses(data || []);
     } catch (err) {
-      // console.error('Error fetching addresses:', err);
+      // console.warn('Error fetching addresses:', err);
     } finally {
       setLoading(false);
     }

@@ -55,7 +55,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
           setResults(data as any[]);
         }
       } catch (err) {
-        console.error('Search error:', err);
+        console.warn('Search error:', err);
       } finally {
         setLoading(false);
       }

@@ -31,7 +31,7 @@ export default function UserWishlist() {
           setWishlistItems(mapped);
         }
       } catch (err) {
-        // console.error('Error fetching wishlist:', err);
+        // console.warn('Error fetching wishlist:', err);
       } finally {
         setLoading(false);
       }
@@ -46,7 +46,7 @@ export default function UserWishlist() {
       if (error) throw error;
       setWishlistItems(prev => prev.filter(item => item.id !== id));
     } catch (err) {
-      console.error('Error removing from wishlist:', err);
+      console.warn('Error removing from wishlist:', err);
     }
   };
 

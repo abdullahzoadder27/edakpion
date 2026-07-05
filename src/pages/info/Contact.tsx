@@ -68,7 +68,7 @@ export default function Contact() {
         setErrors(newErrors);
       } else {
         setSubmitError('Failed to send message. Please try again later.');
-        // console.error(err);
+        // console.warn(err);
       }
     } finally {
       setIsSubmitting(false);

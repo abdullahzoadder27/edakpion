@@ -22,7 +22,7 @@ export default function UserCoupons() {
         if (error) throw error;
         setCoupons(data || []);
       } catch (err) {
-        // console.error('Error fetching coupons:', err);
+        // console.warn('Error fetching coupons:', err);
       } finally {
         setLoading(false);
       }

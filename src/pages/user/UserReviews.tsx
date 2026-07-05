@@ -23,7 +23,7 @@ export default function UserReviews() {
         if (error) throw error;
         setReviews(data || []);
       } catch (err) {
-        // console.error('Error fetching reviews:', err);
+        // console.warn('Error fetching reviews:', err);
       } finally {
         setLoading(false);
       }
