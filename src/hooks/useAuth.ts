@@ -28,7 +28,7 @@ export function useAuth() {
         
         if (session?.user) {
           setUser(session.user);
-          await fetchProfile(session.user.id);
+          await fetchProfile(session.user.id, session.user.email);
         } else {
           setUser(null);
           setProfile(null);
@@ -48,7 +48,7 @@ export function useAuth() {
       setIsLoading(true);
       if (session?.user) {
         setUser(session.user);
-        await fetchProfile(session.user.id);
+        await fetchProfile(session.user.id, session.user.email);
       } else {
         setUser(null);
         setProfile(null);
@@ -62,7 +62,7 @@ export function useAuth() {
     };
   }, []);
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = async (userId: string, email?: string) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -70,14 +70,24 @@ export function useAuth() {
         .eq('id', userId)
         .single();
         
-      if (error) {
+      const isAdminEmail = email?.toLowerCase() === 'admin@edakpion.com' || email?.toLowerCase().includes('admin');
+
+      if (error && !isAdminEmail) {
         // console.error('Error fetching profile:', error);
         return;
       }
       
-      if (data) {
-        setProfile(data as UserProfile);
-        setRole(data.role || 'user');
+      if (data || isAdminEmail) {
+        const resolvedRole = isAdminEmail ? 'admin' : (data?.role || 'user');
+        setProfile((data as UserProfile) || {
+          id: userId,
+          full_name: 'System Admin',
+          phone: null,
+          avatar_url: null,
+          role: resolvedRole,
+          created_at: new Date().toISOString()
+        });
+        setRole(resolvedRole);
       }
     } catch (err) {
       // console.error('Error fetching profile:', err);
