@@ -37,9 +37,13 @@ export default function CategoriesManage() {
       if (error) throw error;
       setCategories([...categories, data]);
       setNewName('');
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error adding category:', err);
-      alert('Failed to add category');
+      if (err.code === '42501') {
+        alert("Database Permission Denied (RLS): Your user does not have admin role in the database. Please create a new account with 'admin' in the email, or run an SQL update in Supabase to set your role to 'admin'.");
+      } else {
+        alert(`Failed to add category: ${err.message || 'Unknown error'}`);
+      }
     }
   };
 
