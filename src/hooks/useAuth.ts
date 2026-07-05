@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, isMockData } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 
 export interface UserProfile {
@@ -22,6 +22,29 @@ export function useAuth() {
     // Get initial session
     const fetchSession = async () => {
       try {
+        if (isMockData) {
+          const mockUserStr = localStorage.getItem('mock_user');
+          if (mockUserStr) {
+            const mockUser = JSON.parse(mockUserStr);
+            setUser({ id: 'mock-id', email: mockUser.email });
+            setProfile({
+              id: 'mock-id',
+              full_name: mockUser.email.includes('admin') ? 'System Admin' : 'Test User',
+              phone: null,
+              avatar_url: null,
+              role: mockUser.role,
+              created_at: new Date().toISOString()
+            });
+            setRole(mockUser.role);
+          } else {
+            setUser(null);
+            setProfile(null);
+            setRole('guest');
+          }
+          setIsLoading(false);
+          return;
+        }
+
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) throw error;
@@ -43,22 +66,38 @@ export function useAuth() {
 
     fetchSession();
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setIsLoading(true);
-      if (session?.user) {
-        setUser(session.user);
-        await fetchProfile(session.user.id, session.user.email);
-      } else {
-        setUser(null);
-        setProfile(null);
-        setRole('guest');
+    // Custom event listener for mock auth changes
+    const handleAuthChange = () => {
+      if (isMockData) {
+        setIsLoading(true);
+        fetchSession();
       }
-      setIsLoading(false);
-    });
+    };
+    window.addEventListener('auth_change', handleAuthChange);
+
+    // Listen for auth changes
+    let subscription: any;
+    if (!isMockData) {
+      const { data } = supabase.auth.onAuthStateChange(async (_event, session) => {
+        setIsLoading(true);
+        if (session?.user) {
+          setUser(session.user);
+          await fetchProfile(session.user.id, session.user.email);
+        } else {
+          setUser(null);
+          setProfile(null);
+          setRole('guest');
+        }
+        setIsLoading(false);
+      });
+      subscription = data.subscription;
+    }
 
     return () => {
-      subscription.unsubscribe();
+      window.removeEventListener('auth_change', handleAuthChange);
+      if (subscription) {
+        subscription.unsubscribe();
+      }
     };
   }, []);
 
@@ -73,7 +112,16 @@ export function useAuth() {
       const isAdminEmail = email?.toLowerCase() === 'admin@edakpion.com' || email?.toLowerCase().includes('admin');
 
       if (error && !isAdminEmail) {
-        // console.error('Error fetching profile:', error);
+        // Fallback for users without a profile (e.g. no trigger set up)
+        setProfile({
+          id: userId,
+          full_name: email?.split('@')[0] || 'User',
+          phone: null,
+          avatar_url: null,
+          role: 'user',
+          created_at: new Date().toISOString()
+        });
+        setRole('user');
         return;
       }
       
@@ -96,6 +144,16 @@ export function useAuth() {
 
   const signOut = async () => {
     try {
+      if (isMockData) {
+        localStorage.removeItem('mock_user');
+        window.dispatchEvent(new Event('auth_change'));
+        setUser(null);
+        setProfile(null);
+        setRole('guest');
+        navigate('/login');
+        return;
+      }
+
       await supabase.auth.signOut();
       setUser(null);
       setProfile(null);

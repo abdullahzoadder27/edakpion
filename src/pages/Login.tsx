@@ -17,8 +17,12 @@ export default function Login() {
     try {
       if (isMockData) {
         if (email === 'admin@edakpion.com' && password === 'admin123') {
+           localStorage.setItem('mock_user', JSON.stringify({ email, role: 'admin' }));
+           window.dispatchEvent(new Event('auth_change'));
            navigate('/admin');
         } else {
+           localStorage.setItem('mock_user', JSON.stringify({ email, role: 'user' }));
+           window.dispatchEvent(new Event('auth_change'));
            navigate('/account');
         }
         return;
