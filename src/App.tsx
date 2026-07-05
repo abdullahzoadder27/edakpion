@@ -56,10 +56,13 @@ import SupportTicketAdmin from './pages/admin/SupportTicketAdmin';
 import NotificationsManage from './pages/admin/NotificationsManage';
 import SettingsManage from './pages/admin/SettingsManage';
 
+import AdminLogin from './pages/admin/AdminLogin';
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="shop" element={<Shop />} />

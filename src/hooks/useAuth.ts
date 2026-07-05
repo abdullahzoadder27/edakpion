@@ -7,7 +7,8 @@ export interface UserProfile {
   full_name: string | null;
   phone: string | null;
   avatar_url: string | null;
-  role: 'user' | 'admin';
+  role: 'user' | 'admin' | string;
+  admin_role?: string;
   created_at: string;
 }
 
@@ -64,6 +65,28 @@ export function useAuth() {
 
   const fetchProfile = async (userId: string, email?: string) => {
     try {
+      // First try to fetch from admins table to see if user is an admin
+      const { data: adminData, error: adminError } = await supabase
+        .from('admins')
+        .select('*, roles(role_name)')
+        .eq('auth_user_id', userId)
+        .eq('is_active', true)
+        .single();
+
+      if (!adminError && adminData) {
+        setProfile({
+          id: userId,
+          full_name: adminData.full_name || email?.split('@')[0] || 'Admin',
+          phone: null,
+          avatar_url: null,
+          role: 'admin',
+          admin_role: adminData.roles?.role_name || 'Admin',
+          created_at: adminData.created_at || new Date().toISOString()
+        });
+        setRole('admin');
+        return;
+      }
+
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
