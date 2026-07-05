@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Filter, ChevronDown } from 'lucide-react';
+import { Filter, ChevronDown, Loader2 } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
-import { mockProducts } from '../lib/data';
+import { getProducts } from '../lib/api';
+import { Product } from '../types';
 import ProductCard from '../components/ui/ProductCard';
 
 export default function Shop() {
@@ -9,10 +10,23 @@ export default function Shop() {
   const tagFilter = searchParams.get('tag');
   
   const [activeCategory, setActiveCategory] = useState('All');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
   const categories = ['All', 'T-Shirts', 'Shirts', 'Jackets', 'Accessories'];
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setIsLoading(true);
+      const data = await getProducts();
+      setProducts(data);
+      setIsLoading(false);
+    };
+    fetchProducts();
+  }, []);
+
   // Filter logic
-  let filteredProducts = mockProducts;
+  let filteredProducts = products;
   
   if (tagFilter) {
     filteredProducts = filteredProducts.filter(p => p.tags && p.tags.includes(tagFilter));
@@ -99,7 +113,11 @@ export default function Shop() {
               </select>
             </div>
             
-            {filteredProducts.length > 0 ? (
+            {isLoading ? (
+              <div className="flex justify-center items-center py-20">
+                <Loader2 className="w-8 h-8 text-[#0F3D2E] animate-spin" />
+              </div>
+            ) : filteredProducts.length > 0 ? (
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {filteredProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
@@ -116,7 +134,7 @@ export default function Shop() {
             )}
             
             {/* Pagination Placeholder */}
-            {filteredProducts.length > 0 && (
+            {filteredProducts.length > 0 && !isLoading && (
               <div className="flex justify-center mt-16">
                 <button className="border border-gray-300 px-8 py-3 rounded-full text-sm font-bold hover:bg-gray-100 transition-colors">
                   LOAD MORE

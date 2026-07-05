@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase, isMockData } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 
 export interface UserProfile {
@@ -22,29 +22,6 @@ export function useAuth() {
     // Get initial session
     const fetchSession = async () => {
       try {
-        if (isMockData) {
-          const mockUserStr = localStorage.getItem('mock_user');
-          if (mockUserStr) {
-            const mockUser = JSON.parse(mockUserStr);
-            setUser({ id: 'mock-id', email: mockUser.email });
-            setProfile({
-              id: 'mock-id',
-              full_name: mockUser.email.includes('admin') ? 'System Admin' : 'Test User',
-              phone: null,
-              avatar_url: null,
-              role: mockUser.role,
-              created_at: new Date().toISOString()
-            });
-            setRole(mockUser.role);
-          } else {
-            setUser(null);
-            setProfile(null);
-            setRole('guest');
-          }
-          setIsLoading(false);
-          return;
-        }
-
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) throw error;
@@ -58,7 +35,7 @@ export function useAuth() {
           setRole('guest');
         }
       } catch (err) {
-        // console.error('Error fetching session:', err);
+        console.error('Error fetching session:', err);
       } finally {
         setIsLoading(false);
       }
@@ -66,38 +43,22 @@ export function useAuth() {
 
     fetchSession();
 
-    // Custom event listener for mock auth changes
-    const handleAuthChange = () => {
-      if (isMockData) {
-        setIsLoading(true);
-        fetchSession();
-      }
-    };
-    window.addEventListener('auth_change', handleAuthChange);
-
     // Listen for auth changes
-    let subscription: any;
-    if (!isMockData) {
-      const { data } = supabase.auth.onAuthStateChange(async (_event, session) => {
-        setIsLoading(true);
-        if (session?.user) {
-          setUser(session.user);
-          await fetchProfile(session.user.id, session.user.email);
-        } else {
-          setUser(null);
-          setProfile(null);
-          setRole('guest');
-        }
-        setIsLoading(false);
-      });
-      subscription = data.subscription;
-    }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setIsLoading(true);
+      if (session?.user) {
+        setUser(session.user);
+        await fetchProfile(session.user.id, session.user.email);
+      } else {
+        setUser(null);
+        setProfile(null);
+        setRole('guest');
+      }
+      setIsLoading(false);
+    });
 
     return () => {
-      window.removeEventListener('auth_change', handleAuthChange);
-      if (subscription) {
-        subscription.unsubscribe();
-      }
+      subscription.unsubscribe();
     };
   }, []);
 
@@ -134,16 +95,6 @@ export function useAuth() {
 
   const signOut = async () => {
     try {
-      if (isMockData) {
-        localStorage.removeItem('mock_user');
-        window.dispatchEvent(new Event('auth_change'));
-        setUser(null);
-        setProfile(null);
-        setRole('guest');
-        navigate('/login');
-        return;
-      }
-
       await supabase.auth.signOut();
       setUser(null);
       setProfile(null);

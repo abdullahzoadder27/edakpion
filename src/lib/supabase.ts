@@ -11,4 +11,3 @@ if (rawAnonKey && rawAnonKey.split('.').length > 3) {
 const supabaseAnonKey = rawAnonKey;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-export const isMockData = false;

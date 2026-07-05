@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase, isMockData } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 export interface AdminStats {
   totalSales: number;
@@ -28,28 +28,6 @@ export function useAdminStats() {
       try {
         setIsLoading(true);
         setError(null);
-
-        if (isMockData) {
-          // Return mock admin stats
-          setStats({
-            totalSales: 15420.50,
-            todaySales: 345.00,
-            totalOrders: 142,
-            pendingOrders: 12,
-            processingOrders: 8,
-            shippedOrders: 25,
-            deliveredOrders: 90,
-            cancelledOrders: 7,
-            totalProducts: 45,
-            lowStockProducts: 4,
-            totalUsers: 840,
-            totalSubscribers: 1250,
-            totalReviews: 320,
-            supportTickets: 3,
-          });
-          setIsLoading(false);
-          return;
-        }
         
         // Orders & Sales
         const { data: orders, error: ordersError } = await supabase

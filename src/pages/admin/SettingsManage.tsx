@@ -107,11 +107,15 @@ export default function SettingsManage() {
       if (error) throw error;
       
       // Log audit
-      await supabase.from('audit_logs').insert([{
-        actor_id: currentAdmin?.id,
-        action: 'ASSIGN_SUPER_ADMIN',
-        details: { assigned_user_id: user.id }
-      }]).catch(e => console.warn('Audit log failed (table might not exist):', e));
+      try {
+        await supabase.from('audit_logs').insert([{
+          actor_id: currentAdmin?.id,
+          action: 'ASSIGN_SUPER_ADMIN',
+          details: { assigned_user_id: user.id }
+        }]);
+      } catch (e) {
+        console.warn('Audit log failed:', e);
+      }
       
       setMessage({ text: `Successfully assigned ${user.full_name || 'User'} as Super Admin.`, type: 'success' });
       setSelectedUser(user);

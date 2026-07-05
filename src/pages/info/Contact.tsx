@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
-import { supabase, isMockData } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import { z } from 'zod';
 
 const contactSchema = z.object({
@@ -48,21 +48,14 @@ export default function Contact() {
       contactSchema.parse(formData);
       setIsSubmitting(true);
 
-      if (isMockData) {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setSubmitSuccess(true);
-        setFormData({ full_name: '', email: '', phone: '', subject: '', message: '' });
-      } else {
-        const { error } = await supabase
-          .from('contact_messages')
-          .insert([formData]);
+      const { error } = await supabase
+        .from('contact_messages')
+        .insert([formData]);
 
-        if (error) throw error;
-        
-        setSubmitSuccess(true);
-        setFormData({ full_name: '', email: '', phone: '', subject: '', message: '' });
-      }
+      if (error) throw error;
+      
+      setSubmitSuccess(true);
+      setFormData({ full_name: '', email: '', phone: '', subject: '', message: '' });
     } catch (err) {
       if (err instanceof z.ZodError) {
         const newErrors: Partial<Record<keyof ContactFormData, string>> = {};

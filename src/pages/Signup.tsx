@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase, isMockData } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -15,12 +15,6 @@ export default function Signup() {
     setError(null);
 
     try {
-      if (isMockData) {
-        alert('Mock mode: Signup successful! You can now log in.');
-        navigate('/login');
-        return;
-      }
-
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
