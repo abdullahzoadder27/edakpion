@@ -21,14 +21,26 @@ export default function Signup() {
         return;
       }
 
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/login`,
+        }
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.status === 429 || error.message.toLowerCase().includes('rate limit')) {
+          throw new Error('Supabase email rate limit exceeded. Please configure a custom SMTP server in your Supabase Dashboard or increase the rate limit to allow more signups from this IP address.');
+        }
+        throw error;
+      }
       
-      alert('Signup successful! You can now log in.');
+      if (data?.user && data?.user?.identities && data.user.identities.length === 0) {
+         throw new Error('This email is already registered. Please sign in instead.');
+      }
+      
+      alert('Signup successful! Please check your email to verify your account before logging in.');
       navigate('/login');
     } catch (err: any) {
       setError(err.message || 'Failed to sign up');
