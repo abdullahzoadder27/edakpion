@@ -1,0 +1,271 @@
+import { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { Star, Truck, RefreshCcw, Shield, Heart } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import { useCartStore } from '../lib/store';
+import { formatPrice } from '../lib/utils';
+import ProductCard from '../components/ui/ProductCard';
+import { Product } from '../types';
+
+export default function ProductDetail() {
+  const { slug } = useParams<{ slug: string }>();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  const [selectedSize, setSelectedSize] = useState<string>('');
+  const [selectedColor, setSelectedColor] = useState<string>('');
+  const [quantity, setQuantity] = useState(1);
+  const [inWishlist, setInWishlist] = useState(false);
+  const addItem = useCartStore((state) => state.addItem);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        // Fetch product
+        const { data: productData, error: productError } = await supabase
+          .from('products')
+          .select('*')
+          .eq('slug', slug)
+          .single();
+          
+        if (productError) throw productError;
+        setProduct(productData);
+        
+        if (productData) {
+          setSelectedSize(productData.sizes?.[0] || '');
+          setSelectedColor(productData.colors?.[0] || '');
+          
+          // Fetch related
+          const { data: relatedData } = await supabase
+            .from('products')
+            .select('*')
+            .eq('category_id', productData.category_id)
+            .neq('id', productData.id)
+            .limit(4);
+            
+          setRelatedProducts(relatedData || []);
+
+          // Check session for recently viewed & wishlist
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user) {
+            // Track recently viewed
+            await supabase.from('recently_viewed').upsert({
+              user_id: session.user.id,
+              product_id: productData.id,
+              viewed_at: new Date().toISOString()
+            }, { onConflict: 'user_id,product_id' });
+
+            // Check wishlist
+            const { data: wishlistData } = await supabase
+              .from('wishlists')
+              .select('id')
+              .eq('user_id', session.user.id)
+              .eq('product_id', productData.id)
+              .single();
+              
+            if (wishlistData) setInWishlist(true);
+          }
+        }
+      } catch (err) {
+        // console.error('Error fetching product:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (slug) fetchProduct();
+  }, [slug]);
+
+  const handleAddToCart = () => {
+    if (product) {
+      addItem(product, quantity, selectedSize, selectedColor);
+      alert('Added to cart!');
+    }
+  };
+
+  const handleToggleWishlist = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) {
+      alert('Please log in to add to wishlist');
+      return;
+    }
+
+    if (!product) return;
+
+    try {
+      if (inWishlist) {
+        await supabase
+          .from('wishlists')
+          .delete()
+          .eq('user_id', session.user.id)
+          .eq('product_id', product.id);
+        setInWishlist(false);
+      } else {
+        await supabase
+          .from('wishlists')
+          .insert([{ user_id: session.user.id, product_id: product.id }]);
+        setInWishlist(true);
+      }
+    } catch (err) {
+      console.error('Error updating wishlist:', err);
+    }
+  };
+
+  if (loading) return <div className="p-24 text-center">Loading product...</div>;
+  if (!product) return <div className="p-24 text-center">Product not found.</div>;
+
+  return (
+    <div className="bg-[#F5F2ED] min-h-screen py-12">
+      <div className="max-w-7xl mx-auto px-6">
+        
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-gray-500 mb-8">
+          <Link to="/" className="hover:text-black">Home</Link>
+          <span>/</span>
+          <Link to="/shop" className="hover:text-black">Shop</Link>
+          <span>/</span>
+          <span className="text-black font-medium">{product.name}</span>
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-12 mb-20">
+          {/* Images */}
+          <div className="md:w-1/2 flex gap-4">
+            <div className="flex flex-col gap-4 w-20">
+              {product.images?.map((img, i) => (
+                <div key={i} className="w-20 h-24 bg-white border border-[#E8E4DE] rounded-xl overflow-hidden cursor-pointer hover:border-[#0F3D2E]">
+                  <img src={img} alt="" className="w-full h-full object-cover" />
+                </div>
+              ))}
+            </div>
+            <div className="flex-1 bg-white border border-[#E8E4DE] rounded-[32px] overflow-hidden h-[600px]">
+              {product.images?.[0] && (
+                <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+              )}
+            </div>
+          </div>
+          
+          {/* Info */}
+          <div className="md:w-1/2">
+            <h1 className="text-4xl md:text-5xl font-serif mb-4 text-[#0F3D2E]">{product.name}</h1>
+            <div className="flex items-center gap-4 mb-6">
+              <span className="text-2xl font-serif text-gray-900">{formatPrice(product.price)}</span>
+              {product.compare_at_price && (
+                <span className="text-gray-400 line-through">{formatPrice(product.compare_at_price)}</span>
+              )}
+            </div>
+            
+            <p className="text-gray-600 mb-8 leading-relaxed">
+              {product.description}
+            </p>
+
+            {/* Colors */}
+            {product.colors && product.colors.length > 0 && (
+              <div className="mb-6">
+                <h4 className="font-bold text-sm mb-3">COLOR: <span className="text-gray-500 font-normal">{selectedColor}</span></h4>
+                <div className="flex gap-3">
+                  {product.colors.map(color => (
+                    <button 
+                      key={color}
+                      onClick={() => setSelectedColor(color)}
+                      className={`px-4 py-2 rounded-full border text-sm font-medium transition-colors ${
+                        selectedColor === color 
+                        ? 'border-[#0F3D2E] bg-[#0F3D2E] text-white' 
+                        : 'border-[#E8E4DE] bg-white hover:border-gray-300'
+                      }`}
+                    >
+                      {color}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Sizes */}
+            {product.sizes && product.sizes.length > 0 && (
+              <div className="mb-8">
+                <h4 className="font-bold text-sm mb-3 flex justify-between">
+                  <span>SIZE: <span className="text-gray-500 font-normal">{selectedSize}</span></span>
+                  <button className="text-gray-500 font-normal underline">Size Guide</button>
+                </h4>
+                <div className="flex gap-3">
+                  {product.sizes.map(size => (
+                    <button 
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`w-12 h-12 flex items-center justify-center rounded-full border text-sm font-bold transition-colors ${
+                        selectedSize === size 
+                        ? 'border-[#0F3D2E] bg-[#0F3D2E] text-white' 
+                        : 'border-[#E8E4DE] bg-white hover:border-gray-300'
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="flex gap-4 mb-8">
+              <div className="flex items-center border border-[#E8E4DE] rounded-full bg-white px-4">
+                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-2 text-gray-500 hover:text-black">-</button>
+                <span className="w-8 text-center font-bold text-sm">{quantity}</span>
+                <button onClick={() => setQuantity(quantity + 1)} className="p-2 text-gray-500 hover:text-black">+</button>
+              </div>
+              
+              <button 
+                onClick={handleAddToCart}
+                disabled={product.stock <= 0}
+                className="flex-1 bg-[#0F3D2E] text-white rounded-full font-bold text-xs tracking-widest uppercase hover:bg-[#154636] transition-colors disabled:opacity-50"
+              >
+                {product.stock > 0 ? 'ADD TO CART' : 'OUT OF STOCK'}
+              </button>
+              
+              <button 
+                onClick={handleToggleWishlist}
+                className={`w-12 h-12 flex items-center justify-center rounded-full border border-[#E8E4DE] bg-white transition-colors ${
+                  inWishlist ? 'text-red-500 border-red-200' : 'text-[#0F3D2E] hover:text-red-500'
+                }`}
+              >
+                <Heart className={`w-5 h-5 ${inWishlist ? 'fill-current' : ''}`} />
+              </button>
+            </div>
+
+            {/* Features */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-8 border-t border-[#E8E4DE]">
+               <div className="flex items-center gap-3">
+                  <div className="bg-white border border-[#E8E4DE] p-2 rounded-full"><Truck className="w-4 h-4 text-[#0F3D2E]" /></div>
+                  <span className="text-sm font-medium">Free shipping on orders over ৳5000</span>
+               </div>
+               <div className="flex items-center gap-3">
+                  <div className="bg-white border border-[#E8E4DE] p-2 rounded-full"><RefreshCcw className="w-4 h-4 text-[#0F3D2E]" /></div>
+                  <span className="text-sm font-medium">7 Days Return Policy</span>
+               </div>
+               <div className="flex items-center gap-3">
+                  <div className="bg-white border border-[#E8E4DE] p-2 rounded-full"><Shield className="w-4 h-4 text-[#0F3D2E]" /></div>
+                  <span className="text-sm font-medium">100% Original Product</span>
+               </div>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Related Products */}
+        {relatedProducts.length > 0 && (
+          <div>
+            <h2 className="text-2xl font-serif mb-8 text-[#0F3D2E]">YOU MAY ALSO LIKE</h2>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {relatedProducts.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}
+
