@@ -9,7 +9,9 @@ CREATE TABLE IF NOT EXISTS public.roles (
 );
 
 ALTER TABLE public.roles ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Public read access for roles" ON public.roles;
 CREATE POLICY "Public read access for roles" ON public.roles FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admin full access roles" ON public.roles;
 CREATE POLICY "Admin full access roles" ON public.roles FOR ALL USING (is_admin());
 
 -- Create admins table
@@ -25,7 +27,9 @@ CREATE TABLE IF NOT EXISTS public.admins (
 );
 
 ALTER TABLE public.admins ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admin read own record" ON public.admins;
 CREATE POLICY "Admin read own record" ON public.admins FOR SELECT USING (auth.uid() = auth_user_id);
+DROP POLICY IF EXISTS "Admin full access admins" ON public.admins;
 CREATE POLICY "Admin full access admins" ON public.admins FOR ALL USING (is_admin());
 
 -- Insert default roles

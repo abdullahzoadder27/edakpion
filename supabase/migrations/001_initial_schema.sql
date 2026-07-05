@@ -11,7 +11,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- 1. Profiles
-CREATE TABLE profiles (
+CREATE TABLE IF NOT EXISTS profiles (
     id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     full_name TEXT,
     phone TEXT,
@@ -24,6 +24,7 @@ CREATE TABLE profiles (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+DROP TRIGGER IF EXISTS update_profiles_modtime ON profiles;
 CREATE TRIGGER update_profiles_modtime BEFORE UPDATE ON profiles FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Function to handle new user signup
@@ -59,7 +60,7 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- 2. Categories
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     slug TEXT UNIQUE NOT NULL,
@@ -69,10 +70,11 @@ CREATE TABLE categories (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+DROP TRIGGER IF EXISTS update_categories_modtime ON categories;
 CREATE TRIGGER update_categories_modtime BEFORE UPDATE ON categories FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- 3. Products
-CREATE TABLE products (
+CREATE TABLE IF NOT EXISTS products (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     slug TEXT UNIQUE NOT NULL,
@@ -91,10 +93,11 @@ CREATE TABLE products (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+DROP TRIGGER IF EXISTS update_products_modtime ON products;
 CREATE TRIGGER update_products_modtime BEFORE UPDATE ON products FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- 4. Carts
-CREATE TABLE carts (
+CREATE TABLE IF NOT EXISTS carts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
     product_id UUID REFERENCES products(id) ON DELETE CASCADE,
@@ -105,10 +108,11 @@ CREATE TABLE carts (
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE(user_id, product_id, selected_size, selected_color)
 );
+DROP TRIGGER IF EXISTS update_carts_modtime ON carts;
 CREATE TRIGGER update_carts_modtime BEFORE UPDATE ON carts FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- 5. Wishlists
-CREATE TABLE wishlists (
+CREATE TABLE IF NOT EXISTS wishlists (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
     product_id UUID REFERENCES products(id) ON DELETE CASCADE,
@@ -117,7 +121,7 @@ CREATE TABLE wishlists (
 );
 
 -- 6. Orders
-CREATE TABLE orders (
+CREATE TABLE IF NOT EXISTS orders (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
     customer_name TEXT,
@@ -138,10 +142,11 @@ CREATE TABLE orders (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+DROP TRIGGER IF EXISTS update_orders_modtime ON orders;
 CREATE TRIGGER update_orders_modtime BEFORE UPDATE ON orders FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- 7. Order Items
-CREATE TABLE order_items (
+CREATE TABLE IF NOT EXISTS order_items (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
     product_id UUID REFERENCES products(id) ON DELETE SET NULL,
@@ -155,7 +160,7 @@ CREATE TABLE order_items (
 );
 
 -- 8. Addresses
-CREATE TABLE addresses (
+CREATE TABLE IF NOT EXISTS addresses (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
     label TEXT,
@@ -171,10 +176,11 @@ CREATE TABLE addresses (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+DROP TRIGGER IF EXISTS update_addresses_modtime ON addresses;
 CREATE TRIGGER update_addresses_modtime BEFORE UPDATE ON addresses FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- 9. Blogs
-CREATE TABLE blogs (
+CREATE TABLE IF NOT EXISTS blogs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title TEXT NOT NULL,
     slug TEXT UNIQUE NOT NULL,
@@ -193,17 +199,18 @@ CREATE TABLE blogs (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+DROP TRIGGER IF EXISTS update_blogs_modtime ON blogs;
 CREATE TRIGGER update_blogs_modtime BEFORE UPDATE ON blogs FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- 10. Subscribers
-CREATE TABLE subscribers (
+CREATE TABLE IF NOT EXISTS subscribers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email TEXT UNIQUE NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- 11. Testimonials
-CREATE TABLE testimonials (
+CREATE TABLE IF NOT EXISTS testimonials (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT,
     message TEXT,
@@ -213,10 +220,11 @@ CREATE TABLE testimonials (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+DROP TRIGGER IF EXISTS update_testimonials_modtime ON testimonials;
 CREATE TRIGGER update_testimonials_modtime BEFORE UPDATE ON testimonials FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- 12. Site Content
-CREATE TABLE site_content (
+CREATE TABLE IF NOT EXISTS site_content (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     section TEXT NOT NULL,
     title TEXT,
@@ -229,10 +237,11 @@ CREATE TABLE site_content (
     is_active BOOLEAN DEFAULT TRUE,
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+DROP TRIGGER IF EXISTS update_site_content_modtime ON site_content;
 CREATE TRIGGER update_site_content_modtime BEFORE UPDATE ON site_content FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- 13. Coupons
-CREATE TABLE coupons (
+CREATE TABLE IF NOT EXISTS coupons (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     code TEXT UNIQUE NOT NULL,
     type TEXT,
@@ -248,10 +257,11 @@ CREATE TABLE coupons (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+DROP TRIGGER IF EXISTS update_coupons_modtime ON coupons;
 CREATE TRIGGER update_coupons_modtime BEFORE UPDATE ON coupons FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- 14. Coupon Usages
-CREATE TABLE coupon_usages (
+CREATE TABLE IF NOT EXISTS coupon_usages (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     coupon_id UUID REFERENCES coupons(id) ON DELETE CASCADE,
     user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
@@ -260,7 +270,7 @@ CREATE TABLE coupon_usages (
 );
 
 -- 15. Reviews
-CREATE TABLE reviews (
+CREATE TABLE IF NOT EXISTS reviews (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
     product_id UUID REFERENCES products(id) ON DELETE CASCADE,
@@ -273,10 +283,11 @@ CREATE TABLE reviews (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+DROP TRIGGER IF EXISTS update_reviews_modtime ON reviews;
 CREATE TRIGGER update_reviews_modtime BEFORE UPDATE ON reviews FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- 16. Notifications
-CREATE TABLE notifications (
+CREATE TABLE IF NOT EXISTS notifications (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
@@ -289,7 +300,7 @@ CREATE TABLE notifications (
 );
 
 -- 17. Support Tickets
-CREATE TABLE support_tickets (
+CREATE TABLE IF NOT EXISTS support_tickets (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
     order_id UUID REFERENCES orders(id) ON DELETE SET NULL,
@@ -299,10 +310,11 @@ CREATE TABLE support_tickets (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+DROP TRIGGER IF EXISTS update_support_tickets_modtime ON support_tickets;
 CREATE TRIGGER update_support_tickets_modtime BEFORE UPDATE ON support_tickets FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- 18. Support Messages
-CREATE TABLE support_messages (
+CREATE TABLE IF NOT EXISTS support_messages (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     ticket_id UUID REFERENCES support_tickets(id) ON DELETE CASCADE,
     sender_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
@@ -313,7 +325,7 @@ CREATE TABLE support_messages (
 );
 
 -- 19. Recently Viewed
-CREATE TABLE recently_viewed (
+CREATE TABLE IF NOT EXISTS recently_viewed (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
     product_id UUID REFERENCES products(id) ON DELETE CASCADE,
@@ -322,16 +334,17 @@ CREATE TABLE recently_viewed (
 );
 
 -- 20. Store Settings
-CREATE TABLE store_settings (
+CREATE TABLE IF NOT EXISTS store_settings (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     key TEXT UNIQUE NOT NULL,
     value JSONB,
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+DROP TRIGGER IF EXISTS update_store_settings_modtime ON store_settings;
 CREATE TRIGGER update_store_settings_modtime BEFORE UPDATE ON store_settings FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- 21. Account Deletion Requests
-CREATE TABLE account_deletion_requests (
+CREATE TABLE IF NOT EXISTS account_deletion_requests (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
     reason TEXT,
@@ -340,7 +353,7 @@ CREATE TABLE account_deletion_requests (
 );
 
 -- 22. Admin Activity Logs
-CREATE TABLE admin_activity_logs (
+CREATE TABLE IF NOT EXISTS admin_activity_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     admin_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
     action TEXT,
@@ -468,6 +481,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_restore_stock_on_cancel ON orders;
 CREATE TRIGGER trigger_restore_stock_on_cancel
 AFTER UPDATE ON orders
 FOR EACH ROW
