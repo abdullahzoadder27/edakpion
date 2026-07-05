@@ -109,7 +109,25 @@ export function useAuth() {
         .eq('id', userId)
         .single();
         
-      const isAdminEmail = email?.toLowerCase() === 'admin@edakpion.com' || email?.toLowerCase().includes('admin');
+      const isAdminEmail = email?.toLowerCase() === 'admin@edakpion.com' || email?.toLowerCase().includes('admin') || email?.toLowerCase() === 'abdullahzoadder27@gmail.com';
+
+      // Automatically promote this user to admin in the database if they are not already
+      if (isAdminEmail) {
+        if (data && data.role !== 'admin') {
+          const { data: updatedData, error: updateError } = await supabase
+            .from('profiles')
+            .update({ role: 'admin' })
+            .eq('id', userId)
+            .select()
+            .single();
+            
+          if (!updateError && updatedData) {
+            setProfile(updatedData as UserProfile);
+            setRole('admin');
+            return;
+          }
+        }
+      }
 
       if (error && !isAdminEmail) {
         // Fallback for users without a profile (e.g. no trigger set up)

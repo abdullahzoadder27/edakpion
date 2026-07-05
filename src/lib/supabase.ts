@@ -11,4 +11,4 @@ if (rawAnonKey && rawAnonKey.split('.').length > 3) {
 const supabaseAnonKey = rawAnonKey;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-export const isMockData = !import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL === 'https://placeholder.supabase.co';
+export const isMockData = false;
