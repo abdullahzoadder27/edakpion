@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { supabase, isMockData } from '../lib/supabase';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -15,6 +15,15 @@ export default function Login() {
     setError(null);
 
     try {
+      if (isMockData) {
+        if (email === 'admin@edakpion.com' && password === 'admin123') {
+           navigate('/admin');
+        } else {
+           navigate('/account');
+        }
+        return;
+      }
+
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
