@@ -109,27 +109,7 @@ export function useAuth() {
         .eq('id', userId)
         .single();
         
-      const isAdminEmail = email?.toLowerCase() === 'admin@edakpion.com' || email?.toLowerCase().includes('admin') || email?.toLowerCase() === 'abdullahzoadder27@gmail.com';
-
-      // Automatically promote this user to admin in the database if they are not already
-      if (isAdminEmail) {
-        if (data && data.role !== 'admin') {
-          const { data: updatedData, error: updateError } = await supabase
-            .from('profiles')
-            .update({ role: 'admin' })
-            .eq('id', userId)
-            .select()
-            .single();
-            
-          if (!updateError && updatedData) {
-            setProfile(updatedData as UserProfile);
-            setRole('admin');
-            return;
-          }
-        }
-      }
-
-      if (error && !isAdminEmail) {
+      if (error) {
         // Fallback for users without a profile (e.g. no trigger set up)
         setProfile({
           id: userId,
@@ -143,17 +123,9 @@ export function useAuth() {
         return;
       }
       
-      if (data || isAdminEmail) {
-        const resolvedRole = isAdminEmail ? 'admin' : (data?.role || 'user');
-        setProfile((data as UserProfile) || {
-          id: userId,
-          full_name: 'System Admin',
-          phone: null,
-          avatar_url: null,
-          role: resolvedRole,
-          created_at: new Date().toISOString()
-        });
-        setRole(resolvedRole);
+      if (data) {
+        setProfile((data as UserProfile));
+        setRole(data.role || 'user');
       }
     } catch (err) {
       // console.error('Error fetching profile:', err);

@@ -422,3 +422,35 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
+
+-- Create audit_logs table
+CREATE TABLE IF NOT EXISTS audit_logs (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  actor_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
+  action TEXT NOT NULL,
+  details JSONB,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Admin full access audit_logs" ON audit_logs FOR ALL USING (is_admin());
+
+-- Add email to profiles for admin visibility
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS email TEXT;
+
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.profiles (id, full_name, role, email)
+  VALUES (
+    new.id,
+    new.raw_user_meta_data->>'full_name',
+    CASE
+      WHEN new.email LIKE '%admin%' THEN 'admin'
+      ELSE 'user'
+    END,
+    new.email
+  );
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
