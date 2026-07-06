@@ -22,10 +22,9 @@ export default function Checkout() {
   useEffect(() => {
     supabase.from('delivery_zones').select('*').eq('is_active', true).order('sort_order', { ascending: true })
       .then(({ data }) => {
-        if (data) {
-          setDeliveryZones(data);
-        }
-      });
+        if (data) setDeliveryZones(data);
+      })
+      .catch(err => console.warn('Error fetching delivery zones:', err));
   }, []);
   
   const insideZones = deliveryZones.filter(z => z.zone_type === 'inside');

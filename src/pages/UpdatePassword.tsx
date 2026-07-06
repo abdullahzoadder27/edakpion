@@ -14,7 +14,7 @@ export default function UpdatePassword() {
       if (!session) {
         // Will be populated if token is valid
       }
-    });
+    }).catch(err => console.warn('Error checking session:', err));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {

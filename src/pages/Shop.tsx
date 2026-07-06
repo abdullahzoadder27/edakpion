@@ -18,9 +18,14 @@ export default function Shop() {
   useEffect(() => {
     const fetchProducts = async () => {
       setIsLoading(true);
-      const data = await getProducts();
-      setProducts(data);
-      setIsLoading(false);
+      try {
+        const data = await getProducts();
+        setProducts(data);
+      } catch (err) {
+        console.warn('Error fetching products:', err);
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchProducts();
   }, []);

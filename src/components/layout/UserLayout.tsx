@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import ErrorBoundary from '../ErrorBoundary';
 import { useAuth } from '../../hooks/useAuth';
 import { 
   LayoutDashboard, 
@@ -132,7 +133,7 @@ export default function UserLayout() {
 
           {/* Main Content */}
           <main className="flex-1 min-w-0">
-            <Outlet context={{ profile, user }} />
+            <ErrorBoundary><Outlet context={{ profile, user }} /></ErrorBoundary>
           </main>
         </div>
       </div>

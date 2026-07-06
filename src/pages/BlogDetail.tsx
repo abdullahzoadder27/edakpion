@@ -14,14 +14,13 @@ export default function BlogDetail() {
 
   useEffect(() => {
     if (slug) {
-      getBlogBySlug(slug).then(data => {
-        if (!data) {
-          navigate('/blog');
-        } else {
-          setBlog(data);
-        }
-        setLoading(false);
-      });
+      getBlogBySlug(slug)
+        .then(data => {
+          if (!data) navigate('/blog');
+          else setBlog(data);
+        })
+        .catch(err => console.warn('Error fetching blog detail:', err))
+        .finally(() => setLoading(false));
     }
   }, [slug, navigate]);
 

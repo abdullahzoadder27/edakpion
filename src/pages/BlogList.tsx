@@ -11,10 +11,12 @@ export default function BlogList() {
   const [category, setCategory] = useState('');
 
   useEffect(() => {
-    getPublishedBlogs().then(data => {
-      setBlogs(data);
-      setLoading(false);
-    });
+    getPublishedBlogs()
+      .then(data => {
+        setBlogs(data);
+      })
+      .catch(err => console.warn('Error fetching blogs:', err))
+      .finally(() => setLoading(false));
   }, []);
 
   const filteredBlogs = blogs.filter(b => {
