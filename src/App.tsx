@@ -56,6 +56,7 @@ import ContentManage from './pages/admin/ContentManage';
 import SupportManage from './pages/admin/SupportManage';
 import SupportTicketAdmin from './pages/admin/SupportTicketAdmin';
 import NotificationsManage from './pages/admin/NotificationsManage';
+import DeliveryZonesManage from './pages/admin/DeliveryZonesManage';
 import SettingsManage from './pages/admin/SettingsManage';
 
 import AdminLogin from './pages/admin/AdminLogin';
@@ -122,6 +123,7 @@ export default function App() {
           <Route path="support" element={<SupportManage />} />
           <Route path="support/:id" element={<SupportTicketAdmin />} />
           <Route path="notifications" element={<NotificationsManage />} />
+<Route path="delivery-zones" element={<DeliveryZonesManage />} />
           <Route path="settings" element={<SettingsManage />} />
         </Route>
       </Routes>

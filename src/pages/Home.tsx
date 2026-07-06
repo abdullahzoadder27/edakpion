@@ -14,10 +14,19 @@ export default function Home() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [email, setEmail] = useState('');
 
+  
+  const [content, setContent] = useState<any>(null);
+
   useEffect(() => {
     getProducts().then(setProducts);
     getPublishedBlogs(3).then(setBlogs);
+    
+    supabase.from('store_settings').select('value').eq('key', 'homepage_cms').single()
+      .then(({ data }) => {
+        if (data && data.value) setContent(data.value);
+      });
   }, []);
+
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();

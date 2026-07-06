@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
-  LayoutDashboard, Package, ShoppingCart, Users, FileText, Ticket, 
+  LayoutDashboard, Truck, Package, ShoppingCart, Users, FileText, Ticket, 
   Star, Mail, MessageSquare, LayoutTemplate, HelpCircle, Bell, 
   Settings, LogOut, Menu, X, ExternalLink
 } from 'lucide-react';
@@ -40,6 +40,7 @@ export default function AdminLayout() {
     { name: 'Homepage Content', path: '/admin/content', icon: <LayoutTemplate className="w-5 h-5" />, roles: ['Super Admin', 'Admin', 'Content Editor'] },
     { name: 'Support Tickets', path: '/admin/support', icon: <HelpCircle className="w-5 h-5" />, roles: ['Super Admin', 'Admin', 'Customer Support'] },
     { name: 'Notifications', path: '/admin/notifications', icon: <Bell className="w-5 h-5" />, roles: ['Super Admin', 'Admin'] },
+    { name: 'Delivery Zones', path: '/admin/delivery-zones', icon: <Truck className="w-5 h-5" />, roles: ['Super Admin', 'Admin'] },
     { name: 'Settings', path: '/admin/settings', icon: <Settings className="w-5 h-5" />, roles: ['Super Admin', 'Admin'] },
   ];
 

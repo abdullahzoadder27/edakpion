@@ -1,270 +1,126 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Search, Shield, User, AlertCircle, CheckCircle2, ChevronDown } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
-
-interface Profile {
-  id: string;
-  full_name: string | null;
-  email?: string; // from auth.users if available, or we might not have it directly
-  phone: string | null;
-  role: string;
-  status?: string; // we'll default to active
-}
+import { Save, Loader2 } from 'lucide-react';
 
 export default function SettingsManage() {
-  const { profile: currentAdmin } = useAuth();
-  const [users, setUsers] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [filterRole, setFilterRole] = useState('all');
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
-  const [actionLoading, setActionLoading] = useState(false);
-  const [message, setMessage] = useState({ text: '', type: '' });
-  
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [saving, setSaving] = useState(false);
+  const [settings, setSettings] = useState<any>({
+    general: { store_name: 'EDAKPION', logo_url: '', favicon_url: '', email: '', phone: '', address: '' },
+    social: { facebook: '', instagram: '', tiktok: '', youtube: '', linkedin: '', whatsapp: '' },
+    seo: { meta_title: '', meta_description: '', keywords: '' },
+    analytics: { google_analytics: '', meta_pixel: '', search_console: '' },
+    email: { smtp_host: '', smtp_port: '', sender_email: '', sender_name: '' },
+    system: { maintenance_mode: false }
+  });
 
   useEffect(() => {
-    fetchUsers();
-    
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    fetchSettings();
   }, []);
 
-  const fetchUsers = async () => {
+  const fetchSettings = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*');
-        
-      if (error) throw error;
-      
-      // In a real app we might join with auth.users to get email if possible,
-      // but standard Supabase doesn't allow querying auth.users from client.
-      // So we map what we have.
-      const profiles = (data || []).map(p => ({
-        ...p,
-        email: p.email || 'Email hidden for privacy',
-        status: 'Active'
-      }));
-      
-      setUsers(profiles);
-      
-      const currentSuper = profiles.find(p => p.role === 'admin');
-      if (currentSuper) {
-        setSelectedUser(currentSuper);
+      const { data, error } = await supabase.from('store_settings').select('value').eq('key', 'platform_settings').single();
+      if (error && error.code !== 'PGRST116') throw error;
+      if (data && data.value) {
+        setSettings({ ...settings, ...data.value });
       }
     } catch (err) {
-      console.warn('Error fetching users:', err);
+      console.warn('Error fetching settings:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = 
-      (user.full_name?.toLowerCase() || '').includes(search.toLowerCase()) ||
-      (user.email?.toLowerCase() || '').includes(search.toLowerCase()) ||
-      (user.phone?.toLowerCase() || '').includes(search.toLowerCase()) ||
-      user.id.toLowerCase().includes(search.toLowerCase());
-      
-    const matchesRole = filterRole === 'all' || 
-                       (filterRole === 'admin' && user.role === 'admin') ||
-                       (filterRole === 'user' && user.role !== 'admin');
-                       
-    return matchesSearch && matchesRole;
-  });
+  const handleNestedChange = (section: string, field: string, value: any) => {
+    setSettings((prev: any) => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [field]: value
+      }
+    }));
+  };
 
-  const handleAssignSuperAdmin = async (user: Profile) => {
-    if (user.role === 'admin') return;
-    
-    setActionLoading(true);
-    setMessage({ text: '', type: '' });
-    setIsOpen(false);
-    
+  const saveSettings = async () => {
+    setSaving(true);
     try {
-      // Find current admins and demote them
-      const currentAdmins = users.filter(u => u.role === 'admin' && u.id !== user.id);
+      const { error } = await supabase.from('store_settings').upsert({
+        key: 'platform_settings',
+        value: settings
+      }, { onConflict: 'key' });
       
-      for (const admin of currentAdmins) {
-        await supabase.from('profiles').update({ role: 'user' }).eq('id', admin.id);
-      }
-      
-      // Promote new admin
-      const { error } = await supabase
-        .from('profiles')
-        .update({ role: 'admin' })
-        .eq('id', user.id);
-        
       if (error) throw error;
-      
-      // Log audit
-      try {
-        await supabase.from('audit_logs').insert([{
-          actor_id: currentAdmin?.id,
-          action: 'ASSIGN_SUPER_ADMIN',
-          details: { assigned_user_id: user.id }
-        }]);
-      } catch (e) {
-        console.warn('Audit log failed:', e);
-      }
-      
-      setMessage({ text: `Successfully assigned ${user.full_name || 'User'} as Super Admin.`, type: 'success' });
-      setSelectedUser(user);
-      
-      // Update local state
-      setUsers(users.map(u => ({
-        ...u,
-        role: u.id === user.id ? 'admin' : (u.role === 'admin' ? 'user' : u.role)
-      })));
-      
+      alert('Settings updated successfully!');
     } catch (err: any) {
-      console.warn('Error assigning admin:', err);
-      setMessage({ text: err.message || 'Failed to assign Super Admin.', type: 'error' });
+      alert(`Error saving settings: ${err.message}`);
     } finally {
-      setActionLoading(false);
+      setSaving(false);
     }
   };
 
+  if (loading) return <div className="p-8 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-[#0F3D2E]" /></div>;
+
   return (
-    <div className="space-y-6 max-w-4xl">
-      <h1 className="text-2xl font-bold text-[#0F3D2E]">Platform Settings</h1>
-      
-      <div className="bg-white rounded-2xl border border-[#E8E4DE] shadow-sm overflow-visible">
-        <div className="p-6 border-b border-[#E8E4DE]">
-          <div className="flex items-center gap-3 mb-2">
-            <Shield className="w-6 h-6 text-purple-600" />
-            <h2 className="text-lg font-bold text-[#0F3D2E]">Super Admin Management</h2>
-          </div>
-          <p className="text-sm text-gray-500">
-            Select a user to grant Super Admin privileges. This will replace the current Super Admin.
-          </p>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-[#0F3D2E]">Platform Settings</h1>
+        <button 
+          onClick={saveSettings}
+          disabled={saving}
+          className="bg-[#0F3D2E] text-white px-6 py-2 rounded-xl flex items-center gap-2 hover:bg-[#154636] font-bold disabled:opacity-50"
+        >
+          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          {saving ? 'Saving...' : 'Save Settings'}
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* General Settings */}
+        <div className="bg-white p-6 rounded-2xl border border-[#E8E4DE] shadow-sm space-y-4">
+          <h2 className="text-lg font-bold text-[#0F3D2E] border-b pb-2">General</h2>
+          <div><label className="text-sm font-bold">Store Name</label><input value={settings.general?.store_name || ''} onChange={(e) => handleNestedChange('general', 'store_name', e.target.value)} className="w-full border p-2 rounded-lg" /></div>
+          <div><label className="text-sm font-bold">Logo URL</label><input value={settings.general?.logo_url || ''} onChange={(e) => handleNestedChange('general', 'logo_url', e.target.value)} className="w-full border p-2 rounded-lg" /></div>
+          <div><label className="text-sm font-bold">Favicon URL</label><input value={settings.general?.favicon_url || ''} onChange={(e) => handleNestedChange('general', 'favicon_url', e.target.value)} className="w-full border p-2 rounded-lg" /></div>
+          <div><label className="text-sm font-bold">Contact Email</label><input value={settings.general?.email || ''} onChange={(e) => handleNestedChange('general', 'email', e.target.value)} className="w-full border p-2 rounded-lg" /></div>
+          <div><label className="text-sm font-bold">Phone Number</label><input value={settings.general?.phone || ''} onChange={(e) => handleNestedChange('general', 'phone', e.target.value)} className="w-full border p-2 rounded-lg" /></div>
+          <div><label className="text-sm font-bold">Business Address</label><textarea value={settings.general?.address || ''} onChange={(e) => handleNestedChange('general', 'address', e.target.value)} className="w-full border p-2 rounded-lg" rows={2} /></div>
+        </div>
+
+        {/* Social Media */}
+        <div className="bg-white p-6 rounded-2xl border border-[#E8E4DE] shadow-sm space-y-4">
+          <h2 className="text-lg font-bold text-[#0F3D2E] border-b pb-2">Social Media Links</h2>
+          <div><label className="text-sm font-bold">Facebook</label><input value={settings.social?.facebook || ''} onChange={(e) => handleNestedChange('social', 'facebook', e.target.value)} className="w-full border p-2 rounded-lg" /></div>
+          <div><label className="text-sm font-bold">Instagram</label><input value={settings.social?.instagram || ''} onChange={(e) => handleNestedChange('social', 'instagram', e.target.value)} className="w-full border p-2 rounded-lg" /></div>
+          <div><label className="text-sm font-bold">TikTok</label><input value={settings.social?.tiktok || ''} onChange={(e) => handleNestedChange('social', 'tiktok', e.target.value)} className="w-full border p-2 rounded-lg" /></div>
+          <div><label className="text-sm font-bold">YouTube</label><input value={settings.social?.youtube || ''} onChange={(e) => handleNestedChange('social', 'youtube', e.target.value)} className="w-full border p-2 rounded-lg" /></div>
+          <div><label className="text-sm font-bold">WhatsApp</label><input value={settings.social?.whatsapp || ''} onChange={(e) => handleNestedChange('social', 'whatsapp', e.target.value)} className="w-full border p-2 rounded-lg" /></div>
+        </div>
+
+        {/* SEO Settings */}
+        <div className="bg-white p-6 rounded-2xl border border-[#E8E4DE] shadow-sm space-y-4">
+          <h2 className="text-lg font-bold text-[#0F3D2E] border-b pb-2">Global SEO</h2>
+          <div><label className="text-sm font-bold">Meta Title</label><input value={settings.seo?.meta_title || ''} onChange={(e) => handleNestedChange('seo', 'meta_title', e.target.value)} className="w-full border p-2 rounded-lg" /></div>
+          <div><label className="text-sm font-bold">Meta Description</label><textarea value={settings.seo?.meta_description || ''} onChange={(e) => handleNestedChange('seo', 'meta_description', e.target.value)} className="w-full border p-2 rounded-lg" rows={3} /></div>
+          <div><label className="text-sm font-bold">Keywords</label><input value={settings.seo?.keywords || ''} onChange={(e) => handleNestedChange('seo', 'keywords', e.target.value)} className="w-full border p-2 rounded-lg" /></div>
+        </div>
+
+        {/* Analytics & Tracking */}
+        <div className="bg-white p-6 rounded-2xl border border-[#E8E4DE] shadow-sm space-y-4">
+          <h2 className="text-lg font-bold text-[#0F3D2E] border-b pb-2">Analytics</h2>
+          <div><label className="text-sm font-bold">Google Analytics ID</label><input value={settings.analytics?.google_analytics || ''} onChange={(e) => handleNestedChange('analytics', 'google_analytics', e.target.value)} className="w-full border p-2 rounded-lg" /></div>
+          <div><label className="text-sm font-bold">Meta Pixel ID</label><input value={settings.analytics?.meta_pixel || ''} onChange={(e) => handleNestedChange('analytics', 'meta_pixel', e.target.value)} className="w-full border p-2 rounded-lg" /></div>
         </div>
         
-        <div className="p-6 space-y-6 overflow-visible">
-          {message.text && (
-            <div className={`p-4 rounded-xl flex items-center gap-3 ${
-              message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
-            }`}>
-              {message.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
-              <p className="font-medium text-sm">{message.text}</p>
-            </div>
-          )}
-          
-          <div className="space-y-2">
-            <label className="block text-sm font-bold text-gray-700">Current Super Admin</label>
-            <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl flex items-center gap-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600">
-                <Shield className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="font-bold text-[#0F3D2E]">{selectedUser?.full_name || 'No Admin Assigned'}</p>
-                <p className="text-xs text-gray-500">{selectedUser?.email} • ID: {selectedUser?.id}</p>
-              </div>
-              <div className="ml-auto">
-                <span className="px-3 py-1 bg-purple-100 text-purple-700 text-xs font-bold rounded-full">
-                  Super Admin
-                </span>
-              </div>
-            </div>
+        {/* System */}
+        <div className="bg-white p-6 rounded-2xl border border-[#E8E4DE] shadow-sm space-y-4">
+          <h2 className="text-lg font-bold text-[#0F3D2E] border-b pb-2">System</h2>
+          <div className="flex items-center gap-3">
+            <input type="checkbox" id="maintenance" checked={settings.system?.maintenance_mode || false} onChange={(e) => handleNestedChange('system', 'maintenance_mode', e.target.checked)} className="w-5 h-5" />
+            <label htmlFor="maintenance" className="text-sm font-bold">Enable Maintenance Mode</label>
           </div>
-
-          <div className="space-y-2 relative" ref={dropdownRef}>
-            <label className="block text-sm font-bold text-gray-700">Assign New Super Admin</label>
-            
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="w-full bg-white border border-[#E8E4DE] rounded-xl p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
-            >
-              <span className="text-gray-600">Select a user from the directory...</span>
-              <ChevronDown className="w-5 h-5 text-gray-400" />
-            </button>
-            
-            {isOpen && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-[#E8E4DE] rounded-xl shadow-xl z-50 max-h-[400px] flex flex-col">
-                <div className="p-4 border-b border-[#E8E4DE] space-y-3">
-                  <div className="relative">
-                    <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                    <input
-                      type="text"
-                      placeholder="Search by name, email, phone, or ID..."
-                      value={search}
-                      onChange={e => setSearch(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-[#E8E4DE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F3D2E]/20"
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    {['all', 'user', 'admin'].map(role => (
-                      <button
-                        key={role}
-                        onClick={() => setFilterRole(role)}
-                        className={`px-3 py-1 rounded-full text-xs font-bold capitalize transition-colors ${
-                          filterRole === role 
-                            ? 'bg-[#0F3D2E] text-white' 
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
-                      >
-                        {role}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                
-                <div className="overflow-y-auto flex-1 p-2 space-y-1">
-                  {loading ? (
-                    <div className="p-8 text-center text-gray-500">Loading users...</div>
-                  ) : filteredUsers.length === 0 ? (
-                    <div className="p-8 text-center text-gray-500">No users found matching your search.</div>
-                  ) : (
-                    filteredUsers.map(user => (
-                      <div 
-                        key={user.id}
-                        className="p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors border border-transparent hover:border-[#E8E4DE] flex items-center justify-between group"
-                        onClick={() => handleAssignSuperAdmin(user)}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 shrink-0">
-                            <User className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <p className="font-bold text-[#0F3D2E] text-sm">{user.full_name || 'Unnamed User'}</p>
-                            <p className="text-xs text-gray-500">{user.email}</p>
-                            {user.phone && <p className="text-xs text-gray-400">{user.phone}</p>}
-                          </div>
-                        </div>
-                        <div className="flex flex-col items-end gap-1">
-                          <div className="flex gap-2">
-                            {user.status === 'Active' && (
-                              <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded-full">Active</span>
-                            )}
-                            <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full ${
-                              user.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'
-                            }`}>
-                              {user.role === 'admin' ? 'Admin' : 'User'}
-                            </span>
-                          </div>
-                          {user.role !== 'admin' && (
-                            <span className="text-xs text-purple-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity">
-                              Assign →
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-          
+          <p className="text-xs text-gray-500">When enabled, visitors will see a "Under Construction" page.</p>
         </div>
       </div>
     </div>
