@@ -17,7 +17,7 @@ export default function SupportManage() {
   const fetchTickets = async () => {
     setLoading(true);
     try {
-      let query = supabase.from('support_tickets').select('*, profiles!support_tickets_user_id_fkey(full_name, email)').order('created_at', { ascending: false });
+      let query = supabase.from('support_tickets').select('*, profiles!support_tickets_user_id_fkey(full_name)').order('created_at', { ascending: false });
       
       const { data, error } = await query;
       if (error) throw error;
