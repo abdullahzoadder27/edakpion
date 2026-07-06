@@ -109,7 +109,7 @@ export default function SupportManage() {
                         <option value="resolved">Resolved</option>
                         <option value="closed">Closed</option>
                       </select>
-                      {/* TODO: Add a specific ticket detail page in the future if requested */}
+                      <Link to={`/admin/support/${ticket.id}`} className="p-2 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg text-sm font-bold">View</Link>
                     </div>
                   </td>
                 </tr>
