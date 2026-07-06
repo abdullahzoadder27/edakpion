@@ -13,7 +13,6 @@ export type Product = {
   tags: string[];
   status?: string;
   sku?: string;
-  features?: string[];
   is_active: boolean;
   created_at: string;
   updated_at: string;

@@ -308,11 +308,6 @@ export default function ProductDetail() {
             {activeTab === 'description' && (
               <div className="animate-in fade-in duration-500">
                 <p>{product.description}</p>
-                {product.features && product.features.length > 0 && (
-                  <ul className="mt-6 space-y-2">
-                    {product.features.map((f, i) => <li key={i} className="flex gap-2"><span className="text-[#0F3D2E]">✓</span>{f}</li>)}
-                  </ul>
-                )}
               </div>
             )}
             {activeTab === 'specifications' && (
