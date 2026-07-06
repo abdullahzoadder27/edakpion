@@ -112,7 +112,7 @@ export default function UserOrderDetails() {
                   <div key={item.id} className="flex gap-4 p-4 border border-gray-100 rounded-xl">
                     <div className="w-20 h-24 bg-gray-100 rounded-lg overflow-hidden shrink-0">
                       {item.image_url ? (
-                        <img src={item.image_url} alt={item.product_name} className="w-full h-full object-cover" />
+                        <img loading="lazy" decoding="async" src={item.image_url} alt={item.product_name} className="w-full h-full object-cover" />
                       ) : (
                         <Package className="w-full h-full p-6 text-gray-300" />
                       )}

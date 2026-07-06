@@ -10,7 +10,7 @@ export default function BlogCard({ blog }: { blog: Blog }) {
     <div className="bg-white border border-[#E8E4DE] rounded-[24px] overflow-hidden group hover:border-[#0F3D2E]/20 transition-all duration-300">
       <Link to={`/blog/${blog.slug}`} className="block relative overflow-hidden aspect-[16/9]">
         {blog.cover_image_url ? (
-          <img 
+          <img loading="lazy" decoding="async" 
             src={blog.cover_image_url} 
             alt={blog.title} 
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 

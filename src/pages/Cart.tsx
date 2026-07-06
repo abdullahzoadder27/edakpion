@@ -45,7 +45,7 @@ export default function Cart() {
                     <div key={item.id} className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center py-4 border-b border-gray-50 last:border-0 pb-0">
                       <div className="col-span-1 sm:col-span-6 flex gap-4">
                         <div className="w-24 h-32 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                          <img src={item.product.images[0]} alt={item.product.name} className="w-full h-full object-cover" />
+                          <img loading="lazy" decoding="async" src={item.product.images[0]} alt={item.product.name} className="w-full h-full object-cover" />
                         </div>
                         <div className="flex flex-col justify-center">
                           <h3 className="font-bold text-gray-900">{item.product.name}</h3>

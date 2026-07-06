@@ -164,13 +164,13 @@ export default function ProductDetail() {
             <div className="flex flex-col gap-4 w-20">
               {product.images?.map((img, i) => (
                 <div key={i} className="w-20 h-24 bg-white border border-[#E8E4DE] rounded-xl overflow-hidden cursor-pointer hover:border-[#0F3D2E]">
-                  <img src={img} alt="" className="w-full h-full object-cover" />
+                  <img loading="lazy" decoding="async" src={img} alt="" className="w-full h-full object-cover" />
                 </div>
               ))}
             </div>
             <div className="flex-1 bg-white border border-[#E8E4DE] rounded-[32px] overflow-hidden h-[600px]">
               {product.images?.[0] && (
-                <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                <img loading="lazy" decoding="async" src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
               )}
             </div>
           </div>

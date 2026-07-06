@@ -92,7 +92,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
               {isLoggedIn ? (
                 <div className="bg-white p-4 rounded-xl shadow-sm border border-[#E8E4DE] flex items-center gap-4">
                   {profile?.avatar_url ? (
-                    <img src={profile.avatar_url} alt={profile.full_name || 'User'} className="w-12 h-12 rounded-full object-cover" />
+                    <img loading="lazy" decoding="async" src={profile.avatar_url} alt={profile.full_name || 'User'} className="w-12 h-12 rounded-full object-cover" />
                   ) : (
                     <div className="w-12 h-12 bg-[#0F3D2E] text-white rounded-full flex items-center justify-center text-xl font-bold">
                       {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || <UserCircle className="w-6 h-6" />}

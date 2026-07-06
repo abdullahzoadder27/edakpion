@@ -253,7 +253,7 @@ export default function AdminProductForm() {
               <div className="flex flex-wrap gap-4 mb-4">
                 {images.map((img, index) => (
                   <div key={index} className="relative w-24 h-24 border border-[#E8E4DE] rounded-xl overflow-hidden group">
-                    <img src={img} alt="Product" className="w-full h-full object-cover" />
+                    <img loading="lazy" decoding="async" src={img} alt="Product" className="w-full h-full object-cover" />
                     <button 
                       type="button" 
                       onClick={() => removeImageUrl(index)}

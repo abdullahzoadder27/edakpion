@@ -221,7 +221,7 @@ export default function AdminBlogForm() {
               </div>
               {formData.cover_image_url && (
                 <div className="w-24 h-24 rounded-lg overflow-hidden shrink-0 border border-gray-200">
-                  <img src={formData.cover_image_url} alt="Cover Preview" className="w-full h-full object-cover" />
+                  <img loading="lazy" decoding="async" src={formData.cover_image_url} alt="Cover Preview" className="w-full h-full object-cover" />
                 </div>
               )}
             </div>

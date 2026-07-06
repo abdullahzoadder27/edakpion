@@ -1,7 +1,26 @@
 import { supabase } from './supabase';
 import { Product } from '../types';
 
+
+const cache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_TTL = 1000 * 60 * 5; // 5 minutes
+
+function getCached<T>(key: string): T | null {
+  const cached = cache.get(key);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    return cached.data;
+  }
+  return null;
+}
+
+function setCache(key: string, data: any) {
+  cache.set(key, { data, timestamp: Date.now() });
+}
+
 export async function getProducts(): Promise<Product[]> {
+  const cacheKey = 'products_all';
+  const cached = getCached<Product[]>(cacheKey);
+  if (cached) return cached;
   try {
     const { data, error } = await supabase
       .from('products')
@@ -13,7 +32,9 @@ export async function getProducts(): Promise<Product[]> {
       return []; 
     }
     
-    return (data || []) as Product[];
+    const result = (data || []) as Product[];
+    setCache(cacheKey, result);
+    return result;
   } catch (error) {
     console.warn('Supabase exception, returning empty products list.');
     return [];

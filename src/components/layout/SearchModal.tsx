@@ -122,7 +122,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                     >
                       <div className="w-16 h-16 bg-gray-100 rounded overflow-hidden">
                         {product.images && product.images[0] && (
-                          <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                          <img loading="lazy" decoding="async" src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
                         )}
                       </div>
                       <div className="flex-1">

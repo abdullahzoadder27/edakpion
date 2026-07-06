@@ -39,7 +39,7 @@ export default function BlogDetail() {
     <div className="bg-[#F5F2ED] min-h-screen pb-20">
       {blog.cover_image_url && (
         <div className="w-full h-[400px] md:h-[600px] relative">
-          <img src={blog.cover_image_url} alt={blog.title} className="w-full h-full object-cover" />
+          <img loading="lazy" decoding="async" src={blog.cover_image_url} alt={blog.title} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-black/30"></div>
         </div>
       )}

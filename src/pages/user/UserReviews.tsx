@@ -58,7 +58,7 @@ export default function UserReviews() {
                 <div className="flex flex-col sm:flex-row gap-6">
                   <div className="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden shrink-0">
                     {review.products?.images?.[0] ? (
-                      <img src={review.products.images[0]} alt={review.products.name} className="w-full h-full object-cover" />
+                      <img loading="lazy" decoding="async" src={review.products.images[0]} alt={review.products.name} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400"><MessageSquare className="w-8 h-8" /></div>
                     )}

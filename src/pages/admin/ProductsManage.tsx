@@ -108,7 +108,7 @@ export default function ProductsManage() {
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-lg bg-gray-100 overflow-hidden shrink-0">
                           {product.images?.[0] && (
-                            <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                            <img loading="lazy" decoding="async" src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
                           )}
                         </div>
                         <div>

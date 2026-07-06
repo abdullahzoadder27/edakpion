@@ -143,7 +143,7 @@ export default function TestimonialsManage() {
                 <tr key={item.id} className="hover:bg-gray-50/50">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      {item.avatar_url ? <img src={item.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" /> : <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center font-bold text-gray-500">{item.name?.charAt(0)}</div>}
+                      {item.avatar_url ? <img loading="lazy" decoding="async" src={item.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" /> : <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center font-bold text-gray-500">{item.name?.charAt(0)}</div>}
                       <div>
                         <div className="font-bold text-gray-900">{item.name}</div>
                         <div className="text-xs text-gray-500">{item.occupation} {item.location && `• ${item.location}`}</div>

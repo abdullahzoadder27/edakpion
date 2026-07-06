@@ -158,7 +158,7 @@ export default function AdminLayout() {
               </div>
               <div className="w-10 h-10 rounded-full bg-[#0F3D2E] text-white flex items-center justify-center font-bold overflow-hidden border-2 border-white shadow-sm">
                 {profile?.avatar_url ? (
-                  <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                  <img loading="lazy" decoding="async" src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
                   (profile?.full_name?.charAt(0) || 'A').toUpperCase()
                 )}

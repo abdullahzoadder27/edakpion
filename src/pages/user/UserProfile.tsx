@@ -130,7 +130,7 @@ export default function UserProfile() {
             <div className="flex flex-col items-center gap-4">
               <div className="w-32 h-32 rounded-full bg-gray-100 border border-gray-200 overflow-hidden relative group">
                 {avatarUrl ? (
-                  <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                  <img loading="lazy" decoding="async" src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
                   <User className="w-16 h-16 text-gray-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
                 )}

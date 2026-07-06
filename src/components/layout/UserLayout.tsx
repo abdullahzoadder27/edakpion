@@ -62,7 +62,7 @@ export default function UserLayout() {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[#0F3D2E] text-white flex items-center justify-center font-bold overflow-hidden">
               {profile?.avatar_url ? (
-                <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                <img loading="lazy" decoding="async" src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
               ) : (
                 profile?.full_name?.charAt(0) || user?.email?.charAt(0) || 'U'
               )}
@@ -85,7 +85,7 @@ export default function UserLayout() {
               <div className="hidden lg:flex items-center gap-4 mb-8 pb-6 border-b border-[#E8E4DE]">
                 <div className="w-12 h-12 rounded-full bg-[#0F3D2E] text-white flex items-center justify-center font-bold text-lg overflow-hidden shrink-0">
                   {profile?.avatar_url ? (
-                    <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                    <img loading="lazy" decoding="async" src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
                     profile?.full_name?.charAt(0) || user?.email?.charAt(0) || 'U'
                   )}

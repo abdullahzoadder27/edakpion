@@ -64,7 +64,7 @@ export default function Home() {
             <div className="w-full h-full flex items-end justify-center relative">
                <div className="w-[80%] h-[90%] bg-[#215a48] rounded-t-full opacity-40 animate-pulse"></div>
                <div className="absolute bottom-0 right-10 w-[300px] h-[400px] bg-[#0F3D2E] border-x-8 border-t-8 border-white/10 rounded-t-[100px] flex items-center justify-center overflow-hidden">
-                  <img src="https://images.unsplash.com/photo-1516826957135-700ede19c6ce?q=80&w=1200&auto=format&fit=crop" alt="Model" className="h-full w-full object-cover" />
+                  <img fetchPriority="high" src="https://images.unsplash.com/photo-1516826957135-700ede19c6ce?q=80&w=1200&auto=format&fit=crop" alt="Model" className="h-full w-full object-cover" />
                </div>
             </div>
           </div>
@@ -144,7 +144,7 @@ export default function Home() {
               </Link>
             </div>
             <div className="md:w-1/2 h-64 md:h-[400px] w-full">
-              <img src="https://images.unsplash.com/photo-1506152983158-b4a74a01c721?q=80&w=1473&auto=format&fit=crop" alt="Summer Collection" className="w-full h-full object-cover" />
+              <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1506152983158-b4a74a01c721?q=80&w=1473&auto=format&fit=crop" alt="Summer Collection" className="w-full h-full object-cover" />
             </div>
           </div>
         </div>
@@ -225,7 +225,7 @@ export default function Home() {
              </div>
              
              <div className="md:w-1/2 flex justify-end">
-                <img src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1000&auto=format&fit=crop" alt="App Preview" className="w-64 h-auto rounded-3xl shadow-lg mix-blend-multiply border-4 border-white" />
+                <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1000&auto=format&fit=crop" alt="App Preview" className="w-64 h-auto rounded-3xl shadow-lg mix-blend-multiply border-4 border-white" />
              </div>
           </div>
         </div>

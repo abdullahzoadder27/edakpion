@@ -212,7 +212,7 @@ export default function Checkout() {
                 <div key={index} className="flex gap-4 border-b border-[#E8E4DE] pb-4 last:border-0 last:pb-0">
                   <div className="w-20 h-24 bg-gray-100 rounded-lg overflow-hidden shrink-0">
                     {item.product.images?.[0] && (
-                      <img src={item.product.images[0]} alt={item.product.name} className="w-full h-full object-cover" />
+                      <img loading="lazy" decoding="async" src={item.product.images[0]} alt={item.product.name} className="w-full h-full object-cover" />
                     )}
                   </div>
                   <div className="flex-1">

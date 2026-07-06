@@ -4,66 +4,76 @@
  */
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Layout from './components/layout/Layout';
-import Home from './pages/Home';
-import Shop from './pages/Shop';
-import ProductDetail from './pages/ProductDetail';
-import Cart from './pages/Cart';
-import Checkout from './pages/Checkout';
-import OrderSuccess from './pages/OrderSuccess';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import ForgotPassword from './pages/ForgotPassword';
-import UpdatePassword from './pages/UpdatePassword';
-import UserLayout from './components/layout/UserLayout';
-import UserDashboard from './pages/user/UserDashboard';
-import UserOrders from './pages/user/UserOrders';
-import UserOrderDetails from './pages/user/UserOrderDetails';
-import UserWishlist from './pages/user/UserWishlist';
-import UserAddresses from './pages/user/UserAddresses';
-import UserReviews from './pages/user/UserReviews';
-import UserCoupons from './pages/user/UserCoupons';
-import UserNotifications from './pages/user/UserNotifications';
-import UserSupport from './pages/user/UserSupport';
-import UserSupportTicket from './pages/user/UserSupportTicket';
-import UserProfile from './pages/user/UserProfile';
-import UserSecurity from './pages/user/UserSecurity';
-import UserRecentlyViewed from './pages/user/UserRecentlyViewed';
-import BlogList from './pages/BlogList';
-import BlogDetail from './pages/BlogDetail';
-import About from './pages/info/About';
-import OurStory from './pages/info/OurStory';
-import Contact from './pages/info/Contact';
-import Faqs from './pages/info/Faqs';
-import Shipping from './pages/info/Shipping';
-import Returns from './pages/info/Returns';
-import SizeGuide from './pages/info/SizeGuide';
-import AdminLayout from './components/layout/AdminLayout';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import ProductsManage from './pages/admin/ProductsManage';
-import AdminProductForm from './pages/admin/AdminProductForm';
-import CategoriesManage from './pages/admin/CategoriesManage';
-import OrdersManage from './pages/admin/OrdersManage';
-import OrderDetailAdmin from './pages/admin/OrderDetailAdmin';
-import UsersManage from './pages/admin/UsersManage';
-import AdminBlogs from './pages/admin/AdminBlogs';
-import AdminBlogForm from './pages/admin/AdminBlogForm';
-import CouponsManage from './pages/admin/CouponsManage';
-import ReviewsManage from './pages/admin/ReviewsManage';
-import SubscribersManage from './pages/admin/SubscribersManage';
-import TestimonialsManage from './pages/admin/TestimonialsManage';
-import ContentManage from './pages/admin/ContentManage';
-import SupportManage from './pages/admin/SupportManage';
-import SupportTicketAdmin from './pages/admin/SupportTicketAdmin';
-import NotificationsManage from './pages/admin/NotificationsManage';
-import DeliveryZonesManage from './pages/admin/DeliveryZonesManage';
-import SettingsManage from './pages/admin/SettingsManage';
+import { Suspense, lazy } from 'react';
+import { Loader2 } from 'lucide-react';
 
-import AdminLogin from './pages/admin/AdminLogin';
+const PageLoader = () => (
+  <div className="min-h-[60vh] flex items-center justify-center">
+    <Loader2 className="w-8 h-8 animate-spin text-[#0F3D2E]" />
+  </div>
+);
+
+import Layout from './components/layout/Layout';
+const Home = lazy(() => import('./pages/Home'));
+const Shop = lazy(() => import('./pages/Shop'));
+const ProductDetail = lazy(() => import('./pages/ProductDetail'));
+const Cart = lazy(() => import('./pages/Cart'));
+const Checkout = lazy(() => import('./pages/Checkout'));
+const OrderSuccess = lazy(() => import('./pages/OrderSuccess'));
+const Login = lazy(() => import('./pages/Login'));
+const Signup = lazy(() => import('./pages/Signup'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const UpdatePassword = lazy(() => import('./pages/UpdatePassword'));
+import UserLayout from './components/layout/UserLayout';
+const UserDashboard = lazy(() => import('./pages/user/UserDashboard'));
+const UserOrders = lazy(() => import('./pages/user/UserOrders'));
+const UserOrderDetails = lazy(() => import('./pages/user/UserOrderDetails'));
+const UserWishlist = lazy(() => import('./pages/user/UserWishlist'));
+const UserAddresses = lazy(() => import('./pages/user/UserAddresses'));
+const UserReviews = lazy(() => import('./pages/user/UserReviews'));
+const UserCoupons = lazy(() => import('./pages/user/UserCoupons'));
+const UserNotifications = lazy(() => import('./pages/user/UserNotifications'));
+const UserSupport = lazy(() => import('./pages/user/UserSupport'));
+const UserSupportTicket = lazy(() => import('./pages/user/UserSupportTicket'));
+const UserProfile = lazy(() => import('./pages/user/UserProfile'));
+const UserSecurity = lazy(() => import('./pages/user/UserSecurity'));
+const UserRecentlyViewed = lazy(() => import('./pages/user/UserRecentlyViewed'));
+const BlogList = lazy(() => import('./pages/BlogList'));
+const BlogDetail = lazy(() => import('./pages/BlogDetail'));
+const About = lazy(() => import('./pages/info/About'));
+const OurStory = lazy(() => import('./pages/info/OurStory'));
+const Contact = lazy(() => import('./pages/info/Contact'));
+const Faqs = lazy(() => import('./pages/info/Faqs'));
+const Shipping = lazy(() => import('./pages/info/Shipping'));
+const Returns = lazy(() => import('./pages/info/Returns'));
+const SizeGuide = lazy(() => import('./pages/info/SizeGuide'));
+import AdminLayout from './components/layout/AdminLayout';
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const ProductsManage = lazy(() => import('./pages/admin/ProductsManage'));
+const AdminProductForm = lazy(() => import('./pages/admin/AdminProductForm'));
+const CategoriesManage = lazy(() => import('./pages/admin/CategoriesManage'));
+const OrdersManage = lazy(() => import('./pages/admin/OrdersManage'));
+const OrderDetailAdmin = lazy(() => import('./pages/admin/OrderDetailAdmin'));
+const UsersManage = lazy(() => import('./pages/admin/UsersManage'));
+const AdminBlogs = lazy(() => import('./pages/admin/AdminBlogs'));
+const AdminBlogForm = lazy(() => import('./pages/admin/AdminBlogForm'));
+const CouponsManage = lazy(() => import('./pages/admin/CouponsManage'));
+const ReviewsManage = lazy(() => import('./pages/admin/ReviewsManage'));
+const SubscribersManage = lazy(() => import('./pages/admin/SubscribersManage'));
+const TestimonialsManage = lazy(() => import('./pages/admin/TestimonialsManage'));
+const ContentManage = lazy(() => import('./pages/admin/ContentManage'));
+const SupportManage = lazy(() => import('./pages/admin/SupportManage'));
+const SupportTicketAdmin = lazy(() => import('./pages/admin/SupportTicketAdmin'));
+const NotificationsManage = lazy(() => import('./pages/admin/NotificationsManage'));
+const DeliveryZonesManage = lazy(() => import('./pages/admin/DeliveryZonesManage'));
+const SettingsManage = lazy(() => import('./pages/admin/SettingsManage'));
+
+const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
 
 export default function App() {
   return (
     <BrowserRouter>
+      <Suspense fallback={<PageLoader />}>
       <Routes>
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/" element={<Layout />}>
@@ -127,6 +137,7 @@ export default function App() {
           <Route path="settings" element={<SettingsManage />} />
         </Route>
       </Routes>
+          </Suspense>
     </BrowserRouter>
   );
 }
