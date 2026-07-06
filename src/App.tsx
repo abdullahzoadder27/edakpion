@@ -13,6 +13,8 @@ import Checkout from './pages/Checkout';
 import OrderSuccess from './pages/OrderSuccess';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import ForgotPassword from './pages/ForgotPassword';
+import UpdatePassword from './pages/UpdatePassword';
 import UserLayout from './components/layout/UserLayout';
 import UserDashboard from './pages/user/UserDashboard';
 import UserOrders from './pages/user/UserOrders';
@@ -72,6 +74,8 @@ export default function App() {
           <Route path="order-success/:id" element={<OrderSuccess />} />
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="update-password" element={<UpdatePassword />} />
           <Route path="about" element={<About />} />
           <Route path="our-story" element={<OurStory />} />
           <Route path="contact" element={<Contact />} />
