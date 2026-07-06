@@ -68,7 +68,7 @@ CREATE POLICY "Users can delete own wishlist" ON wishlists FOR DELETE USING (aut
 DROP POLICY IF EXISTS "Users can view own orders" ON orders;
 CREATE POLICY "Users can view own orders" ON orders FOR SELECT USING (auth.uid() = user_id);
 DROP POLICY IF EXISTS "Users can insert own orders" ON orders;
-CREATE POLICY "Users can insert own orders" ON orders FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can insert own orders" ON orders FOR INSERT WITH CHECK (auth.uid() = user_id OR (auth.uid() IS NULL AND user_id IS NULL));
 DROP POLICY IF EXISTS "Users can update own orders" ON orders;
 CREATE POLICY "Users can update own orders" ON orders FOR UPDATE USING (auth.uid() = user_id);
 DROP POLICY IF EXISTS "Admin can manage all orders" ON orders;
@@ -81,7 +81,7 @@ CREATE POLICY "Users can view own order items" ON order_items FOR SELECT USING (
 );
 DROP POLICY IF EXISTS "Users can insert own order items" ON order_items;
 CREATE POLICY "Users can insert own order items" ON order_items FOR INSERT WITH CHECK (
-    order_id IN (SELECT id FROM orders WHERE user_id = auth.uid())
+    order_id IN (SELECT id FROM orders WHERE user_id = auth.uid() OR (auth.uid() IS NULL AND user_id IS NULL))
 );
 DROP POLICY IF EXISTS "Admin can manage all order items" ON order_items;
 CREATE POLICY "Admin can manage all order items" ON order_items FOR ALL USING (is_admin());
@@ -124,7 +124,7 @@ CREATE POLICY "Admin can manage coupons" ON coupons FOR ALL USING (is_admin());
 DROP POLICY IF EXISTS "Users can view own coupon usages" ON coupon_usages;
 CREATE POLICY "Users can view own coupon usages" ON coupon_usages FOR SELECT USING (auth.uid() = user_id);
 DROP POLICY IF EXISTS "Users can insert own coupon usages" ON coupon_usages;
-CREATE POLICY "Users can insert own coupon usages" ON coupon_usages FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can insert own coupon usages" ON coupon_usages FOR INSERT WITH CHECK (auth.uid() = user_id OR (auth.uid() IS NULL AND user_id IS NULL));
 DROP POLICY IF EXISTS "Admin can manage coupon usages" ON coupon_usages;
 CREATE POLICY "Admin can manage coupon usages" ON coupon_usages FOR ALL USING (is_admin());
 

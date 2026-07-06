@@ -20,11 +20,15 @@ export default function Checkout() {
   const [selectedZoneId, setSelectedZoneId] = useState('');
   
   useEffect(() => {
-    supabase.from('delivery_zones').select('*').eq('is_active', true).order('sort_order', { ascending: true })
-      .then(({ data }) => {
+    const fetchZones = async () => {
+      try {
+        const { data } = await supabase.from('delivery_zones').select('*').eq('is_active', true).order('sort_order', { ascending: true });
         if (data) setDeliveryZones(data);
-      })
-      .catch(err => console.warn('Error fetching delivery zones:', err));
+      } catch (err) {
+        console.warn('Error fetching delivery zones:', err);
+      }
+    };
+    fetchZones();
   }, []);
   
   const insideZones = deliveryZones.filter(z => z.zone_type === 'inside');
@@ -121,9 +125,12 @@ export default function Checkout() {
 
     try {
       // Create order
-      const { data: order, error: orderError } = await supabase
+      const orderId = crypto.randomUUID();
+      const { error: orderError } = await supabase
         .from('orders')
         .insert([{
+          id: orderId,
+          user_id: user?.id || null,
           customer_name: formData.name,
           phone: formData.phone,
           email: formData.email,
@@ -139,9 +146,7 @@ export default function Checkout() {
           status: 'pending',
           payment_method: 'cod',
           payment_status: 'pending'
-        }])
-        .select()
-        .single();
+        }]);
 
       if (orderError) throw orderError;
       
@@ -149,7 +154,7 @@ export default function Checkout() {
       if (appliedCoupon) {
         await supabase.from('coupon_usages').insert([{
           coupon_id: appliedCoupon.id,
-          order_id: order.id,
+          order_id: orderId,
           discount_amount: discountAmount,
           user_id: user?.id || null
         }]);
@@ -157,7 +162,7 @@ export default function Checkout() {
 
       // Create order items
       const orderItems = items.map(item => ({
-        order_id: order.id,
+        order_id: orderId,
         product_id: item.product.id,
         quantity: item.quantity,
         price: item.product.price,
@@ -176,7 +181,7 @@ export default function Checkout() {
         clearCart();
       }
 
-      navigate(`/order-success/${order.id}`);
+      navigate(`/order-success/${orderId}`);
     } catch (error: any) {
       alert(error.message || 'Error placing order. Please try again.');
     } finally {

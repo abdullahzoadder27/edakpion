@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
+import ErrorBoundary from '../ErrorBoundary';
 import { 
   LayoutDashboard, Truck, Package, ShoppingCart, Users, FileText, Ticket, 
   Star, Mail, MessageSquare, LayoutTemplate, HelpCircle, Bell, 
