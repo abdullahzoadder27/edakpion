@@ -76,6 +76,7 @@ export default function OrderDetailAdmin() {
       payment_status: data.payment_status || 'unpaid',
       status: data.status || 'pending',
       tracking_number: data.tracking_number || '',
+      courier_name: data.courier_name || '',
       notes: data.notes || '',
       admin_notes: data.admin_notes || ''
     });
@@ -174,6 +175,9 @@ export default function OrderDetailAdmin() {
       if (order && 'tracking_number' in order) {
         orderUpdate.tracking_number = editForm.tracking_number;
       }
+      if (order && 'courier_name' in order) {
+        orderUpdate.courier_name = editForm.courier_name;
+      }
       if (order && 'admin_notes' in order) {
         orderUpdate.admin_notes = editForm.admin_notes;
       }
@@ -207,13 +211,16 @@ export default function OrderDetailAdmin() {
       });
 
       // Update product stocks based on diffs
-      for (const [productId, diff] of Object.entries(productQtyDiff)) {
-        if (diff !== 0) {
-          // If diff > 0, we ordered more, so stock decreases. If diff < 0, we ordered less, stock increases.
-          // Wait, stock = current - diff
-          const { data: p } = await supabase.from('products').select('stock').eq('id', productId).single();
-          if (p) {
-            await supabase.from('products').update({ stock: p.stock - diff }).eq('id', productId);
+      // Only apply stock diffs if the order is not being cancelled right now, 
+      // and was not already cancelled. If it is transitioning to cancelled, the DB trigger handles it.
+      if (editForm.status !== 'cancelled' && order.status !== 'cancelled') {
+        for (const [productId, diff] of Object.entries(productQtyDiff)) {
+          if (diff !== 0) {
+            // If diff > 0, we ordered more, so stock decreases. If diff < 0, we ordered less, stock increases.
+            const { data: p } = await supabase.from('products').select('stock').eq('id', productId).single();
+            if (p) {
+              await supabase.from('products').update({ stock: p.stock - diff }).eq('id', productId);
+            }
           }
         }
       }
@@ -648,6 +655,48 @@ export default function OrderDetailAdmin() {
                 )}
               </div>
               
+              <div>
+                <p className="text-gray-500 mb-1">Tracking Number</p>
+                {isEditing ? (
+                  <input 
+                    value={editForm.tracking_number}
+                    onChange={(e) => setEditForm({...editForm, tracking_number: e.target.value})}
+                    className="w-full px-3 py-2 bg-gray-50 border border-[#E8E4DE] rounded-lg"
+                    placeholder="e.g. TRK-12345"
+                  />
+                ) : (
+                  <p className="font-medium text-[#0F3D2E]">{order.tracking_number || 'N/A'}</p>
+                )}
+              </div>
+
+              <div>
+                <p className="text-gray-500 mb-1">Courier Name</p>
+                {isEditing ? (
+                  <input 
+                    value={editForm.courier_name}
+                    onChange={(e) => setEditForm({...editForm, courier_name: e.target.value})}
+                    className="w-full px-3 py-2 bg-gray-50 border border-[#E8E4DE] rounded-lg"
+                    placeholder="e.g. Pathao, Steadfast"
+                  />
+                ) : (
+                  <p className="font-medium text-[#0F3D2E]">{order.courier_name || 'N/A'}</p>
+                )}
+              </div>
+              
+              <div>
+                <p className="text-gray-500 mb-1">Admin Notes (Internal)</p>
+                {isEditing ? (
+                  <textarea 
+                    value={editForm.admin_notes}
+                    onChange={(e) => setEditForm({...editForm, admin_notes: e.target.value})}
+                    className="w-full px-3 py-2 bg-gray-50 border border-[#E8E4DE] rounded-lg resize-none"
+                    rows={2}
+                  />
+                ) : (
+                  <p className="text-gray-600">{order.admin_notes || 'None'}</p>
+                )}
+              </div>
+
               <div>
                 <p className="text-gray-500 mb-1">Customer Notes</p>
                 {isEditing ? (
