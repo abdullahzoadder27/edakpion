@@ -37,7 +37,11 @@ export default function Signup() {
       alert('Signup successful! Please check your email to verify your account before logging in.');
       navigate('/login');
     } catch (err: any) {
-      setError(err.message || 'Failed to sign up');
+      if (err.message === 'Failed to fetch') {
+        setError('Connection failed. Your Supabase project might be paused or the URL is invalid. Please check your Supabase credentials in Settings.');
+      } else {
+        setError(err.message || 'Failed to sign up');
+      }
     } finally {
       setLoading(false);
     }
