@@ -44,12 +44,12 @@ export default function ProductsManage() {
     }
   };
 
-  const toggleStatus = async (id: string, currentStatus: string) => {
+  const toggleStatus = async (id: string, currentStatus: boolean) => {
     try {
-      const newStatus = currentStatus === 'active' ? 'draft' : 'active';
-      const { error } = await supabase.from('products').update({ status: newStatus }).eq('id', id);
+      const newStatus = !currentStatus;
+      const { error } = await supabase.from('products').update({ is_active: newStatus }).eq('id', id);
       if (error) throw error;
-      setProducts(products.map(p => p.id === id ? { ...p, status: newStatus } : p));
+      setProducts(products.map(p => p.id === id ? { ...p, is_active: newStatus } : p));
     } catch (err) {
       console.warn('Error updating status:', err);
     }
@@ -134,15 +134,15 @@ export default function ProductsManage() {
                     </td>
                     <td className="px-6 py-4">
                       <button 
-                        onClick={() => toggleStatus(product.id, product.status)}
+                        onClick={() => toggleStatus(product.id, product.is_active)}
                         className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold transition-colors ${
-                          product.status === 'active' 
+                          product.is_active 
                             ? 'bg-green-100 text-green-700 hover:bg-green-200' 
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                       >
-                        {product.status === 'active' ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-                        {product.status}
+                        {product.is_active ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                        {product.is_active ? 'active' : 'draft'}
                       </button>
                     </td>
                     <td className="px-6 py-4 text-right">

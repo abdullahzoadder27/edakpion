@@ -20,14 +20,13 @@ export default function AdminProductForm() {
     compare_at_price: '',
     category_id: '',
     stock: '',
-    sku: '',
-    status: 'active',
+    is_active: true,
   });
   const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [sizes, setSizes] = useState<string[]>(['']);
   const [colors, setColors] = useState<string[]>(['']);
-  const [features, setFeatures] = useState<string[]>(['']);
+  
   
   useEffect(() => {
     fetchCategories();
@@ -54,13 +53,12 @@ export default function AdminProductForm() {
           compare_at_price: data.compare_at_price?.toString() || '',
           category_id: data.category_id || '',
           stock: data.stock?.toString() || '0',
-          sku: data.sku || '',
-          status: data.status || 'active',
+          is_active: data.is_active !== false,
         });
         setImages(data.images || []);
         setSizes(data.sizes?.length ? data.sizes : ['']);
         setColors(data.colors?.length ? data.colors : ['']);
-        setFeatures(data.features?.length ? data.features : ['']);
+        
       }
     } catch (err) {
       // console.warn('Error fetching product:', err);
@@ -97,14 +95,7 @@ export default function AdminProductForm() {
   const addColor = () => setColors([...colors, '']);
   const removeColor = (index: number) => setColors(colors.filter((_, i) => i !== index));
 
-  const handleFeatureChange = (index: number, value: string) => {
-    const newFeatures = [...features];
-    newFeatures[index] = value;
-    setFeatures(newFeatures);
-  };
   
-  const addFeature = () => setFeatures([...features, '']);
-  const removeFeature = (index: number) => setFeatures(features.filter((_, i) => i !== index));
 
   const handleImageUrlChange = (index: number, value: string) => {
     const newImages = [...images];
@@ -127,12 +118,11 @@ export default function AdminProductForm() {
         compare_at_price: formData.compare_at_price ? parseFloat(formData.compare_at_price) : null,
         category_id: formData.category_id || null,
         stock: parseInt(formData.stock) || 0,
-        sku: formData.sku,
-        status: formData.status,
+        is_active: formData.is_active,
         images: images.filter(url => url.trim() !== ''),
         sizes: sizes.filter(s => s.trim() !== ''),
         colors: colors.filter(c => c.trim() !== ''),
-        features: features.filter(f => f.trim() !== ''),
+        
       };
 
       if (isEdit) {
@@ -202,13 +192,13 @@ export default function AdminProductForm() {
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700">Status</label>
               <select 
-                name="status"
-                value={formData.status} onChange={handleChange}
+                name="is_active"
+                value={formData.is_active ? 'true' : 'false'} 
+                onChange={(e) => setFormData(prev => ({ ...prev, is_active: e.target.value === 'true' }))}
                 className="w-full px-4 py-2 bg-gray-50 border border-[#E8E4DE] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F3D2E]/20"
               >
-                <option value="active">Active</option>
-                <option value="draft">Draft</option>
-                <option value="archived">Archived</option>
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
               </select>
             </div>
           </div>
@@ -251,14 +241,7 @@ export default function AdminProductForm() {
                 className="w-full px-4 py-2 bg-gray-50 border border-[#E8E4DE] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F3D2E]/20"
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700">SKU (Optional)</label>
-              <input 
-                type="text" name="sku"
-                value={formData.sku} onChange={handleChange}
-                className="w-full px-4 py-2 bg-gray-50 border border-[#E8E4DE] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F3D2E]/20"
-              />
-            </div>
+            
           </div>
         </div>
 
@@ -390,31 +373,6 @@ export default function AdminProductForm() {
               </div>
             ))}
             {colors.length === 0 && <p className="text-sm text-gray-500">No colors added yet.</p>}
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-2xl border border-[#E8E4DE] space-y-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-[#0F3D2E]">Features</h2>
-            <button type="button" onClick={addFeature} className="text-sm font-bold text-[#0F3D2E] hover:underline">
-              + Add Feature
-            </button>
-          </div>
-          
-          <div className="space-y-3">
-            {features.map((feature, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <input 
-                  type="text" placeholder="e.g. 100% Organic Cotton"
-                  value={feature} onChange={(e) => handleFeatureChange(index, e.target.value)}
-                  className="flex-1 px-4 py-2 bg-gray-50 border border-[#E8E4DE] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F3D2E]/20"
-                />
-                <button type="button" onClick={() => removeFeature(index)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            ))}
-            {features.length === 0 && <p className="text-sm text-gray-500">No features added yet.</p>}
           </div>
         </div>
 

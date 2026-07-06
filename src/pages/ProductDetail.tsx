@@ -270,7 +270,7 @@ export default function ProductDetail() {
               </button>
             </div>
 
-            {/* Features */}
+            {/* Tags */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-8 border-t border-[#E8E4DE]">
                <div className="flex items-center gap-3">
                   <div className="bg-white border border-[#E8E4DE] p-2 rounded-full"><Truck className="w-4 h-4 text-[#0F3D2E]" /></div>
@@ -308,9 +308,9 @@ export default function ProductDetail() {
             {activeTab === 'description' && (
               <div className="animate-in fade-in duration-500">
                 <p>{product.description}</p>
-                {product.features && product.features.length > 0 && (
+                {product.tags && product.tags.length > 0 && (
                   <ul className="mt-6 space-y-2">
-                    {product.features.map((f, i) => <li key={i} className="flex gap-2"><span className="text-[#0F3D2E]">✓</span>{f}</li>)}
+                    {product.tags.map((f, i) => <li key={i} className="flex gap-2"><span className="text-[#0F3D2E]">✓</span>{f}</li>)}
                   </ul>
                 )}
               </div>
@@ -320,7 +320,7 @@ export default function ProductDetail() {
                 <table className="w-full text-sm">
                   <tbody>
                     <tr className="border-b"><td className="py-3 font-bold w-1/3">Brand</td><td className="py-3">EDAKPION</td></tr>
-                    <tr className="border-b"><td className="py-3 font-bold w-1/3">SKU</td><td className="py-3">{product.sku || 'N/A'}</td></tr>
+                    
                     <tr className="border-b"><td className="py-3 font-bold w-1/3">Category</td><td className="py-3">{product.category_id || 'Uncategorized'}</td></tr>
                     <tr className="border-b"><td className="py-3 font-bold w-1/3">Material</td><td className="py-3">Premium Quality</td></tr>
                     <tr className="border-b"><td className="py-3 font-bold w-1/3">Country of Origin</td><td className="py-3">Bangladesh</td></tr>

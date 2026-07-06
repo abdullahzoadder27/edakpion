@@ -162,8 +162,8 @@ export default function Checkout() {
         product_id: item.product.id,
         quantity: item.quantity,
         price: item.product.price,
-        selected_size: item.selectedSize,
-        selected_color: item.selectedColor
+        selected_size: item.selected_size,
+        selected_color: item.selected_color
       }));
 
       const { error: itemsError } = await supabase
@@ -218,8 +218,8 @@ export default function Checkout() {
                   <div className="flex-1">
                     <h3 className="font-bold text-[#0F3D2E] text-sm md:text-base line-clamp-2">{item.product.name}</h3>
                     <div className="text-xs text-gray-500 mt-1 space-y-0.5">
-                      {item.selectedSize && <p>Size: {item.selectedSize}</p>}
-                      {item.selectedColor && <p>Color: {item.selectedColor}</p>}
+                      {item.selected_size && <p>Size: {item.selected_size}</p>}
+                      {item.selected_color && <p>Color: {item.selected_color}</p>}
                       <p>Qty: {item.quantity}</p>
                     </div>
                   </div>
