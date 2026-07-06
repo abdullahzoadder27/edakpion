@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '../lib/store';
+import { create } from 'zustand';
 
 export interface UserProfile {
   id: string;
@@ -13,62 +14,48 @@ export interface UserProfile {
   created_at: string;
 }
 
-export function useAuth() {
-  const [user, setUser] = useState<any | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [role, setRole] = useState<'guest' | 'user' | 'admin'>('guest');
-  const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
+interface AuthState {
+  user: any | null;
+  profile: UserProfile | null;
+  role: 'guest' | 'user' | 'admin';
+  isLoading: boolean;
+  setUser: (user: any | null) => void;
+  setProfile: (profile: UserProfile | null) => void;
+  setRole: (role: 'guest' | 'user' | 'admin') => void;
+  setIsLoading: (isLoading: boolean) => void;
+  signOut: () => Promise<void>;
+}
 
-  useEffect(() => {
-    // Get initial session
-    const fetchSession = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) throw error;
-        
-        if (session?.user) {
-          setUser(session.user);
-          await fetchProfile(session.user.id, session.user.email);
-          useCartStore.getState().syncCart();
-        } else {
-          setUser(null);
-          setProfile(null);
-          setRole('guest');
-        }
-      } catch (err) {
-        console.warn('Error fetching session:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  profile: null,
+  role: 'guest',
+  isLoading: true,
+  setUser: (user) => set({ user }),
+  setProfile: (profile) => set({ profile }),
+  setRole: (role) => set({ role }),
+  setIsLoading: (isLoading) => set({ isLoading }),
+  signOut: async () => {
+    try {
+      await supabase.auth.signOut();
+      set({ user: null, profile: null, role: 'guest' });
+    } catch (error) {
+      console.warn('Error signing out:', error);
+    }
+  }
+}));
 
-    fetchSession();
+// Initialize auth state outside of components so it only runs once
+let isInitializing = false;
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setIsLoading(true);
-      if (session?.user) {
-        setUser(session.user);
-        await fetchProfile(session.user.id, session.user.email);
-        useCartStore.getState().syncCart();
-      } else {
-        setUser(null);
-        setProfile(null);
-        setRole('guest');
-      }
-      setIsLoading(false);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
+const initAuth = async () => {
+  if (isInitializing) return;
+  isInitializing = true;
+  
+  const { setUser, setProfile, setRole, setIsLoading } = useAuthStore.getState();
+  
   const fetchProfile = async (userId: string, email?: string) => {
     try {
-      // First try to fetch from admins table to see if user is an admin
       const { data: adminData, error: adminError } = await supabase
         .from('admins')
         .select('*, roles(role_name)')
@@ -97,7 +84,6 @@ export function useAuth() {
         .single();
         
       if (error) {
-        // Fallback for users without a profile (e.g. no trigger set up)
         setProfile({
           id: userId,
           full_name: email?.split('@')[0] || 'User',
@@ -119,25 +105,59 @@ export function useAuth() {
     }
   };
 
-  const signOut = async () => {
-    try {
-      await supabase.auth.signOut();
+  try {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    
+    if (error) throw error;
+    
+    if (session?.user) {
+      setUser(session.user);
+      await fetchProfile(session.user.id, session.user.email);
+      useCartStore.getState().syncCart();
+    } else {
       setUser(null);
       setProfile(null);
       setRole('guest');
-      navigate('/login');
-    } catch (error) {
-      console.warn('Error signing out:', error);
     }
+  } catch (err) {
+    console.warn('Error fetching session:', err);
+  } finally {
+    setIsLoading(false);
+  }
+
+  supabase.auth.onAuthStateChange(async (_event, session) => {
+    setIsLoading(true);
+    if (session?.user) {
+      setUser(session.user);
+      await fetchProfile(session.user.id, session.user.email);
+      useCartStore.getState().syncCart();
+    } else {
+      setUser(null);
+      setProfile(null);
+      setRole('guest');
+    }
+    setIsLoading(false);
+  });
+};
+
+initAuth();
+
+export function useAuth() {
+  const authState = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await authState.signOut();
+    navigate('/login');
   };
 
   return {
-    user,
-    profile,
-    role,
-    isLoading,
-    isLoggedIn: role !== 'guest',
-    isAdmin: role === 'admin',
-    signOut
+    user: authState.user,
+    profile: authState.profile,
+    role: authState.role,
+    isLoading: authState.isLoading,
+    isLoggedIn: authState.role !== 'guest',
+    isAdmin: authState.role === 'admin',
+    signOut: handleSignOut
   };
 }

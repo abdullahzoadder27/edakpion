@@ -1,9 +1,11 @@
 import express from "express";
+import compression from "compression";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 
 async function startServer() {
   const app = express();
+  app.use(compression());
   const PORT = 3000;
 
   // Vite middleware for development

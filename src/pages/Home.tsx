@@ -18,13 +18,18 @@ export default function Home() {
   const [content, setContent] = useState<any>(null);
 
   useEffect(() => {
-    getProducts().then(setProducts);
-    getPublishedBlogs(3).then(setBlogs);
+    getProducts().then(setProducts).catch(console.warn);
+    getPublishedBlogs(3).then(setBlogs).catch(console.warn);
     
-    supabase.from('store_settings').select('value').eq('key', 'homepage_cms').single()
-      .then(({ data }) => {
+    const fetchSettings = async () => {
+      try {
+        const { data } = await supabase.from('store_settings').select('value').eq('key', 'homepage_cms').single();
         if (data && data.value) setContent(data.value);
-      });
+      } catch (err) {
+        console.warn('Error fetching homepage CMS:', err);
+      }
+    };
+    fetchSettings();
   }, []);
 
 
