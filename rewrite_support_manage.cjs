@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react';
+const fs = require('fs');
+
+const content = `import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Loader2, ExternalLink, MessageCircle, Search, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -35,7 +37,7 @@ export default function SupportManage() {
       if (error) throw error;
       setTickets(tickets.map(t => t.id === id ? { ...t, status } : t));
     } catch (err: any) {
-      alert(`Error updating ticket: ${err.message}`);
+      alert(\`Error updating ticket: \${err.message}\`);
     }
   };
 
@@ -47,7 +49,7 @@ export default function SupportManage() {
       if (error) throw error;
       setTickets(tickets.filter(t => t.id !== id));
     } catch (err: any) {
-      alert(`Error deleting ticket: ${err.message}`);
+      alert(\`Error deleting ticket: \${err.message}\`);
     } finally {
       setDeletingId(null);
     }
@@ -115,17 +117,17 @@ export default function SupportManage() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-col gap-1 items-start">
-                      <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase
-                        ${ticket.priority === 'urgent' ? 'bg-red-100 text-red-700' :
+                      <span className={\`px-2 py-1 rounded-full text-[10px] font-bold uppercase
+                        \${ticket.priority === 'urgent' ? 'bg-red-100 text-red-700' :
                           ticket.priority === 'high' ? 'bg-orange-100 text-orange-700' :
                           ticket.priority === 'medium' ? 'bg-blue-100 text-blue-700' :
-                          'bg-gray-100 text-gray-700'}`}>
+                          'bg-gray-100 text-gray-700'}\`}>
                         {ticket.priority || 'medium'}
                       </span>
-                      <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase
-                        ${ticket.status === 'open' ? 'bg-green-100 text-green-700' :
+                      <span className={\`px-2 py-1 rounded-full text-[10px] font-bold uppercase
+                        \${ticket.status === 'open' ? 'bg-green-100 text-green-700' :
                           ticket.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                          'bg-gray-100 text-gray-700'}`}>
+                          'bg-gray-100 text-gray-700'}\`}>
                         {ticket.status}
                       </span>
                     </div>
@@ -142,7 +144,7 @@ export default function SupportManage() {
                         <option value="resolved">Resolved</option>
                         <option value="closed">Closed</option>
                       </select>
-                      <Link to={`/admin/support/${ticket.id}`} className="p-1.5 bg-gray-100 text-[#0F3D2E] hover:bg-gray-200 rounded text-sm font-bold">View</Link>
+                      <Link to={\`/admin/support/\${ticket.id}\`} className="p-1.5 bg-gray-100 text-[#0F3D2E] hover:bg-gray-200 rounded text-sm font-bold">View</Link>
                       <button 
                         onClick={() => handleDelete(ticket.id)}
                         disabled={deletingId === ticket.id}
@@ -162,3 +164,7 @@ export default function SupportManage() {
     </div>
   );
 }
+`
+
+fs.writeFileSync('src/pages/admin/SupportManage.tsx', content);
+
