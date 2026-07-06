@@ -126,7 +126,7 @@ export default function Checkout() {
     try {
       // Create order
       const orderId = crypto.randomUUID();
-      const { error: orderError } = await supabase
+      const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .insert([{
           id: orderId,
@@ -146,7 +146,7 @@ export default function Checkout() {
           status: 'pending',
           payment_method: 'cod',
           payment_status: 'pending'
-        }]);
+        }]).select('*').single();
 
       if (orderError) throw orderError;
       
@@ -181,7 +181,7 @@ export default function Checkout() {
         clearCart();
       }
 
-      navigate(`/order-success/${orderId}`);
+      navigate(`/order-success/${orderData?.order_number || orderId}`);
     } catch (error: any) {
       alert(error.message || 'Error placing order. Please try again.');
     } finally {

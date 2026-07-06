@@ -362,7 +362,8 @@ export default function OrderDetailAdmin() {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <p className="text-sm text-gray-500">Order ID</p>
-                <p className="font-mono font-bold text-[#0F3D2E]">{order.id}</p>
+                <p className="font-mono font-bold text-[#0F3D2E] text-lg">{order.order_number || order.id}</p>
+                {order.order_number && <p className="font-mono text-xs text-gray-400 mt-1">UUID: {order.id}</p>}
               </div>
               <div className="text-right">
                 <p className="text-sm text-gray-500">Date</p>

@@ -14,7 +14,7 @@ export default function OrderSuccess() {
       
       {id && (
         <div className="bg-white px-8 py-4 rounded-3xl border border-[#E8E4DE] mt-4 mb-8 shadow-sm">
-          <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Order ID</p>
+          <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Order #</p>
           <p className="font-mono font-bold text-lg text-[#0F3D2E]">{id}</p>
         </div>
       )}

@@ -38,7 +38,7 @@ export default function UserSupport() {
         // Fetch recent orders for the dropdown
         const { data: ordersData } = await supabase
           .from('orders')
-          .select('id, created_at')
+          .select('*')
           .eq('user_id', profile.id)
           .order('created_at', { ascending: false })
           .limit(10);
@@ -139,7 +139,7 @@ export default function UserSupport() {
                   <option value="">None</option>
                   {orders.map(order => (
                     <option key={order.id} value={order.id}>
-                      Order #{order.id.split('-')[0].toUpperCase()} - {new Date(order.created_at).toLocaleDateString()}
+                      Order #{order.order_number || order.id.split('-')[0].toUpperCase()} - {new Date(order.created_at).toLocaleDateString()}
                     </option>
                   ))}
                 </select>

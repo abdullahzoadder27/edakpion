@@ -77,7 +77,7 @@ export default function UserOrderDetails() {
         </Link>
         <div>
           <h1 className="text-2xl font-serif text-[#0F3D2E]">Order Details</h1>
-          <p className="text-sm text-gray-500">#{order.id.split('-')[0].toUpperCase()}</p>
+          <p className="text-sm text-gray-500">#{order.order_number || order.id.split('-')[0].toUpperCase()}</p>
         </div>
       </div>
 

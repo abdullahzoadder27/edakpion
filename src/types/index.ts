@@ -45,6 +45,7 @@ export type CartItem = {
 
 export type Order = {
   id: string;
+  order_number?: string;
   user_id?: string;
   customer_name: string;
   phone: string;

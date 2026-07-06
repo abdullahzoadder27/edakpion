@@ -27,7 +27,7 @@ export default function UserOrders() {
         
         if (data) {
           if (search) {
-            setOrders(data.filter(o => o.id.toLowerCase().includes(search.toLowerCase())));
+            setOrders(data.filter(o => o.order_number?.toLowerCase().includes(search.toLowerCase()) || o.id.toLowerCase().includes(search.toLowerCase())));
           } else {
             setOrders(data as Order[]);
           }
@@ -92,7 +92,7 @@ export default function UserOrders() {
               <div key={order.id} className="p-6 hover:bg-gray-50 transition-colors">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                   <div>
-                    <h3 className="font-medium text-[#0F3D2E]">Order #{order.id.split('-')[0].toUpperCase()}</h3>
+                    <h3 className="font-medium text-[#0F3D2E]">Order #{order.order_number || order.id.split('-')[0].toUpperCase()}</h3>
                     <p className="text-sm text-gray-500">{new Date(order.created_at).toLocaleDateString()} at {new Date(order.created_at).toLocaleTimeString()}</p>
                   </div>
                   <div className="flex items-center gap-2">

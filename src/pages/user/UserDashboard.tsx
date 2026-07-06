@@ -113,7 +113,7 @@ export default function UserDashboard() {
               {recentOrders.map(order => (
                 <div key={order.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-[#E8E4DE] rounded-xl gap-4">
                   <div>
-                    <p className="font-medium text-[#0F3D2E] mb-1">Order #{order.id.split('-')[0].toUpperCase()}</p>
+                    <p className="font-medium text-[#0F3D2E] mb-1">Order #{order.order_number || order.id.split('-')[0].toUpperCase()}</p>
                     <p className="text-sm text-gray-500">{new Date(order.created_at).toLocaleDateString()}</p>
                   </div>
                   <div className="flex items-center gap-6">

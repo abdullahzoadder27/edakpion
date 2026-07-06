@@ -22,14 +22,7 @@ export default function OrdersManage() {
     try {
       const { data, error } = await supabase
         .from('orders')
-        .select(`
-          id,
-          total,
-          status,
-          created_at,
-          customer_name,
-          email
-        `)
+        .select(`*`)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -95,7 +88,8 @@ export default function OrdersManage() {
   };
 
   const filteredOrders = orders.filter(o => {
-    const matchesSearch = o.id.toLowerCase().includes(search.toLowerCase()) || 
+    const matchesSearch = o.order_number?.toLowerCase().includes(search.toLowerCase()) || 
+                          o.id.toLowerCase().includes(search.toLowerCase()) || 
                           o.customer_name?.toLowerCase().includes(search.toLowerCase());
     const matchesStatus = statusFilter === 'all' || o.status === statusFilter;
     return matchesSearch && matchesStatus;
@@ -140,7 +134,7 @@ export default function OrdersManage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-[#F5F2ED] text-[#0F3D2E]">
               <tr>
-                <th className="px-6 py-4 font-bold">Order ID</th>
+                <th className="px-6 py-4 font-bold">Order #</th>
                 <th className="px-6 py-4 font-bold">Date</th>
                 <th className="px-6 py-4 font-bold">Customer</th>
                 <th className="px-6 py-4 font-bold">Total</th>
@@ -157,7 +151,7 @@ export default function OrdersManage() {
                 filteredOrders.map(order => (
                   <tr key={order.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 font-mono text-xs">
-                      {order.id.slice(0, 8)}...
+                      <span className="font-bold text-base text-[#0F3D2E]">{order.order_number || order.id.slice(0, 8)}</span>
                     </td>
                     <td className="px-6 py-4 text-gray-600">
                       {formatDate(order.created_at)}

@@ -19,7 +19,7 @@ export default function UserSupportTicket() {
     try {
       const { data: ticketData, error: ticketError } = await supabase
         .from('support_tickets')
-        .select('*')
+        .select('*, orders(*)')
         .eq('id', id)
         .eq('user_id', profile.id)
         .single();
@@ -92,7 +92,7 @@ export default function UserSupportTicket() {
             <div className="flex items-center gap-2 mt-1">
               <span className="text-xs text-gray-500">Ticket #{ticket.id.split('-')[0].toUpperCase()}</span>
               {ticket.order_id && (
-                <span className="text-xs text-gray-500 bg-gray-100 px-2 rounded-full">Order #{ticket.order_id.split('-')[0].toUpperCase()}</span>
+                <span className="text-xs text-gray-500 bg-gray-100 px-2 rounded-full">Order #{ticket.orders?.order_number || ticket.order_id.split('-')[0].toUpperCase()}</span>
               )}
             </div>
           </div>
