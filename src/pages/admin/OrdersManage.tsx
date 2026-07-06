@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 import { supabase } from '../../lib/supabase';
 import { formatPrice, formatDate } from '../../lib/utils';
-import { Search, Filter, Eye } from 'lucide-react';
+import { Search, Filter, Eye, Trash2 } from 'lucide-react';
 
 export default function OrdersManage() {
+  const { user } = useAuth();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchOrders();
@@ -49,6 +52,48 @@ export default function OrdersManage() {
     }
   };
 
+  const handleDelete = async (id: string, status: string) => {
+    if (!window.confirm('Are you sure you want to delete this order? This action cannot be undone.')) return;
+    
+    setDeletingId(id);
+    try {
+      // Restore stock manually first just in case trigger doesn't exist
+      if (status !== 'cancelled') {
+        const { data: items } = await supabase.from('order_items').select('product_id, quantity').eq('order_id', id);
+        for (const item of items || []) {
+          if (item.product_id) {
+            const { data: p } = await supabase.from('products').select('stock').eq('id', item.product_id).single();
+            if (p) {
+              await supabase.from('products').update({ stock: p.stock + item.quantity }).eq('id', item.product_id);
+            }
+          }
+        }
+      }
+
+      const { error } = await supabase.from('orders').delete().eq('id', id);
+      if (error) throw error;
+      
+      setOrders(orders.filter(o => o.id !== id));
+      
+      // Log Activity
+      if (user) {
+        await supabase.from('admin_activity_logs').insert({
+          admin_id: user.id,
+          action: 'deleted',
+          entity_type: 'order',
+          entity_id: id,
+          metadata: { notes: 'Deleted order from manage page' }
+        });
+      }
+      alert('Order deleted successfully!');
+    } catch (err: any) {
+      console.error('Error deleting order:', err);
+      alert('Failed to delete order: ' + err.message);
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   const filteredOrders = orders.filter(o => {
     const matchesSearch = o.id.toLowerCase().includes(search.toLowerCase()) || 
                           o.customer_name?.toLowerCase().includes(search.toLowerCase());
@@ -82,14 +127,10 @@ export default function OrdersManage() {
           >
             <option value="all">All Statuses</option>
             <option value="pending">Pending</option>
-            <option value="confirmed">Confirmed</option>
             <option value="processing">Processing</option>
-            <option value="packed">Packed</option>
             <option value="shipped">Shipped</option>
             <option value="delivered">Delivered</option>
             <option value="cancelled">Cancelled</option>
-            <option value="returned">Returned</option>
-            <option value="refunded">Refunded</option>
           </select>
         </div>
       </div>
@@ -148,12 +189,23 @@ export default function OrdersManage() {
                       </select>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <Link 
-                        to={`/admin/orders/${order.id}`}
-                        className="inline-flex items-center gap-1 text-sm font-bold text-[#0F3D2E] hover:underline"
-                      >
-                        <Eye className="w-4 h-4" /> View
-                      </Link>
+                      <div className="flex justify-end gap-2">
+                        <Link 
+                          to={`/admin/orders/${order.id}`}
+                          className="inline-flex items-center gap-1 p-2 bg-gray-50 hover:bg-gray-100 text-[#0F3D2E] rounded transition-colors"
+                          title="View Order"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(order.id, order.status)}
+                          disabled={deletingId === order.id}
+                          className="inline-flex items-center gap-1 p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded transition-colors disabled:opacity-50"
+                          title="Delete Order"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -165,4 +217,3 @@ export default function OrdersManage() {
     </div>
   );
 }
-
