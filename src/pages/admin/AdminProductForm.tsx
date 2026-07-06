@@ -26,6 +26,7 @@ export default function AdminProductForm() {
   const [images, setImages] = useState<string[]>([]);
   const [sizes, setSizes] = useState<string[]>(['']);
   const [colors, setColors] = useState<string[]>(['']);
+  const [features, setFeatures] = useState<string[]>(['']);
   
   useEffect(() => {
     fetchCategories();
@@ -58,6 +59,7 @@ export default function AdminProductForm() {
         setImages(data.images || []);
         setSizes(data.sizes?.length ? data.sizes : ['']);
         setColors(data.colors?.length ? data.colors : ['']);
+        setFeatures(data.features?.length ? data.features : ['']);
       }
     } catch (err) {
       // console.warn('Error fetching product:', err);
@@ -94,6 +96,15 @@ export default function AdminProductForm() {
   const addColor = () => setColors([...colors, '']);
   const removeColor = (index: number) => setColors(colors.filter((_, i) => i !== index));
 
+  const handleFeatureChange = (index: number, value: string) => {
+    const newFeatures = [...features];
+    newFeatures[index] = value;
+    setFeatures(newFeatures);
+  };
+  
+  const addFeature = () => setFeatures([...features, '']);
+  const removeFeature = (index: number) => setFeatures(features.filter((_, i) => i !== index));
+
   const handleImageUrlChange = (index: number, value: string) => {
     const newImages = [...images];
     newImages[index] = value;
@@ -120,6 +131,7 @@ export default function AdminProductForm() {
         images: images.filter(url => url.trim() !== ''),
         sizes: sizes.filter(s => s.trim() !== ''),
         colors: colors.filter(c => c.trim() !== ''),
+        features: features.filter(f => f.trim() !== ''),
       };
 
       if (isEdit) {
@@ -321,6 +333,31 @@ export default function AdminProductForm() {
               </div>
             ))}
             {colors.length === 0 && <p className="text-sm text-gray-500">No colors added yet.</p>}
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-2xl border border-[#E8E4DE] space-y-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold text-[#0F3D2E]">Features</h2>
+            <button type="button" onClick={addFeature} className="text-sm font-bold text-[#0F3D2E] hover:underline">
+              + Add Feature
+            </button>
+          </div>
+          
+          <div className="space-y-3">
+            {features.map((feature, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <input 
+                  type="text" placeholder="e.g. 100% Organic Cotton"
+                  value={feature} onChange={(e) => handleFeatureChange(index, e.target.value)}
+                  className="flex-1 px-4 py-2 bg-gray-50 border border-[#E8E4DE] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F3D2E]/20"
+                />
+                <button type="button" onClick={() => removeFeature(index)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            ))}
+            {features.length === 0 && <p className="text-sm text-gray-500">No features added yet.</p>}
           </div>
         </div>
 
