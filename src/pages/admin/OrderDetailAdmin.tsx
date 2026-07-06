@@ -19,11 +19,7 @@ export default function OrderDetailAdmin() {
         .from('orders')
         .select(`
           *,
-          profiles (
-            full_name,
-            email,
-            phone
-          ),
+          
           order_items (
             id,
             product_id,
@@ -43,7 +39,7 @@ export default function OrderDetailAdmin() {
       if (error) throw error;
       setOrder(data);
     } catch (err) {
-      // console.warn('Error fetching order:', err);
+      console.warn('Error fetching order:', err);
     } finally {
       setLoading(false);
     }
@@ -139,11 +135,11 @@ export default function OrderDetailAdmin() {
             <div className="space-y-3 text-sm">
               <div className="flex justify-between text-gray-600">
                 <span>Subtotal</span>
-                <span>{formatPrice(order.total)}</span>
+                <span>{formatPrice(order.subtotal || order.total)}</span>
               </div>
               <div className="flex justify-between text-gray-600">
-                <span>Shipping</span>
-                <span>Free</span>
+                <span>Delivery Charge</span>
+                <span>{formatPrice(order.delivery_charge || 0)}</span>
               </div>
               <div className="pt-3 border-t border-[#E8E4DE] flex justify-between font-bold text-lg text-[#0F3D2E]">
                 <span>Total</span>
@@ -159,15 +155,15 @@ export default function OrderDetailAdmin() {
             <div className="space-y-4 text-sm">
               <div>
                 <p className="text-gray-500 mb-1">Name</p>
-                <p className="font-bold text-[#0F3D2E]">{order.profiles?.full_name || 'Guest User'}</p>
+                <p className="font-bold text-[#0F3D2E]">{order.customer_name || 'Guest User'}</p>
               </div>
               <div>
                 <p className="text-gray-500 mb-1">Email</p>
-                <p className="font-medium text-[#0F3D2E]">{order.profiles?.email || 'N/A'}</p>
+                <p className="font-medium text-[#0F3D2E]">{order.email || 'N/A'}</p>
               </div>
               <div>
                 <p className="text-gray-500 mb-1">Phone</p>
-                <p className="font-medium text-[#0F3D2E]">{order.profiles?.phone || 'N/A'}</p>
+                <p className="font-medium text-[#0F3D2E]">{order.phone || 'N/A'}</p>
               </div>
             </div>
           </div>
@@ -175,11 +171,11 @@ export default function OrderDetailAdmin() {
           <div className="bg-white p-6 rounded-2xl border border-[#E8E4DE] shadow-sm">
             <h3 className="font-bold text-[#0F3D2E] mb-4">Shipping Address</h3>
             <div className="space-y-1 text-sm text-gray-600">
-              <p className="font-bold text-[#0F3D2E]">{order.shipping_address?.full_name || order.profiles?.full_name}</p>
-              <p>{order.shipping_address?.address_line1}</p>
+              <p className="font-bold text-[#0F3D2E]">{order.customer_name || 'N/A'}</p>
+              <p>{order.address}</p>
               {order.shipping_address?.address_line2 && <p>{order.shipping_address.address_line2}</p>}
-              <p>{order.shipping_address?.city}, {order.shipping_address?.state} {order.shipping_address?.postal_code}</p>
-              <p>{order.shipping_address?.country}</p>
+              <p>{order.district}, {order.division}</p>
+              
             </div>
           </div>
         </div>

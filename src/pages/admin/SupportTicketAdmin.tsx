@@ -28,7 +28,7 @@ export default function SupportTicketAdmin() {
     try {
       const { data: ticketData, error: ticketError } = await supabase
         .from('support_tickets')
-        .select('*, profiles!support_tickets_user_id_fkey(full_name, email)')
+        .select('*, profiles!support_tickets_user_id_fkey(full_name)')
         .eq('id', id)
         .single();
         

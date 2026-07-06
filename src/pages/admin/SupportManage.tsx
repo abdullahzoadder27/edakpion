@@ -15,7 +15,7 @@ export default function SupportManage() {
   const fetchTickets = async () => {
     setLoading(true);
     try {
-      let query = supabase.from('support_tickets').select('*, profiles(full_name, email)').order('created_at', { ascending: false });
+      let query = supabase.from('support_tickets').select('*, profiles(full_name)').order('created_at', { ascending: false });
       
       if (filter !== 'all') {
         query = query.eq('status', filter);

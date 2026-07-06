@@ -24,17 +24,15 @@ export default function OrdersManage() {
           total,
           status,
           created_at,
-          profiles (
-            full_name,
-            email
-          )
+          customer_name,
+          email
         `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       setOrders(data || []);
     } catch (err) {
-      // console.warn('Error fetching orders:', err);
+      console.warn('Error fetching orders:', err);
     } finally {
       setLoading(false);
     }
@@ -53,7 +51,7 @@ export default function OrdersManage() {
 
   const filteredOrders = orders.filter(o => {
     const matchesSearch = o.id.toLowerCase().includes(search.toLowerCase()) || 
-                          o.profiles?.full_name?.toLowerCase().includes(search.toLowerCase());
+                          o.customer_name?.toLowerCase().includes(search.toLowerCase());
     const matchesStatus = statusFilter === 'all' || o.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -124,8 +122,8 @@ export default function OrdersManage() {
                       {formatDate(order.created_at)}
                     </td>
                     <td className="px-6 py-4">
-                      <p className="font-bold text-[#0F3D2E]">{order.profiles?.full_name || 'Guest'}</p>
-                      <p className="text-xs text-gray-500">{order.profiles?.email}</p>
+                      <p className="font-bold text-[#0F3D2E]">{order.customer_name || 'Guest'}</p>
+                      <p className="text-xs text-gray-500">{order.email || '-'}</p>
                     </td>
                     <td className="px-6 py-4 font-bold text-[#0F3D2E]">
                       {formatPrice(order.total)}
