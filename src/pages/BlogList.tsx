@@ -3,6 +3,7 @@ import { getPublishedBlogs } from '../lib/api';
 import { Blog } from '../types';
 import BlogCard from '../components/ui/BlogCard';
 import { Search } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 
 export default function BlogList() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -29,9 +30,13 @@ export default function BlogList() {
 
   return (
     <div className="bg-[#F5F2ED] min-h-screen py-12">
+      <Helmet>
+        <title>Streetwear Blog & Style Guides | Edakpion Bangladesh</title>
+        <meta name="description" content="Read the latest news, style guides, and fashion trends from Edakpion. Your source for premium streetwear culture in Bangladesh." />
+      </Helmet>
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-serif text-[#0F3D2E] mb-4">The Journal</h1>
+          <h1 className="text-4xl md:text-5xl font-serif text-[#0F3D2E] mb-4">The Streetwear Journal</h1>
           <p className="text-gray-500 max-w-2xl mx-auto">Stories, style guides, and news from the world of EDAKPION.</p>
         </div>
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Star, Truck, RefreshCcw, Shield, Heart } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useCartStore } from '../lib/store';
@@ -147,6 +148,30 @@ export default function ProductDetail() {
 
   return (
     <div className="bg-[#F5F2ED] min-h-screen py-12">
+      <Helmet>
+        <title>{product.name} | Premium Streetwear Bangladesh</title>
+        <meta name="description" content={`Buy ${product.name} at Edakpion, the best premium streetwear brand in Bangladesh. Quality urban fashion.`} />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org/",
+            "@type": "Product",
+            "name": product.name,
+            "image": product.images,
+            "description": product.description,
+            "brand": {
+              "@type": "Brand",
+              "name": "Edakpion"
+            },
+            "offers": {
+              "@type": "Offer",
+              "url": `https://edakpion.com/product/${product.slug}`,
+              "priceCurrency": "BDT",
+              "price": product.price,
+              "availability": product.stock_quantity > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+            }
+          })}
+        </script>
+      </Helmet>
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Breadcrumb */}

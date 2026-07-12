@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://edakpion.com/sitemap.xml

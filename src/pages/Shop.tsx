@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Filter, ChevronDown, Loader2 } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { getProducts } from '../lib/api';
 import { Product } from '../types';
 import ProductCard from '../components/ui/ProductCard';
@@ -54,11 +55,15 @@ export default function Shop() {
 
   return (
     <div className="bg-[#F5F2ED] min-h-screen pb-16">
+      <Helmet>
+        <title>Shop {getPageTitle()} | Premium Streetwear Bangladesh | Edakpion</title>
+        <meta name="description" content="Shop premium streetwear in Bangladesh. Explore oversized tees, hoodies, and the latest urban clothing collections at Edakpion." />
+      </Helmet>
       {/* Shop Header */}
       <div className="bg-[#0F3D2E] text-white py-12 md:py-20 mb-8">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-5xl font-serif mb-4">{getPageTitle()}</h1>
-          <p className="text-gray-300 max-w-xl mx-auto font-light">Explore our premium collection of timeless fashion. Designed for comfort, styled for everyday wear.</p>
+          <h1 className="text-4xl md:text-5xl font-serif mb-4">{getPageTitle()} Streetwear Bangladesh</h1>
+          <p className="text-gray-300 max-w-xl mx-auto font-light">Explore our premium collection of urban fashion. Designed for comfort, styled for everyday streetwear culture in BD.</p>
         </div>
       </div>
 

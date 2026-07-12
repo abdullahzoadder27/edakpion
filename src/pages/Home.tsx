@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { ThumbsUp, Truck, RefreshCcw, ShieldCheck, DollarSign, Clock, HelpCircle, Star } from 'lucide-react';
 import { getProducts, getPublishedBlogs } from '../lib/api';
 import { Product, Blog } from '../types';
@@ -51,14 +52,18 @@ export default function Home() {
 
   return (
     <div className="bg-[#F5F2ED] pb-16">
+      <Helmet>
+        <title>Edakpion | Premium Streetwear Bangladesh</title>
+        <meta name="description" content="Shop the best streetwear in Bangladesh at Edakpion. Discover premium oversized tees, hoodies, and exclusive urban fashion for men and women." />
+      </Helmet>
       {/* Hero Section */}
       <div className="px-6 pt-6">
         <div className="w-full h-[600px] bg-[#0F3D2E] rounded-[32px] relative overflow-hidden flex flex-col md:flex-row items-center max-w-7xl mx-auto">
           <div className="w-full md:w-1/2 p-12 flex flex-col justify-center text-white z-10">
-            <span className="text-[12px] font-bold tracking-[0.3em] uppercase opacity-70 mb-2">Premium Clothing</span>
+            <span className="text-[12px] font-bold tracking-[0.3em] uppercase opacity-70 mb-2">Premium Streetwear Bangladesh</span>
             <h1 className="text-5xl md:text-7xl font-serif leading-[0.9] mb-4">Timeless Style,<br/>Unmatched Quality</h1>
             <p className="text-sm opacity-80 mb-8 max-w-sm font-light">
-              Experience the finest fabrics tailored for the modern Bangladeshi lifestyle.
+              Discover the best streetwear in Bangladesh. Premium oversized tees, hoodies, and exclusive urban fashion.
             </p>
             <Link to="/shop" className="w-max px-10 py-4 bg-white text-[#0F3D2E] font-bold text-xs tracking-widest uppercase rounded-full hover:bg-[#F5F2ED] transition-colors">
               SHOP NOW
@@ -156,7 +161,7 @@ export default function Home() {
 
         {/* Why Choose Us */}
         <div className="px-6 mb-16">
-          <h2 className="text-2xl font-serif text-center mb-8 text-[#0F3D2E]">WHY CHOOSE US</h2>
+          <h2 className="text-2xl font-serif text-center mb-8 text-[#0F3D2E]">WHY CHOOSE OUR STREETWEAR BRAND</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-[#0F3D2E] text-white p-6 rounded-[24px] flex flex-col items-start gap-4">
                <div className="bg-white rounded-full p-2"><ShieldCheck className="w-5 h-5 text-[#0F3D2E]" /></div>
