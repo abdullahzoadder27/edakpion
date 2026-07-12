@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase';
 import { useCartStore } from '../lib/store';
 import { formatPrice } from '../lib/utils';
 import ProductCard from '../components/ui/ProductCard';
+import SeoImage from '../components/ui/SeoImage';
 import { Product } from '../types';
 
 export default function ProductDetail() {
@@ -195,7 +196,7 @@ export default function ProductDetail() {
             </div>
             <div className="flex-1 bg-white border border-[#E8E4DE] rounded-[32px] overflow-hidden h-[600px]">
               {product.images?.[0] && (
-                <img loading="lazy" decoding="async" src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                <SeoImage src={product.images[0]} title={product.name} className="w-full h-full object-cover" />
               )}
             </div>
           </div>
