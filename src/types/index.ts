@@ -147,6 +147,7 @@ export type SupportTicket = {
   status: 'open' | 'in_progress' | 'resolved' | 'closed';
   created_at: string;
   updated_at: string;
+  orders?: any;
 };
 
 export type SupportMessage = {

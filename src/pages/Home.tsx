@@ -8,6 +8,8 @@ import ProductCard from '../components/ui/ProductCard';
 import BlogCard from '../components/ui/BlogCard';
 import { supabase } from '../lib/supabase';
 
+import HeroSlider from '../components/ui/HeroSlider';
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState('New Arrival');
   const tabs = ['New Arrival', 'Best Seller', 'Trending', 'Premium'];
@@ -58,27 +60,7 @@ export default function Home() {
       </Helmet>
       {/* Hero Section */}
       <div className="px-6 pt-6">
-        <div className="w-full h-[600px] bg-[#0F3D2E] rounded-[32px] relative overflow-hidden flex flex-col md:flex-row items-center max-w-7xl mx-auto">
-          <div className="w-full md:w-1/2 p-12 flex flex-col justify-center text-white z-10">
-            <span className="text-[12px] font-bold tracking-[0.3em] uppercase opacity-70 mb-2">Premium Fashion Store</span>
-            <h1 className="text-5xl md:text-7xl font-serif leading-[0.9] mb-4">Streetwear<br/>Bangladesh</h1>
-            <p className="text-sm opacity-80 mb-8 max-w-sm font-light">
-              Defining the new standard of Streetwear in Bangladesh. EDAKPION focuses on heavyweight silhouettes, premium essentials, and the art of the oversized fit. More than just a clothing brand—this is your urban uniform.
-            </p>
-            <Link to="/shop" className="w-max px-10 py-4 bg-white text-[#0F3D2E] font-bold text-xs tracking-widest uppercase rounded-full hover:bg-[#F5F2ED] transition-colors">
-              SHOP NOW
-            </Link>
-          </div>
-          
-          <div className="absolute top-0 right-0 w-full md:w-1/2 h-full bg-[#154636]">
-            <div className="w-full h-full flex items-end justify-center relative">
-               <div className="w-[80%] h-[90%] bg-[#215a48] rounded-t-full opacity-40 animate-pulse"></div>
-               <div className="absolute bottom-0 right-10 w-[300px] h-[400px] bg-[#0F3D2E] border-x-8 border-t-8 border-white/10 rounded-t-[100px] flex items-center justify-center overflow-hidden">
-                  <img fetchPriority="high" src="https://images.unsplash.com/photo-1516826957135-700ede19c6ce?q=80&w=1200&auto=format&fit=crop" alt="Model" className="h-full w-full object-cover" />
-               </div>
-            </div>
-          </div>
-        </div>
+        <HeroSlider />
       </div>
 
       <div className="max-w-7xl mx-auto">

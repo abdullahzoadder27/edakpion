@@ -168,7 +168,7 @@ export default function ProductDetail() {
               "url": `https://edakpion.com/product/${product.slug}`,
               "priceCurrency": "BDT",
               "price": product.price,
-              "availability": product.stock_quantity > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+              "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
             }
           })}
         </script>
