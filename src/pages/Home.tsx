@@ -53,17 +53,17 @@ export default function Home() {
   return (
     <div className="bg-[#F5F2ED] pb-16">
       <Helmet>
-        <title>Edakpion | Premium Streetwear Bangladesh</title>
-        <meta name="description" content="Shop the best streetwear in Bangladesh at Edakpion. Discover premium oversized tees, hoodies, and exclusive urban fashion for men and women." />
+        <title>EDAKPION | Streetwear Bangladesh - Premium Fashion Store</title>
+        <meta name="description" content="Defining the new standard of Streetwear in Bangladesh. EDAKPION focuses on heavyweight silhouettes, premium essentials, and the art of the oversized fit. More than just a clothing brand—this is your urban uniform." />
       </Helmet>
       {/* Hero Section */}
       <div className="px-6 pt-6">
         <div className="w-full h-[600px] bg-[#0F3D2E] rounded-[32px] relative overflow-hidden flex flex-col md:flex-row items-center max-w-7xl mx-auto">
           <div className="w-full md:w-1/2 p-12 flex flex-col justify-center text-white z-10">
-            <span className="text-[12px] font-bold tracking-[0.3em] uppercase opacity-70 mb-2">Premium Streetwear Bangladesh</span>
-            <h1 className="text-5xl md:text-7xl font-serif leading-[0.9] mb-4">Timeless Style,<br/>Unmatched Quality</h1>
+            <span className="text-[12px] font-bold tracking-[0.3em] uppercase opacity-70 mb-2">Premium Fashion Store</span>
+            <h1 className="text-5xl md:text-7xl font-serif leading-[0.9] mb-4">Streetwear<br/>Bangladesh</h1>
             <p className="text-sm opacity-80 mb-8 max-w-sm font-light">
-              Discover the best streetwear in Bangladesh. Premium oversized tees, hoodies, and exclusive urban fashion.
+              Defining the new standard of Streetwear in Bangladesh. EDAKPION focuses on heavyweight silhouettes, premium essentials, and the art of the oversized fit. More than just a clothing brand—this is your urban uniform.
             </p>
             <Link to="/shop" className="w-max px-10 py-4 bg-white text-[#0F3D2E] font-bold text-xs tracking-widest uppercase rounded-full hover:bg-[#F5F2ED] transition-colors">
               SHOP NOW
