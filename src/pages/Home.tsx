@@ -55,8 +55,126 @@ export default function Home() {
   return (
     <div className="bg-[#F5F2ED] pb-16">
       <Helmet>
-        <title>EDAKPION | Streetwear Bangladesh - Premium Fashion Store</title>
-        <meta name="description" content="Defining the new standard of Streetwear in Bangladesh. EDAKPION focuses on heavyweight silhouettes, premium essentials, and the art of the oversized fit. More than just a clothing brand—this is your urban uniform." />
+        <title>Premium Men's Fashion Bangladesh | EDAKPION</title>
+        <meta name="description" content="EDAKPION is a premium men's fashion & clothing brand in Bangladesh offering timeless shirts, polos, panjabis, hoodies and modern essentials crafted with premium quality, comfort and confidence." />
+        <script type="application/ld+json">
+          {`{
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": ["Organization", "Brand", "ClothingBrand"],
+                "@id": "https://edakpion.com/#organization",
+                "name": "EDAKPION",
+                "alternateName": "EDAKPION – Premium Men's Fashion & Clothing Brand in Bangladesh",
+                "url": "https://edakpion.com/",
+                "logo": {
+                  "@type": "ImageObject",
+                  "@id": "https://edakpion.com/#logo",
+                  "inLanguage": "en-BD",
+                  "url": "https://edakpion.com/logo.png",
+                  "contentUrl": "https://edakpion.com/logo.png",
+                  "width": 512,
+                  "height": 512,
+                  "caption": "EDAKPION Logo"
+                },
+                "image": {
+                  "@id": "https://edakpion.com/#logo"
+                },
+                "description": "EDAKPION is a premium men's fashion & clothing brand in Bangladesh offering timeless shirts, polos, panjabis, hoodies and modern essentials crafted with premium quality, comfort and confidence.",
+                "sameAs": [
+                  "https://www.facebook.com/edakpion",
+                  "https://www.instagram.com/edakpion"
+                ]
+              },
+              {
+                "@type": "WebSite",
+                "@id": "https://edakpion.com/#website",
+                "url": "https://edakpion.com/",
+                "name": "EDAKPION",
+                "description": "Premium Men's Fashion Bangladesh",
+                "publisher": {
+                  "@id": "https://edakpion.com/#organization"
+                },
+                "inLanguage": "en-BD",
+                "potentialAction": {
+                  "@type": "SearchAction",
+                  "target": {
+                    "@type": "EntryPoint",
+                    "urlTemplate": "https://edakpion.com/shop?q={search_term_string}"
+                  },
+                  "query-input": "required name=search_term_string"
+                }
+              },
+              {
+                "@type": "WebPage",
+                "@id": "https://edakpion.com/#webpage",
+                "url": "https://edakpion.com/",
+                "name": "Premium Men's Fashion Bangladesh | EDAKPION",
+                "description": "EDAKPION is a premium men's fashion & clothing brand in Bangladesh offering timeless shirts, polos, panjabis, hoodies and modern essentials crafted with premium quality, comfort and confidence.",
+                "isPartOf": {
+                  "@id": "https://edakpion.com/#website"
+                },
+                "about": {
+                  "@id": "https://edakpion.com/#organization"
+                },
+                "primaryImageOfPage": {
+                  "@type": "ImageObject",
+                  "@id": "https://edakpion.com/#primaryimage",
+                  "inLanguage": "en-BD",
+                  "url": "https://images.unsplash.com/photo-1516826957135-700ede19c6ce?q=80&w=1200&auto=format&fit=crop",
+                  "contentUrl": "https://images.unsplash.com/photo-1516826957135-700ede19c6ce?q=80&w=1200&auto=format&fit=crop",
+                  "caption": "EDAKPION Premium Men's Fashion"
+                },
+                "image": {
+                  "@id": "https://edakpion.com/#primaryimage"
+                },
+                "inLanguage": "en-BD",
+                "potentialAction": {
+                  "@type": "ReadAction",
+                  "target": ["https://edakpion.com/"]
+                },
+                "mainEntity": {
+                  "@id": "https://edakpion.com/#onlinestore"
+                }
+              },
+              {
+                "@type": "OnlineStore",
+                "@id": "https://edakpion.com/#onlinestore",
+                "name": "EDAKPION Online Store",
+                "description": "Shop premium men's fashion, including shirts, polos, panjabis, hoodies and modern essentials at EDAKPION.",
+                "url": "https://edakpion.com/shop",
+                "parentOrganization": {
+                  "@id": "https://edakpion.com/#organization"
+                },
+                "image": {
+                  "@id": "https://edakpion.com/#primaryimage"
+                },
+                "areaServed": "BD"
+              },
+              {
+                "@type": "BreadcrumbList",
+                "@id": "https://edakpion.com/#breadcrumb",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://edakpion.com/"
+                  }
+                ]
+              },
+              {
+                "@type": "WebPageElement",
+                "@id": "https://edakpion.com/#hero",
+                "name": "Hero Section",
+                "description": "Featured premium fashion collections and modern essentials.",
+                "isPartOf": {
+                  "@id": "https://edakpion.com/#webpage"
+                }
+              }
+            ]
+          }`}
+        </script>
       </Helmet>
       {/* Hero Section */}
       <div className="px-6 pt-6">

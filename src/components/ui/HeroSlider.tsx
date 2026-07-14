@@ -143,7 +143,7 @@ export default function HeroSlider() {
         <span ref={subtitleRef} className="text-[12px] font-bold tracking-[0.3em] uppercase opacity-70 mb-2">Premium Fashion Store</span>
         <h1 ref={headlineRef} className="text-5xl md:text-7xl font-serif leading-[0.9] mb-4">Streetwear<br/>Bangladesh</h1>
         <p ref={descRef} className="text-sm opacity-80 mb-8 max-w-sm font-light">
-          Defining the new standard of Streetwear in Bangladesh. EDAKPION focuses on heavyweight silhouettes, premium essentials, and the art of the oversized fit. More than just a clothing brand—this is your urban uniform.
+          EDAKPION is a premium men's fashion & clothing brand in Bangladesh offering timeless shirts, polos, panjabis, hoodies and modern essentials crafted with premium quality, comfort and confidence.
         </p>
         <div ref={btnRef}>
           <Link to="/shop" className="btn-premium inline-block w-max px-10 py-4 bg-white text-[#0F3D2E] font-bold text-xs tracking-widest uppercase rounded-full hover:bg-[#F5F2ED]">
