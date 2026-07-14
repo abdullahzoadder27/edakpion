@@ -152,10 +152,10 @@ export default function HeroSlider() {
         </div>
       </div>
       
-      <div className="absolute top-0 right-0 w-full md:w-1/2 h-full bg-[#154636] pointer-events-none md:pointer-events-auto overflow-hidden md:overflow-visible opacity-30 md:opacity-100">
+      <div className="absolute top-0 right-0 w-full md:w-1/2 h-full md:bg-[#154636] pointer-events-none md:pointer-events-auto overflow-hidden md:overflow-visible">
         <div className="w-full h-full flex items-end justify-center relative">
-            <div className="w-[80%] h-[90%] bg-[#215a48] rounded-t-full opacity-40 animate-pulse" style={{ animationDuration: '4s' }}></div>
-            <div className="absolute bottom-0 right-0 md:right-10 w-[240px] md:w-[300px] h-[320px] md:h-[400px] bg-[#0F3D2E] border-x-8 border-t-8 border-white/10 rounded-t-[100px] flex items-center justify-center overflow-hidden animate-float">
+            <div className="w-[80%] h-[90%] bg-[#215a48] rounded-t-full opacity-40 animate-pulse hidden md:block" style={{ animationDuration: '4s' }}></div>
+            <div className="absolute bottom-0 right-0 md:right-10 w-[200px] md:w-[300px] h-[280px] md:h-[400px] bg-[#0F3D2E] border-x-4 border-t-4 md:border-x-8 md:border-t-8 border-white/30 rounded-t-[100px] flex items-center justify-center overflow-hidden animate-float shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
               
               {/* Luxury Water Drop / Glass effect */}
               <div className="absolute inset-0 overflow-hidden z-20 pointer-events-none" aria-hidden="true">
