@@ -114,8 +114,17 @@ export default function HeroSlider() {
 
   const currentSlide = slides[activeIndex] || slides[0];
 
+  const title = currentSlide.title || "Premium Men's Fashion<br/>for Everyday Confidence";
+  const subtitle = currentSlide.subtitle || "ELEVATE YOUR STYLE";
+  const description = currentSlide.description || "Discover premium shirts, polos, oversized tees and timeless essentials crafted for modern Bangladeshi men. Quality fabrics, elegant design and confident style—only from eDakpion.";
+  const primaryText = currentSlide.primary_button_text || "Shop Now";
+  const primaryUrl = currentSlide.primary_button_url || "/shop";
+  const secondaryText = currentSlide.secondary_button_text || "Explore Collection";
+  const secondaryUrl = currentSlide.secondary_button_url || "/shop";
+
+
   return (
-    <div className="relative w-full h-[600px] md:h-[700px] bg-[#0F3D2E] overflow-hidden group">
+    <div className="relative w-full min-h-[100dvh] md:min-h-[700px] md:h-[700px] bg-[#0F3D2E] overflow-hidden group flex flex-col md:block pt-16 md:pt-0">
       <style>{/* same styles... */}</style>
       <style>{`
         @keyframes kenBurns {
@@ -180,7 +189,7 @@ export default function HeroSlider() {
         <div className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-[#154636] blur-[100px] mix-blend-screen animate-pulse" style={{ animationDuration: '12s', animationDelay: '2s' }}></div>
       </div>
 
-      <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center text-white z-10 h-full relative">
+      <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col justify-center text-white z-10 relative flex-1 md:h-full">
         {currentSlide.badge && (
           <div ref={badgeRef} className="mb-4">
             <span className="px-3 py-1 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-xs font-semibold tracking-wider uppercase">
@@ -189,33 +198,33 @@ export default function HeroSlider() {
           </div>
         )}
         <span ref={subtitleRef} className="text-[12px] font-bold tracking-[0.3em] uppercase opacity-70 mb-2">
-          {currentSlide.subtitle}
+          {subtitle}
         </span>
-        <h1 ref={headlineRef} className="text-5xl md:text-7xl font-serif leading-[1.1] mb-4" dangerouslySetInnerHTML={{__html: currentSlide.title?.replace(/\n/g, '<br/>') || ''}}>
+        <h1 ref={headlineRef} className="text-5xl md:text-7xl font-serif leading-[1.1] mb-4" dangerouslySetInnerHTML={{__html: title.replace(/\n/g, '<br/>')}}>
         </h1>
         <p ref={descRef} className="text-sm opacity-80 mb-8 max-w-sm font-light">
-          {currentSlide.description}
+          {description}
         </p>
         
         <div className="flex flex-wrap gap-4">
-          {currentSlide.primary_button_text && (
+          {primaryText && (
             <div ref={btnRef}>
-              <Link to={currentSlide.primary_button_url || '/shop'} className="btn-premium inline-block w-max px-8 py-3 bg-white text-[#0F3D2E] font-bold text-xs tracking-widest uppercase rounded-full hover:bg-[#F5F2ED]">
-                {currentSlide.primary_button_text}
+              <Link to={primaryUrl} className="btn-premium inline-block w-max px-8 py-3 bg-white text-[#0F3D2E] font-bold text-xs tracking-widest uppercase rounded-full hover:bg-[#F5F2ED]">
+                {primaryText}
               </Link>
             </div>
           )}
-          {currentSlide.secondary_button_text && (
+          {secondaryText && (
             <div ref={btn2Ref}>
-              <Link to={currentSlide.secondary_button_url || '/shop'} className="btn-premium inline-block w-max px-8 py-3 border border-white/30 text-white font-bold text-xs tracking-widest uppercase rounded-full hover:bg-white/10 backdrop-blur-sm">
-                {currentSlide.secondary_button_text}
+              <Link to={secondaryUrl} className="btn-premium inline-block w-max px-8 py-3 border border-white/30 text-white font-bold text-xs tracking-widest uppercase rounded-full hover:bg-white/10 backdrop-blur-sm">
+                {secondaryText}
               </Link>
             </div>
           )}
         </div>
       </div>
       
-      <div className="absolute top-0 right-0 w-full md:w-1/2 h-full md:bg-[#154636] pointer-events-none md:pointer-events-auto overflow-hidden md:overflow-visible">
+      <div className="relative md:absolute top-0 right-0 w-full md:w-1/2 h-[45vh] md:h-full md:bg-[#154636] pointer-events-none md:pointer-events-auto overflow-hidden md:overflow-visible mt-auto z-10 md:z-0 flex-shrink-0">
         <div className="w-full h-full flex items-end justify-center relative">
             <div className="w-[80%] h-[90%] bg-[#215a48] rounded-t-full opacity-40 animate-pulse hidden md:block" style={{ animationDuration: '4s' }}></div>
             
