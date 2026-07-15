@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { HeroSlide } from '../../types';
 import { Plus, Edit2, Trash2, Check, X, GripVertical, Image as ImageIcon, Loader2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+
 
 export default function HeroSlidesManage() {
   const [slides, setSlides] = useState<HeroSlide[]>([]);

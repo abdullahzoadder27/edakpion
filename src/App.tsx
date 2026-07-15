@@ -131,6 +131,7 @@ export default function App() {
           <Route path="subscribers" element={<SubscribersManage />} />
           <Route path="testimonials" element={<TestimonialsManage />} />
           <Route path="content" element={<ContentManage />} />
+          <Route path="hero-slides" element={<HeroSlidesManage />} />
           <Route path="support" element={<SupportManage />} />
           <Route path="support/:id" element={<SupportTicketAdmin />} />
           <Route path="notifications" element={<NotificationsManage />} />

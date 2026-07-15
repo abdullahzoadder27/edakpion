@@ -132,13 +132,6 @@ export default function HeroSlider() {
           100% { transform: translateY(0px); }
         }
         
-        @keyframes waterDrop {
-          0% { transform: translateY(-20px) scaleY(1); opacity: 0; }
-          10% { opacity: 0.6; }
-          80% { opacity: 0.6; transform: translateY(350px) scaleY(1.2); }
-          100% { opacity: 0; transform: translateY(400px) scaleY(1.5); }
-        }
-        
         .btn-premium {
           position: relative;
           overflow: hidden;

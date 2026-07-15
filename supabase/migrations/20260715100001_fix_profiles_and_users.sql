@@ -37,5 +37,5 @@ SELECT
     p.is_active,
     p.created_at,
     (SELECT count(*) FROM orders WHERE user_id = p.id) as total_orders,
-    (SELECT COALESCE(sum(total_amount), 0) FROM orders WHERE user_id = p.id) as total_spend
+    (SELECT COALESCE(sum(total), 0) FROM orders WHERE user_id = p.id) as total_spend
 FROM profiles p;

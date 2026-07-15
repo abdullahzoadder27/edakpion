@@ -1,4 +1,4 @@
-import { Image, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import ErrorBoundary from '../ErrorBoundary';
 import { 
