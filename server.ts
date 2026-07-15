@@ -2,11 +2,15 @@ import express from "express";
 import compression from "compression";
 import path from "path";
 import { createServer as createViteServer } from "vite";
+import { getGoogleFeed } from "./feed";
 
 async function startServer() {
   const app = express();
   app.use(compression());
   const PORT = 3000;
+
+  // Google Merchant Center Feeds
+  app.get('/google-feed.xml', getGoogleFeed);
 
 
   // Vite middleware for development
