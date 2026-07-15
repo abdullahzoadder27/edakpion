@@ -26,9 +26,7 @@ function escapeXml(unsafe: string): string {
 
 export async function getGoogleFeed(req: Request, res: Response) {
   try {
-    const domain = req.get('host') || 'edakpion.com';
-    const isLocalhost = domain.includes('localhost') || domain.includes('127.0.0.1');
-    const protocol = isLocalhost ? 'http' : 'https';
+    const BASE_URL = 'https://edakpion.com';
 
     res.set('Content-Type', 'application/xml; charset=utf-8');
     res.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
@@ -38,7 +36,7 @@ export async function getGoogleFeed(req: Request, res: Response) {
     res.write(`<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">\n`);
     res.write(`  <channel>\n`);
     res.write(`    <title>EDAKPION Store</title>\n`);
-    res.write(`    <link>${protocol}://${domain}</link>\n`);
+    res.write(`    <link>${BASE_URL}</link>\n`);
     res.write(`    <description>Premium Clothing Store Google Merchant Feed</description>\n`);
 
     let page = 0;
@@ -76,7 +74,7 @@ export async function getGoogleFeed(req: Request, res: Response) {
         const id = escapeXml(product.id);
         const title = escapeXml(product.name);
         const description = escapeXml(product.description || product.name);
-        const link = `${protocol}://${domain}/product/${product.slug}`;
+        const link = `${BASE_URL}/product/${product.slug}`;
         
         let imageLink = '';
         let additionalImageLinksXml = '';
