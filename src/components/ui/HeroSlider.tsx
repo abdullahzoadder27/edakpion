@@ -124,7 +124,7 @@ export default function HeroSlider() {
 
 
   return (
-    <div className="relative w-full min-h-[100dvh] md:min-h-[700px] md:h-[700px] bg-[#0F3D2E] overflow-hidden group flex flex-col md:block pt-16 md:pt-0">
+    <div className="relative w-full h-[85vh] md:h-[90vh] min-h-[600px] md:min-h-[700px] max-h-[800px] md:max-h-[900px] bg-[#0F3D2E] overflow-hidden group flex flex-col md:flex-row">
       <style>{/* same styles... */}</style>
       <style>{`
         @keyframes kenBurns {
@@ -189,34 +189,35 @@ export default function HeroSlider() {
         <div className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-[#154636] blur-[100px] mix-blend-screen animate-pulse" style={{ animationDuration: '12s', animationDelay: '2s' }}></div>
       </div>
 
-      <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col justify-center text-white z-10 relative flex-1 md:h-full">
+      {/* Left Content Area */}
+      <div className="w-full md:w-1/2 px-6 pt-20 md:pt-0 md:p-12 lg:p-20 flex flex-col justify-center text-white z-10 relative flex-shrink-0 md:flex-1">
         {currentSlide.badge && (
-          <div ref={badgeRef} className="mb-4">
-            <span className="px-3 py-1 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-xs font-semibold tracking-wider uppercase">
+          <div ref={badgeRef} className="mb-3">
+            <span className="px-3 py-1 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-[10px] md:text-xs font-semibold tracking-wider uppercase">
               {currentSlide.badge}
             </span>
           </div>
         )}
-        <span ref={subtitleRef} className="text-[12px] font-bold tracking-[0.3em] uppercase opacity-70 mb-2">
+        <span ref={subtitleRef} className="text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase opacity-70 mb-2">
           {subtitle}
         </span>
-        <h1 ref={headlineRef} className="text-5xl md:text-7xl font-serif leading-[1.1] mb-4" dangerouslySetInnerHTML={{__html: title.replace(/\n/g, '<br/>')}}>
+        <h1 ref={headlineRef} className="text-[clamp(2.5rem,6vw,4.5rem)] font-serif leading-[1.05] mb-4" dangerouslySetInnerHTML={{__html: title.replace(/\n/g, '<br/>')}}>
         </h1>
-        <p ref={descRef} className="text-sm opacity-80 mb-8 max-w-sm font-light">
+        <p ref={descRef} className="text-xs md:text-sm opacity-80 mb-6 max-w-sm font-light leading-relaxed">
           {description}
         </p>
         
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-3">
           {primaryText && (
             <div ref={btnRef}>
-              <Link to={primaryUrl} className="btn-premium inline-block w-max px-8 py-3 bg-white text-[#0F3D2E] font-bold text-xs tracking-widest uppercase rounded-full hover:bg-[#F5F2ED]">
+              <Link to={primaryUrl} className="btn-premium inline-block w-max px-6 md:px-8 py-3 md:py-3 bg-white text-[#0F3D2E] font-bold text-[10px] md:text-xs tracking-widest uppercase rounded-full hover:bg-[#F5F2ED]">
                 {primaryText}
               </Link>
             </div>
           )}
           {secondaryText && (
             <div ref={btn2Ref}>
-              <Link to={secondaryUrl} className="btn-premium inline-block w-max px-8 py-3 border border-white/30 text-white font-bold text-xs tracking-widest uppercase rounded-full hover:bg-white/10 backdrop-blur-sm">
+              <Link to={secondaryUrl} className="btn-premium inline-block w-max px-6 md:px-8 py-3 md:py-3 border border-white/30 text-white font-bold text-[10px] md:text-xs tracking-widest uppercase rounded-full hover:bg-white/10 backdrop-blur-sm">
                 {secondaryText}
               </Link>
             </div>
@@ -224,11 +225,14 @@ export default function HeroSlider() {
         </div>
       </div>
       
-      <div className="relative md:absolute top-0 right-0 w-full md:w-1/2 h-[45vh] md:h-full md:bg-[#154636] pointer-events-none md:pointer-events-auto overflow-hidden md:overflow-visible mt-auto z-10 md:z-0 flex-shrink-0">
-        <div className="w-full h-full flex items-end justify-center relative">
-            <div className="w-[80%] h-[90%] bg-[#215a48] rounded-t-full opacity-40 animate-pulse hidden md:block" style={{ animationDuration: '4s' }}></div>
+      {/* Right Image Area */}
+      <div className="w-full md:w-1/2 relative flex-1 md:bg-[#154636] pointer-events-none md:pointer-events-auto mt-4 md:mt-0 flex items-end justify-end md:justify-center overflow-hidden z-10 md:z-0 pr-4 md:pr-0">
+        <div className="w-full h-full flex items-end justify-end md:justify-center relative">
+            {/* Desktop backdrop shape */}
+            <div className="absolute bottom-0 w-[80%] h-[90%] bg-[#215a48] rounded-t-full opacity-40 animate-pulse hidden md:block" style={{ animationDuration: '4s' }}></div>
             
-            <div className="absolute bottom-0 right-0 md:right-10 w-[200px] md:w-[300px] h-[280px] md:h-[400px] bg-[#0F3D2E] border-x-4 border-t-4 md:border-x-8 md:border-t-8 border-white/30 rounded-t-[100px] flex items-center justify-center overflow-hidden animate-float shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
+            {/* Main Image Frame */}
+            <div className="relative bottom-0 right-0 md:right-auto w-[220px] sm:w-[280px] md:w-[320px] lg:w-[380px] h-[300px] sm:h-[380px] md:h-[450px] lg:h-[520px] shrink-0 bg-[#0F3D2E] border-x-4 border-t-4 md:border-x-8 md:border-t-8 border-white/30 rounded-t-[100px] md:rounded-t-[150px] flex items-center justify-center overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.5)] md:shadow-[0_20px_50px_rgba(0,0,0,0.6)] animate-float transform-gpu origin-bottom md:mb-10">
               
               <Swiper
                 modules={[Autoplay, EffectFade, Pagination, Navigation]}
