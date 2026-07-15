@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Image, useEffect, useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import ErrorBoundary from '../ErrorBoundary';
 import { 
@@ -39,6 +39,7 @@ export default function AdminLayout() {
     { name: 'Subscribers', path: '/admin/subscribers', icon: <Mail className="w-5 h-5" />, roles: ['Super Admin', 'Admin', 'Manager', 'Content Editor'] },
     { name: 'Testimonials', path: '/admin/testimonials', icon: <MessageSquare className="w-5 h-5" />, roles: ['Super Admin', 'Admin', 'Content Editor'] },
     { name: 'Homepage Content', path: '/admin/content', icon: <LayoutTemplate className="w-5 h-5" />, roles: ['Super Admin', 'Admin', 'Content Editor'] },
+    { name: 'Hero Slides', path: '/admin/hero-slides', icon: <LayoutTemplate className="w-5 h-5" />, roles: ['Super Admin', 'Admin', 'Content Editor'] },
     { name: 'Support Tickets', path: '/admin/support', icon: <HelpCircle className="w-5 h-5" />, roles: ['Super Admin', 'Admin', 'Customer Support'] },
     { name: 'Notifications', path: '/admin/notifications', icon: <Bell className="w-5 h-5" />, roles: ['Super Admin', 'Admin'] },
     { name: 'Delivery Zones', path: '/admin/delivery-zones', icon: <Truck className="w-5 h-5" />, roles: ['Super Admin', 'Admin'] },

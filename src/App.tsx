@@ -68,6 +68,7 @@ const NotificationsManage = lazy(() => import('./pages/admin/NotificationsManage
 const DeliveryZonesManage = lazy(() => import('./pages/admin/DeliveryZonesManage'));
 const SettingsManage = lazy(() => import('./pages/admin/SettingsManage'));
 
+const HeroSlidesManage = lazy(() => import('./pages/admin/HeroSlidesManage'));
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
 
 export default function App() {

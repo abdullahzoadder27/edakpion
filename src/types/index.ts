@@ -170,3 +170,24 @@ export type Coupon = {
   is_active: boolean;
   created_at: string;
 };
+
+export interface HeroSlide {
+  id: string;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  image_url?: string;
+  desktop_image?: string;
+  mobile_image?: string;
+  primary_button_text?: string;
+  primary_button_url?: string;
+  secondary_button_text?: string;
+  secondary_button_url?: string;
+  badge?: string;
+  display_order: number;
+  is_active: boolean;
+  start_date?: string;
+  end_date?: string;
+  created_at: string;
+  updated_at: string;
+}
