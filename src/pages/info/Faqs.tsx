@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import Header from '../../components/layout/Header';
-import Footer from '../../components/layout/Footer';
 
 const faqData = [
   {
@@ -47,15 +45,14 @@ export default function Faqs() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F2ED] font-sans flex flex-col">
+    <div className="w-full">
       <Helmet>
         <title>FAQs | EDAKPION</title>
         <meta name="description" content="Find answers to common questions about ordering, payment, shipping, returns, and sizing." />
       </Helmet>
       
-      <Header />
       
-      <main className="flex-grow pt-24 pb-16">
+      <div className="pt-8 pb-16">
         <div className="max-w-3xl mx-auto px-6">
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-serif text-[#0F3D2E] mb-6 tracking-tight">Frequently Asked Questions</h1>
@@ -106,9 +103,8 @@ export default function Faqs() {
             </a>
           </div>
         </div>
-      </main>
+      </div>
 
-      <Footer />
     </div>
   );
 }

@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
-import Header from '../../components/layout/Header';
-import Footer from '../../components/layout/Footer';
 import { supabase } from '../../lib/supabase';
 import { z } from 'zod';
 
@@ -76,15 +74,14 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F2ED] font-sans flex flex-col">
+    <div className="w-full">
       <Helmet>
         <title>Contact Us | EDAKPION</title>
         <meta name="description" content="Contact EDAKPION for orders, support, shipping, returns, and general questions." />
       </Helmet>
       
-      <Header />
       
-      <main className="flex-grow pt-24 pb-16">
+      <div className="pt-8 pb-16">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-serif text-[#0F3D2E] mb-6 tracking-tight">Contact Us</h1>
@@ -241,9 +238,8 @@ export default function Contact() {
             </div>
           </div>
         </div>
-      </main>
+      </div>
 
-      <Footer />
     </div>
   );
 }

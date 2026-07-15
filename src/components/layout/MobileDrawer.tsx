@@ -188,8 +188,17 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
                   <NavLink to="/blog">Blog</NavLink>
                   <NavLink to="/about">About Us</NavLink>
                   <NavLink to="/contact">Contact</NavLink>
-                  <NavLink to="/size-guide">Size Guide</NavLink>
+                </nav>
+              </div>
+              
+              {/* Help Links */}
+              <div>
+                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 px-4">Help</h4>
+                <nav className="space-y-1">
                   <NavLink to="/faqs">FAQs</NavLink>
+                  <NavLink to="/shipping">Shipping</NavLink>
+                  <NavLink to="/returns">Return Policy</NavLink>
+                  <NavLink to="/size-guide">Size Guide</NavLink>
                 </nav>
               </div>
             </div>

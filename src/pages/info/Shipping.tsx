@@ -1,20 +1,17 @@
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import Header from '../../components/layout/Header';
-import Footer from '../../components/layout/Footer';
 import { Truck, Map, Clock, AlertCircle } from 'lucide-react';
 
 export default function Shipping() {
   return (
-    <div className="min-h-screen bg-[#F5F2ED] font-sans flex flex-col">
+    <div className="w-full">
       <Helmet>
         <title>Shipping Policy | EDAKPION</title>
         <meta name="description" content="Learn about EDAKPION delivery times, shipping charges, and delivery coverage across Bangladesh." />
       </Helmet>
       
-      <Header />
       
-      <main className="flex-grow pt-24 pb-16">
+      <div className="pt-8 pb-16">
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-serif text-[#0F3D2E] mb-6 tracking-tight">Shipping Policy</h1>
@@ -88,9 +85,8 @@ export default function Shipping() {
             </div>
           </div>
         </div>
-      </main>
+      </div>
 
-      <Footer />
     </div>
   );
 }

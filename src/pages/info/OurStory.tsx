@@ -1,19 +1,16 @@
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import Header from '../../components/layout/Header';
-import Footer from '../../components/layout/Footer';
 
 export default function OurStory() {
   return (
-    <div className="min-h-screen bg-[#F5F2ED] font-sans flex flex-col">
+    <div className="w-full">
       <Helmet>
         <title>Our Story | EDAKPION</title>
         <meta name="description" content="Discover the story behind EDAKPION and our mission to bring premium clothing across Bangladesh." />
       </Helmet>
       
-      <Header />
       
-      <main className="flex-grow pt-24 pb-16">
+      <div className="pt-8 pb-16">
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-serif text-[#0F3D2E] mb-6 tracking-tight">Our Story</h1>
@@ -50,9 +47,8 @@ export default function OurStory() {
             </Link>
           </div>
         </div>
-      </main>
+      </div>
 
-      <Footer />
     </div>
   );
 }
