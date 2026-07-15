@@ -32,7 +32,29 @@ export default function HeroSlider() {
           .order('display_order', { ascending: true });
         
         if (error) throw error;
-        setSlides(data || []);
+        
+        if (data && data.length > 0) {
+          setSlides(data);
+        } else {
+          // Provide a beautiful fallback slide if the database is empty
+          setSlides([
+            {
+              id: 'fallback-1',
+              title: 'Discover Our<br/>Premium Collection',
+              subtitle: 'WELCOME TO EDAKPION',
+              description: 'Experience unparalleled quality and style with our latest curated selections.',
+              image_url: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+              desktop_image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+              primary_button_text: 'Shop Now',
+              primary_button_url: '/shop',
+              badge: 'New Arrivals',
+              is_active: true,
+              display_order: 0,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            }
+          ]);
+        }
       } catch (err) {
         console.error('Error fetching hero slides:', err);
       } finally {
@@ -206,15 +228,6 @@ export default function HeroSlider() {
             
             <div className="absolute bottom-0 right-0 md:right-10 w-[200px] md:w-[300px] h-[280px] md:h-[400px] bg-[#0F3D2E] border-x-4 border-t-4 md:border-x-8 md:border-t-8 border-white/30 rounded-t-[100px] flex items-center justify-center overflow-hidden animate-float shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
               
-              {/* Luxury Water Drop / Glass effect */}
-              <div className="absolute inset-0 overflow-hidden z-20 pointer-events-none" aria-hidden="true">
-                <div className="absolute top-[-10%] left-[20%] w-[1px] h-[15px] bg-white/40 blur-[0.5px] rounded-full animate-[waterDrop_4s_infinite_linear] drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)]" style={{ animationDelay: '0s' }}></div>
-                <div className="absolute top-[-10%] left-[50%] w-[2px] h-[20px] bg-white/30 blur-[0.5px] rounded-full animate-[waterDrop_6s_infinite_linear] drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)]" style={{ animationDelay: '2s' }}></div>
-                <div className="absolute top-[-10%] left-[80%] w-[1px] h-[10px] bg-white/50 blur-[0.5px] rounded-full animate-[waterDrop_3s_infinite_linear] drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)]" style={{ animationDelay: '1s' }}></div>
-                <div className="absolute top-[-10%] left-[35%] w-[1px] h-[12px] bg-white/40 blur-[0.5px] rounded-full animate-[waterDrop_5s_infinite_linear] drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)]" style={{ animationDelay: '3.5s' }}></div>
-                <div className="absolute top-[-10%] left-[65%] w-[2px] h-[18px] bg-white/30 blur-[0.5px] rounded-full animate-[waterDrop_4.5s_infinite_linear] drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)]" style={{ animationDelay: '1.5s' }}></div>
-              </div>
-
               <Swiper
                 modules={[Autoplay, EffectFade, Pagination, Navigation]}
                 effect="fade"
