@@ -146,7 +146,6 @@ export default function ProductCard({ product }: { product: Product }) {
           <span className="text-[10px] text-gray-400 ml-1">(0)</span>
         </div>
         
-        <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Brand Name</p>
         <h3 className="text-xs font-bold mb-2 text-gray-900 line-clamp-2 leading-tight flex-1">{product.name}</h3>
         
         <div className="flex items-end justify-between mt-auto pt-2 border-t border-[#E8E4DE]/50">
