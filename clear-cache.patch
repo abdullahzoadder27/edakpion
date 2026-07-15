@@ -1,0 +1,10 @@
+--- feed.ts
++++ feed.ts
+@@ -82,2 +82,7 @@
+ 
++export function clearFeedCache(req: any, res: any) {
++  feedCache = null;
++  res.status(200).send({ message: 'Feed cache cleared' });
++}
++
+ export async function getGoogleFeed(req: any, res: any, type: 'xml' | 'csv') {

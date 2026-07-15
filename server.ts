@@ -2,11 +2,18 @@ import express from "express";
 import compression from "compression";
 import path from "path";
 import { createServer as createViteServer } from "vite";
+import { getGoogleFeed, clearFeedCache } from "./feed";
 
 async function startServer() {
   const app = express();
   app.use(compression());
   const PORT = 3000;
+
+  // Google Merchant Center Feeds
+  app.get('/google-feed.xml', (req, res) => getGoogleFeed(req, res, 'xml'));
+  app.get('/google-feed.csv', (req, res) => getGoogleFeed(req, res, 'csv'));
+  app.post('/api/webhook/clear-feed-cache', clearFeedCache);
+  app.get('/api/webhook/clear-feed-cache', clearFeedCache);
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
