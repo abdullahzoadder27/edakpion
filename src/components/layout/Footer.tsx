@@ -45,7 +45,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-gray-400 mb-8">
               <li><Link to="/faqs" className="hover:text-white transition-colors">FAQs</Link></li>
               <li><Link to="/shipping" className="hover:text-white transition-colors">Shipping</Link></li>
-              <li><Link to="/returns" className="hover:text-white transition-colors">Returns</Link></li>
+              <li><Link to="/returns" className="hover:text-white transition-colors">Return Policy</Link></li>
               <li><Link to="/size-guide" className="hover:text-white transition-colors">Size Guide</Link></li>
             </ul>
             

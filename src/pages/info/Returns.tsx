@@ -8,7 +8,7 @@ export default function Returns() {
   return (
     <div className="min-h-screen bg-[#F5F2ED] font-sans flex flex-col">
       <Helmet>
-        <title>Returns & Exchange Policy | EDAKPION</title>
+        <title>Return Policy | EDAKPION</title>
         <meta name="description" content="Learn about EDAKPION's 7-day return and exchange policy." />
       </Helmet>
       
@@ -17,7 +17,7 @@ export default function Returns() {
       <main className="flex-grow pt-24 pb-16">
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-serif text-[#0F3D2E] mb-6 tracking-tight">Returns & Exchanges</h1>
+            <h1 className="text-4xl md:text-5xl font-serif text-[#0F3D2E] mb-6 tracking-tight">Return Policy</h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               We want you to love what you ordered. If you don't, we make returns and exchanges as simple as possible.
             </p>

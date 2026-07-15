@@ -23,7 +23,7 @@ const faqData = [
   },
   {
     question: "Can I return or exchange a product?",
-    answer: "Yes, we have a 7-day return and exchange policy. Items must be unworn, unwashed, and have original tags attached. Please visit our Returns page for more details."
+    answer: "Yes, we have a 7-day return and exchange policy. Items must be unworn, unwashed, and have original tags attached. Please visit our Return Policy page for more details."
   },
   {
     question: "How do I choose the right size?",
