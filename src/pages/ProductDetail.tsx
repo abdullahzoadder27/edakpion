@@ -30,7 +30,7 @@ export default function ProductDetail() {
         // Fetch product
         const { data: productData, error: productError } = await supabase
           .from('products')
-          .select('*')
+          .select('*, categories(id, name, slug)')
           .eq('slug', slug)
           .single();
           
@@ -44,7 +44,7 @@ export default function ProductDetail() {
           // Fetch related
           const { data: relatedData } = await supabase
             .from('products')
-            .select('*')
+            .select('*, categories(id, name, slug)')
             .eq('category_id', productData.category_id)
             .neq('id', productData.id)
             .limit(4);
@@ -347,7 +347,7 @@ export default function ProductDetail() {
                   <tbody>
                     <tr className="border-b"><td className="py-3 font-bold w-1/3">Brand</td><td className="py-3">EDAKPION</td></tr>
                     
-                    <tr className="border-b"><td className="py-3 font-bold w-1/3">Category</td><td className="py-3">{product.category_id || 'Uncategorized'}</td></tr>
+                    <tr className="border-b"><td className="py-3 font-bold w-1/3">Category</td><td className="py-3">{product.categories?.name || 'Uncategorized'}</td></tr>
                     <tr className="border-b"><td className="py-3 font-bold w-1/3">Material</td><td className="py-3">Premium Quality</td></tr>
                     <tr className="border-b"><td className="py-3 font-bold w-1/3">Country of Origin</td><td className="py-3">Bangladesh</td></tr>
                   </tbody>

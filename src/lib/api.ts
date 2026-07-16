@@ -24,7 +24,7 @@ export async function getProducts(): Promise<Product[]> {
   try {
     const { data, error } = await supabase
       .from('products')
-      .select('*')
+      .select('*, categories(id, name, slug)')
       .eq('is_active', true);
       
     if (error) {
@@ -45,7 +45,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   try {
     const { data, error } = await supabase
       .from('products')
-      .select('*')
+      .select('*, categories(id, name, slug)')
       .eq('slug', slug)
       .eq('is_active', true)
       .single();

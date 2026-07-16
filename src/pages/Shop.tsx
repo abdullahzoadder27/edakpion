@@ -38,7 +38,7 @@ export default function Shop() {
     filteredProducts = filteredProducts.filter(p => p.tags && p.tags.includes(tagFilter));
   } else if (activeCategory !== 'All') {
     // Basic category filtering for now
-    filteredProducts = filteredProducts.filter(p => p.name.includes(activeCategory));
+    filteredProducts = filteredProducts.filter(p => p.categories?.name === activeCategory);
   }
 
   const clearFilters = () => {
