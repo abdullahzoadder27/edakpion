@@ -927,9 +927,9 @@ CREATE INDEX IF NOT EXISTS idx_product_reviews_date ON public.product_reviews(re
 
 ALTER TABLE public.product_reviews ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Public reviews are viewable by everyone" ON public;
+DROP POLICY IF EXISTS "Public reviews are viewable by everyone" ON public.product_reviews;
 CREATE POLICY "Public reviews are viewable by everyone" ON public.product_reviews FOR SELECT USING (status = 'Published');
-DROP POLICY IF EXISTS "Admins can manage all reviews" ON public;
+DROP POLICY IF EXISTS "Admins can manage all reviews" ON public.product_reviews;
 CREATE POLICY "Admins can manage all reviews" ON public.product_reviews FOR ALL USING (
   EXISTS (
     SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
