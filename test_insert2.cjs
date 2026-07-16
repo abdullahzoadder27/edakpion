@@ -5,10 +5,10 @@ const supabase = createClient(process.env.VITE_SUPABASE_URL, process.env.VITE_SU
 
 async function check() {
   const payload = {
-    name: "Test",
-    slug: "test-slug-1234",
+    name: "Test2",
+    slug: "test-slug-12345",
     price: 100,
-    features: { is_new: true, rating: 5 }
+    features: ['feature1', 'feature2']
   };
   const { data, error } = await supabase.from('products').insert([payload]);
   console.log('Error:', error);

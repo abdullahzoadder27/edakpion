@@ -146,7 +146,22 @@ export default function AdminProductForm() {
           seo_description: data.seo_description || '',
           sku: data.sku || '',
           status: data.status || 'published',
-          features: { ...defaultFeatures, ...(data.features || {}) }
+          features: (() => {
+            let parsed = { ...defaultFeatures };
+            if (data.features) {
+              if (Array.isArray(data.features) && data.features.length > 0) {
+                try {
+                  const first = data.features[0];
+                  if (typeof first === 'string' && first.startsWith('{')) {
+                    parsed = { ...parsed, ...JSON.parse(first) };
+                  }
+                } catch (e) {}
+              } else if (typeof data.features === 'object' && !Array.isArray(data.features)) {
+                parsed = { ...parsed, ...data.features };
+              }
+            }
+            return parsed;
+          })()
         });
         setImages(data.images || []);
         setSizes(data.sizes?.length ? data.sizes : []);
@@ -269,7 +284,7 @@ export default function AdminProductForm() {
         seo_description: formData.seo_description,
         sku: formData.sku || `EDK-${Math.floor(1000 + Math.random() * 9000)}`,
         status: formData.status,
-        features: formData.features,
+        features: [JSON.stringify(formData.features)],
         images: images.filter(url => url.trim() !== ''),
         sizes: sizes.filter(s => s.trim() !== ''),
         colors: colors.filter(c => c.trim() !== ''),
@@ -277,18 +292,39 @@ export default function AdminProductForm() {
         updated_at: new Date().toISOString()
       };
 
+      console.log("Payload:", payload);
+
       if (id) {
-        const { error } = await supabase.from('products').update(payload).eq('id', id);
-        if (error) throw error;
+        const response = await supabase.from('products').update(payload).eq('id', id);
+        console.log("Update Response:", response);
+        const { error } = response;
+        if (error) {
+          console.error("Supabase Error:", error);
+          if (error.code === '23505') throw new Error('A product with this slug already exists.');
+          if (error.code === '22P02') throw new Error('Invalid data format submitted.');
+          if (error.code === '42501') throw new Error('Permission denied. Ensure you are an admin.');
+          throw new Error('Database constraint violation or update failed.');
+        }
         setSuccessMsg('Product updated successfully!');
       } else {
-        const { error } = await supabase.from('products').insert([{ ...payload, created_at: new Date().toISOString() }]);
-        if (error) throw error;
+        const response = await supabase.from('products').insert([{ ...payload, created_at: new Date().toISOString() }]);
+        console.log("Insert Response:", response);
+        const { error } = response;
+        if (error) {
+          console.error("Supabase Error:", error);
+          if (error.code === '23505') throw new Error('A product with this slug already exists.');
+          if (error.code === '22P02') throw new Error('Invalid data format submitted.');
+          if (error.code === '42501') throw new Error('Permission denied. Ensure you are an admin.');
+          throw new Error('Database constraint violation or insert failed.');
+        }
         setSuccessMsg('Product created successfully!');
         navigate('/admin/products');
       }
     } catch (err: any) {
-      setErrorMsg(err.message || 'An error occurred while saving the product.');
+      console.error("Save Error:", err);
+      let errMsg = err.message || 'An error occurred while saving the product.';
+      if (errMsg.includes('JSON')) errMsg = 'Invalid data format or missing required fields.';
+      setErrorMsg(errMsg);
     } finally {
       setLoading(false);
       window.scrollTo({ top: 0, behavior: 'smooth' });

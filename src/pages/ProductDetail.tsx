@@ -7,6 +7,7 @@ import { useCartStore } from '../lib/store';
 import { formatPrice } from '../lib/utils';
 import ProductCard from '../components/ui/ProductCard';
 import SeoImage from '../components/ui/SeoImage';
+import ProductReviews from "../components/ProductReviews";
 import { Product } from '../types';
 
 export default function ProductDetail() {
