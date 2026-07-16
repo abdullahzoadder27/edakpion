@@ -152,26 +152,7 @@ export default function ProductDetail() {
       <Helmet>
         <title>{product.name} | Premium Streetwear Bangladesh</title>
         <meta name="description" content={`Buy ${product.name} at Edakpion, the best premium streetwear brand in Bangladesh. Quality urban fashion.`} />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org/",
-            "@type": "Product",
-            "name": product.name,
-            "image": product.images,
-            "description": product.description,
-            "brand": {
-              "@type": "Brand",
-              "name": "Edakpion"
-            },
-            "offers": {
-              "@type": "Offer",
-              "url": `https://edakpion.com/product/${product.slug}`,
-              "priceCurrency": "BDT",
-              "price": product.price,
-              "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
-            }
-          })}
-        </script>
+        
       </Helmet>
       <div className="max-w-7xl mx-auto px-6">
         
@@ -396,6 +377,17 @@ export default function ProductDetail() {
           </div>
         </div>
   
+        {/* Product Reviews */}
+        <ProductReviews 
+          productId={product.id} 
+          productName={product.name} 
+          productImage={product.images?.[0]} 
+          productDescription={product.description}
+          productPrice={product.price}
+          productSlug={product.slug}
+          productStock={product.stock}
+        />
+
         {/* Related Products */}
         {relatedProducts.length > 0 && (
           <div>

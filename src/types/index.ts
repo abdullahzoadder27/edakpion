@@ -192,3 +192,22 @@ export interface HeroSlide {
   created_at: string;
   updated_at: string;
 }
+
+export type ProductReview = {
+  id: string;
+  product_id: string;
+  customer_name: string;
+  review_text: string;
+  rating: number;
+  verified_buyer: boolean;
+  customer_location?: string;
+  customer_designation?: string;
+  profile_image?: string;
+  review_date: string;
+  helpful_count: number;
+  status: 'Published' | 'Draft' | 'Hidden';
+  sort_order: number;
+  admin_note?: string;
+  created_at: string;
+  updated_at: string;
+};
