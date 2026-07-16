@@ -28,15 +28,52 @@ export default function ProductReviews({ productId, productName, productImage, p
 
   const fetchReviews = async () => {
     try {
-      const { data, error } = await supabase
+      // Fetch admin-created reviews
+      const { data: adminData, error: adminError } = await supabase
         .from('product_reviews')
         .select('*')
         .eq('product_id', productId)
         .eq('status', 'Published');
+        
+      // Fetch user-created reviews
+      const { data: userData, error: userError } = await supabase
+        .from('reviews')
+        .select('*, profiles(full_name, avatar_url)')
+        .eq('product_id', productId)
+        .eq('status', 'approved');
 
-      if (!error && data) {
-        setReviews(data);
+      if (adminError) console.error("Admin reviews error:", adminError);
+      if (userError) console.error("User reviews error:", userError);
+
+      let allReviews: any[] = [];
+      
+      if (adminData) {
+        allReviews = [...adminData];
       }
+      
+      if (userData) {
+        const mappedUserReviews = userData.map((r: any) => ({
+          id: r.id,
+          product_id: r.product_id,
+          customer_name: r.profiles?.full_name || 'Verified Customer',
+          review_text: r.review_text,
+          rating: r.rating || 5,
+          verified_buyer: !!r.order_id,
+          customer_location: '',
+          customer_designation: 'Customer',
+          profile_image: r.profiles?.avatar_url || r.review_image_url || '',
+          review_date: r.created_at,
+          helpful_count: 0,
+          status: 'Published',
+          sort_order: 0,
+          admin_reply: r.admin_reply || '',
+          created_at: r.created_at,
+          updated_at: r.updated_at
+        }));
+        allReviews = [...allReviews, ...mappedUserReviews];
+      }
+
+      setReviews(allReviews);
     } catch (err) {
       console.error('Error fetching reviews:', err);
     } finally {
@@ -248,6 +285,20 @@ export default function ProductReviews({ productId, productName, productImage, p
                       <div className="text-gray-700 prose prose-sm max-w-none">
                         <ReactMarkdown>{review.review_text}</ReactMarkdown>
                       </div>
+                      {review.admin_reply && (
+                        <div className="mt-4 bg-gray-50 border border-gray-100 p-4 rounded-xl">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-6 h-6 rounded-full bg-[#0F3D2E] flex items-center justify-center text-white text-xs font-bold">
+                              EDK
+                            </div>
+                            <span className="font-bold text-sm text-gray-900">EDAKPION Support</span>
+                          </div>
+                          <div className="text-gray-700 text-sm">
+                            <ReactMarkdown>{review.admin_reply}</ReactMarkdown>
+                          </div>
+                        </div>
+                      )}
+
 
                       {review.helpful_count > 0 && (
                         <div className="mt-4 flex items-center gap-1 text-xs text-gray-500">

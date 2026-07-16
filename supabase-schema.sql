@@ -935,3 +935,10 @@ CREATE POLICY "Admins can manage all reviews" ON public.product_reviews FOR ALL 
     SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
   )
 );
+ALTER TABLE public.product_reviews ADD COLUMN IF NOT EXISTS admin_reply TEXT;
+ALTER TABLE public.hero_slides ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Published';
+ALTER TABLE public.hero_slides ADD COLUMN IF NOT EXISTS background_color TEXT;
+ALTER TABLE public.hero_slides ADD COLUMN IF NOT EXISTS panel_color TEXT;
+ALTER TABLE public.hero_slides ADD COLUMN IF NOT EXISTS ghost_text TEXT;
+ALTER TABLE public.hero_slides ADD COLUMN IF NOT EXISTS animation_type TEXT;
+ALTER TABLE public.hero_slides ADD COLUMN IF NOT EXISTS autoplay_duration INTEGER;

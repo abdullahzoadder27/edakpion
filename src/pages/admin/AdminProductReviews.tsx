@@ -250,6 +250,7 @@ export default function AdminProductReviews({ productId }: Props) {
                 rating: 5, 
                 status: 'Published', 
                 verified_buyer: true,
+                admin_reply: '',
                 review_date: new Date().toISOString()
               });
               setIsModalOpen(true);
@@ -601,6 +602,18 @@ export default function AdminProductReviews({ productId }: Props) {
                 <label htmlFor="verified_buyer" className="text-sm font-medium text-gray-700">
                   Verified Buyer Badge
                 </label>
+              </div>
+
+              
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Admin Reply (Public)</label>
+                <textarea
+                  rows={3}
+                  value={editingReview?.admin_reply || ''}
+                  onChange={(e) => setEditingReview({...editingReview, admin_reply: e.target.value})}
+                  className="w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none text-sm"
+                  placeholder="Public reply to the customer..."
+                />
               </div>
 
               <div className="mb-6">

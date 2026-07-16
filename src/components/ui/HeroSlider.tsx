@@ -33,8 +33,37 @@ export default function HeroSlider() {
         
         if (error) throw error;
         
+        
         if (data && data.length > 0) {
-          setSlides(data);
+          const now = new Date();
+          const validSlides = data.filter((s: any) => {
+            if (s.start_date && new Date(s.start_date) > now) return false;
+            if (s.end_date && new Date(s.end_date) < now) return false;
+            return true;
+          });
+          
+          if (validSlides.length > 0) {
+            setSlides(validSlides);
+          } else {
+            // Provide a beautiful fallback slide if no active scheduled slides are found
+            setSlides([
+              {
+                id: 'fallback-1',
+                title: 'Discover Our<br/>Premium Collection',
+                subtitle: 'WELCOME TO EDAKPION',
+                description: 'Experience unparalleled quality and style with our latest curated selections.',
+                image_url: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+                desktop_image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+                primary_button_text: 'Shop Now',
+                primary_button_url: '/shop',
+                badge: 'New Arrivals',
+                is_active: true,
+                display_order: 0,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              }
+            ]);
+          }
         } else {
           // Provide a beautiful fallback slide if the database is empty
           setSlides([
@@ -57,6 +86,26 @@ export default function HeroSlider() {
         }
       } catch (err) {
         console.error('Error fetching hero slides:', err);
+            // Provide a beautiful fallback slide on network error
+
+            setSlides([
+              {
+                id: 'fallback-1',
+                title: 'Discover Our<br/>Premium Collection',
+                subtitle: 'WELCOME TO EDAKPION',
+                description: 'Experience unparalleled quality and style with our latest curated selections.',
+                image_url: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+                desktop_image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+                primary_button_text: 'Shop Now',
+                primary_button_url: '/shop',
+                badge: 'New Arrivals',
+                is_active: true,
+                display_order: 0,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              }
+            ]);
+
       } finally {
         setLoading(false);
       }
@@ -66,7 +115,7 @@ export default function HeroSlider() {
 
   const animateContent = () => {
     // Kill existing tweens on the elements
-    gsap.killTweensOf([headlineRef.current, subtitleRef.current, descRef.current, btnRef.current, btn2Ref.current, badgeRef.current]);
+    gsap.killTweensOf([headlineRef.current, subtitleRef.current, descRef.current, btnRef.current, btn2Ref.current, badgeRef.current].filter(Boolean));
 
     gsap.fromTo(subtitleRef.current,
       { y: 20, opacity: 0, filter: 'blur(4px)' },
@@ -113,18 +162,23 @@ export default function HeroSlider() {
   if (slides.length === 0) return null;
 
   const currentSlide = slides[activeIndex] || slides[0];
-
   const title = currentSlide.title || "Premium Men's Fashion<br/>for Everyday Confidence";
   const subtitle = currentSlide.subtitle || "ELEVATE YOUR STYLE";
   const description = currentSlide.description || "Discover premium shirts, polos, oversized tees and timeless essentials crafted for modern Bangladeshi men. Quality fabrics, elegant design and confident style—only from eDakpion.";
   const primaryText = currentSlide.primary_button_text || "Shop Now";
   const primaryUrl = currentSlide.primary_button_url || "/shop";
-  const secondaryText = currentSlide.secondary_button_text || "Explore Collection";
-  const secondaryUrl = currentSlide.secondary_button_url || "/shop";
+  const secondaryText = currentSlide.secondary_button_text || "";
+  const secondaryUrl = currentSlide.secondary_button_url || "/collection";
+  
+  const bgColor = currentSlide.background_color || '#0F3D2E';
+  const panelColor = currentSlide.panel_color || '#154636';
+  const ghostText = currentSlide.ghost_text || '';
+  const autoplayDuration = currentSlide.autoplay_duration || 5000;
+  const animationType = currentSlide.animation_type || 'fade';
 
 
   return (
-    <div className="relative w-full h-[85vh] md:h-[90vh] min-h-[600px] md:min-h-[700px] max-h-[800px] md:max-h-[900px] bg-[#0F3D2E] overflow-hidden group flex flex-col md:flex-row">
+    <div className="relative w-full h-[85vh] md:h-[90vh] min-h-[600px] md:min-h-[700px] max-h-[800px] md:max-h-[900px] overflow-hidden group flex flex-col md:flex-row transition-colors duration-1000" style={{ backgroundColor: bgColor }}>
       <style>{/* same styles... */}</style>
       <style>{`
         @keyframes kenBurns {
@@ -184,9 +238,14 @@ export default function HeroSlider() {
       `}</style>
       
       {/* Background ambient effects */}
+      {ghostText && (
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center pointer-events-none z-0 opacity-[0.03]">
+          <span className="text-[15vw] font-black uppercase whitespace-nowrap">{ghostText}</span>
+        </div>
+      )}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
         <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-white/5 blur-[120px] mix-blend-screen animate-pulse" style={{ animationDuration: '8s' }}></div>
-        <div className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-[#154636] blur-[100px] mix-blend-screen animate-pulse" style={{ animationDuration: '12s', animationDelay: '2s' }}></div>
+        <div className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full blur-[100px] mix-blend-screen animate-pulse transition-colors duration-1000" style={{ animationDuration: '12s', animationDelay: '2s', backgroundColor: panelColor }}></div>
       </div>
 
       {/* Left Content Area */}
@@ -226,24 +285,20 @@ export default function HeroSlider() {
       </div>
       
       {/* Right Image Area */}
-      <div className="w-full md:w-1/2 relative flex-1 md:bg-[#154636] pointer-events-none md:pointer-events-auto mt-4 md:mt-0 flex items-end justify-end md:justify-center overflow-hidden z-10 md:z-0 pr-4 md:pr-0">
+      <div className="w-full md:w-1/2 relative flex-1  pointer-events-none md:pointer-events-auto mt-4 md:mt-0 flex items-end justify-end md:justify-center overflow-hidden z-10 md:z-0 pr-4 md:pr-0">
         <div className="w-full h-full flex items-end justify-end md:justify-center relative">
             {/* Desktop backdrop shape */}
             <div className="absolute bottom-0 w-[80%] h-[90%] bg-[#215a48] rounded-t-full opacity-40 animate-pulse hidden md:block" style={{ animationDuration: '4s' }}></div>
             
             {/* Main Image Frame */}
-            <div className="relative bottom-0 right-0 md:right-auto w-[220px] sm:w-[280px] md:w-[320px] lg:w-[380px] h-[300px] sm:h-[380px] md:h-[450px] lg:h-[520px] shrink-0 bg-[#0F3D2E] border-x-4 border-t-4 md:border-x-8 md:border-t-8 border-white/30 rounded-t-[100px] md:rounded-t-[150px] flex items-center justify-center overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.5)] md:shadow-[0_20px_50px_rgba(0,0,0,0.6)] animate-float transform-gpu origin-bottom md:mb-10">
+            <div className="relative bottom-0 right-0 md:right-auto w-[220px] sm:w-[280px] md:w-[320px] lg:w-[380px] h-[300px] sm:h-[380px] md:h-[450px] lg:h-[520px] shrink-0 border-x-4 border-t-4 md:border-x-8 md:border-t-8 border-white/30 rounded-t-[100px] md:rounded-t-[150px] flex items-center justify-center overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.5)] md:shadow-[0_20px_50px_rgba(0,0,0,0.6)] animate-float transform-gpu origin-bottom md:mb-10 transition-colors duration-1000" style={{ backgroundColor: bgColor }}>
               
               <Swiper
                 modules={[Autoplay, EffectFade, Pagination, Navigation]}
-                effect="fade"
+                effect={animationType === "slide" ? "slide" : "fade"}
                 fadeEffect={{ crossFade: true }}
                 speed={1200}
-                autoplay={{
-                  delay: 5000,
-                  disableOnInteraction: false,
-                  pauseOnMouseEnter: true,
-                }}
+                autoplay={{ delay: autoplayDuration, disableOnInteraction: false, pauseOnMouseEnter: true }}
                 pagination={{
                   clickable: true,
                   el: '.hero-pagination',

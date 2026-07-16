@@ -189,6 +189,12 @@ export interface HeroSlide {
   is_active: boolean;
   start_date?: string;
   end_date?: string;
+  status?: string;
+  background_color?: string;
+  panel_color?: string;
+  ghost_text?: string;
+  animation_type?: string;
+  autoplay_duration?: number;
   created_at: string;
   updated_at: string;
 }
@@ -208,6 +214,7 @@ export type ProductReview = {
   status: 'Published' | 'Draft' | 'Hidden';
   sort_order: number;
   admin_note?: string;
+  admin_reply?: string;
   created_at: string;
   updated_at: string;
 };

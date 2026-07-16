@@ -1,4 +1,8 @@
-import { useState, useEffect } from 'react';
+const fs = require('fs');
+
+const filepath = 'src/pages/admin/HeroSlidesManage.tsx';
+
+const newContent = `import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { HeroSlide } from '../../types';
 import { Plus, Edit2, Trash2, Check, X, Image as ImageIcon, Loader2, GripVertical, Copy, Eye, EyeOff, Archive } from 'lucide-react';
@@ -101,19 +105,8 @@ export default function HeroSlidesManage() {
     e.preventDefault();
     setSaving(true);
     try {
-      // Clean up unsupported columns from formData
-      const {
-        status,
-        background_color,
-        panel_color,
-        ghost_text,
-        animation_type,
-        autoplay_duration,
-        ...validData
-      } = formData;
-
       const payload = {
-        ...validData,
+        ...formData,
         start_date: formData.start_date ? new Date(formData.start_date).toISOString() : null,
         end_date: formData.end_date ? new Date(formData.end_date).toISOString() : null,
         is_active: ['Published', 'Draft'].includes(formData.status) ? formData.is_active : false,
@@ -148,9 +141,7 @@ export default function HeroSlidesManage() {
 
   const handleUpdateStatus = async (id: string, newStatus: string) => {
     try {
-      // Map status to is_active since we don't have a status column in DB
-      const is_active = newStatus === 'Published';
-      const { error } = await supabase.from('hero_slides').update({ is_active }).eq('id', id);
+      const { error } = await supabase.from('hero_slides').update({ status: newStatus }).eq('id', id);
       if (error) throw error;
       await fetchSlides();
     } catch (err: any) {
@@ -220,8 +211,8 @@ export default function HeroSlidesManage() {
     setUploadingImage(true);
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `hero_slides/${fileName}`;
+      const fileName = \`\${Math.random()}.\${fileExt}\`;
+      const filePath = \`hero_slides/\${fileName}\`;
 
       const { error: uploadError } = await supabase.storage
         .from('products') // using existing bucket if hero_slides doesn't exist
@@ -313,13 +304,18 @@ export default function HeroSlidesManage() {
                       <div className="text-xs text-gray-500 line-clamp-1">{slide.subtitle}</div>
                     </td>
                     <td className="p-4">
-                      <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${slide.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
-                        {slide.is_active ? 'Published' : 'Hidden'}
+                      <span className={\`inline-flex px-2 py-1 rounded-full text-xs font-medium
+                        \${slide.status === 'Published' ? 'bg-green-100 text-green-700' : ''}
+                        \${slide.status === 'Draft' ? 'bg-yellow-100 text-yellow-700' : ''}
+                        \${slide.status === 'Hidden' ? 'bg-gray-100 text-gray-700' : ''}
+                        \${slide.status === 'Archived' ? 'bg-red-100 text-red-700' : ''}
+                      \`}>
+                        {slide.status || 'Published'}
                       </span>
                     </td>
                     <td className="p-4 text-right">
                       <div className="flex justify-end gap-2">
-                        {!slide.is_active ? (
+                        {slide.status === 'Hidden' ? (
                           <button onClick={() => handleUpdateStatus(slide.id, 'Published')} className="p-2 text-gray-400 hover:text-green-600 bg-white hover:bg-green-50 rounded-lg border border-gray-200 shadow-sm transition-colors" title="Publish">
                             <Eye className="w-4 h-4" />
                           </button>
@@ -504,3 +500,7 @@ export default function HeroSlidesManage() {
     </div>
   );
 }
+`;
+
+fs.writeFileSync(filepath, newContent);
+console.log('Successfully wrote new HeroSlidesManage.tsx');

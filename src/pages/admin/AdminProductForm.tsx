@@ -3,10 +3,11 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { 
   Loader2, ArrowLeft, Upload, Trash2, X, Plus, GripVertical, 
   AlertCircle, CheckCircle2, ChevronDown, Package, Tag, 
-  Image as ImageIcon, FileText, Settings, BarChart3, Truck
+  Image as ImageIcon, FileText, Settings, BarChart3, Truck, MessageSquare
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Category, Product } from '../../types';
+import AdminProductReviews from './AdminProductReviews';
 
 interface ProductFormData {
   name: string;
@@ -357,8 +358,9 @@ export default function AdminProductForm() {
     { id: 'media', name: 'Media', icon: ImageIcon },
     { id: 'pricing', name: 'Pricing & Inventory', icon: BarChart3 },
     { id: 'variants', name: 'Variants & Specs', icon: Package },
-    { id: 'shipping', name: 'Shipping', icon: Truck },
+    { id: 'shipping', name: 'Shipping', icon: Truck, MessageSquare },
     { id: 'seo', name: 'SEO & Labels', icon: Tag },
+    ...(id ? [{ id: 'reviews', name: 'Reviews', icon: MessageSquare }] : []),
   ];
 
   return (
@@ -970,6 +972,13 @@ export default function AdminProductForm() {
             </div>
             
           </form>
+
+        {activeTab === 'reviews' && id && (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <AdminProductReviews productId={id} />
+          </div>
+        )}
+
         </div>
       </div>
     </div>

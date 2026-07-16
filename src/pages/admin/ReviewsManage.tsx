@@ -8,6 +8,9 @@ export default function ReviewsManage() {
   const [filter, setFilter] = useState('all');
   const [replyText, setReplyText] = useState('');
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
+  const [editReviewText, setEditReviewText] = useState('');
+  const [editRating, setEditRating] = useState(5);
 
   useEffect(() => {
     fetchReviews();
@@ -40,6 +43,18 @@ export default function ReviewsManage() {
       fetchReviews();
     } catch (err: any) {
       alert(`Error updating review: ${err.message}`);
+    }
+  };
+
+  
+  const submitEdit = async (id: string) => {
+    try {
+      const { error } = await supabase.from('reviews').update({ review_text: editReviewText, rating: editRating }).eq('id', id);
+      if (error) throw error;
+      setEditingReviewId(null);
+      fetchReviews();
+    } catch (err: any) {
+      alert(`Error editing: ${err.message}`);
     }
   };
 
@@ -132,7 +147,14 @@ export default function ReviewsManage() {
                   <td className="px-6 py-4 flex flex-wrap gap-2">
                     {review.status !== 'approved' && <button onClick={() => updateStatus(review.id, 'approved')} className="p-2 text-green-600 hover:bg-green-50 rounded-lg" title="Approve"><CheckCircle className="w-4 h-4" /></button>}
                     {review.status !== 'hidden' && <button onClick={() => updateStatus(review.id, 'hidden')} className="p-2 text-yellow-600 hover:bg-yellow-50 rounded-lg" title="Hide"><XCircle className="w-4 h-4" /></button>}
-                    <button onClick={() => { setReplyingTo(review.id); setReplyText(review.admin_reply || ''); }} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg" title="Reply"><MessageCircle className="w-4 h-4" /></button>
+
+                    <button onClick={() => { setEditingReviewId(review.id); setEditReviewText(review.review_text); setEditRating(review.rating || 5); }} className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg" title="Edit">
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => { setReplyingTo(review.id); setReplyText(review.admin_reply || ''); }} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg" title="Reply">
+                      <MessageCircle className="w-4 h-4" />
+                    </button>
+
                     <button onClick={() => deleteReview(review.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg" title="Delete"><Trash2 className="w-4 h-4" /></button>
                   </td>
                 </tr>

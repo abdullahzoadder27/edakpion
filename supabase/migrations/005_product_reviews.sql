@@ -32,3 +32,4 @@ CREATE POLICY "Admins can manage all reviews" ON public.product_reviews FOR ALL 
     SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
   )
 );
+ALTER TABLE public.product_reviews ADD COLUMN IF NOT EXISTS admin_reply TEXT;
