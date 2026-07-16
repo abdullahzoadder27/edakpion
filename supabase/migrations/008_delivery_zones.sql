@@ -16,19 +16,23 @@ CREATE TRIGGER update_delivery_zones_modtime BEFORE UPDATE ON delivery_zones FOR
 ALTER TABLE delivery_zones ENABLE ROW LEVEL SECURITY;
 
 -- Policies
+DROP POLICY IF EXISTS "delivery_zones_read_policy" ON delivery_zones;
 CREATE POLICY "delivery_zones_read_policy" ON delivery_zones
     FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "delivery_zones_insert_policy" ON delivery_zones;
 CREATE POLICY "delivery_zones_insert_policy" ON delivery_zones
     FOR INSERT WITH CHECK (
         (SELECT role FROM profiles WHERE id = auth.uid()) IN ('super_admin', 'admin', 'manager')
     );
 
+DROP POLICY IF EXISTS "delivery_zones_update_policy" ON delivery_zones;
 CREATE POLICY "delivery_zones_update_policy" ON delivery_zones
     FOR UPDATE USING (
         (SELECT role FROM profiles WHERE id = auth.uid()) IN ('super_admin', 'admin', 'manager')
     );
 
+DROP POLICY IF EXISTS "delivery_zones_delete_policy" ON delivery_zones;
 CREATE POLICY "delivery_zones_delete_policy" ON delivery_zones
     FOR DELETE USING (
         (SELECT role FROM profiles WHERE id = auth.uid()) IN ('super_admin', 'admin', 'manager')

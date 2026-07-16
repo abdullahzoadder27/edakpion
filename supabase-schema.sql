@@ -872,19 +872,23 @@ CREATE TRIGGER update_delivery_zones_modtime BEFORE UPDATE ON delivery_zones FOR
 ALTER TABLE delivery_zones ENABLE ROW LEVEL SECURITY;
 
 -- Policies
+DROP POLICY IF EXISTS "delivery_zones_read_policy" ON delivery_zones;
 CREATE POLICY "delivery_zones_read_policy" ON delivery_zones
     FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "delivery_zones_insert_policy" ON delivery_zones;
 CREATE POLICY "delivery_zones_insert_policy" ON delivery_zones
     FOR INSERT WITH CHECK (
         (SELECT role FROM profiles WHERE id = auth.uid()) IN ('super_admin', 'admin', 'manager')
     );
 
+DROP POLICY IF EXISTS "delivery_zones_update_policy" ON delivery_zones;
 CREATE POLICY "delivery_zones_update_policy" ON delivery_zones
     FOR UPDATE USING (
         (SELECT role FROM profiles WHERE id = auth.uid()) IN ('super_admin', 'admin', 'manager')
     );
 
+DROP POLICY IF EXISTS "delivery_zones_delete_policy" ON delivery_zones;
 CREATE POLICY "delivery_zones_delete_policy" ON delivery_zones
     FOR DELETE USING (
         (SELECT role FROM profiles WHERE id = auth.uid()) IN ('super_admin', 'admin', 'manager')
@@ -923,7 +927,9 @@ CREATE INDEX IF NOT EXISTS idx_product_reviews_date ON public.product_reviews(re
 
 ALTER TABLE public.product_reviews ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Public reviews are viewable by everyone" ON public;
 CREATE POLICY "Public reviews are viewable by everyone" ON public.product_reviews FOR SELECT USING (status = 'Published');
+DROP POLICY IF EXISTS "Admins can manage all reviews" ON public;
 CREATE POLICY "Admins can manage all reviews" ON public.product_reviews FOR ALL USING (
   EXISTS (
     SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
