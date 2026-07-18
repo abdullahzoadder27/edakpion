@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { HeroSlide } from '../../types';
-import { ArrowLeft, ArrowRight, ShieldCheck, Award, Truck } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ShieldCheck, Award } from 'lucide-react';
 import { gsap } from 'gsap';
 
 // Background Pattern
 const JamdaniPattern = () => (
-  <svg className="absolute inset-0 w-full h-full opacity-[0.03] pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+  <svg className="absolute inset-0 w-full h-full opacity-[0.02] pointer-events-none" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <pattern id="jamdani" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
         <path d="M20 0 L40 20 L20 40 L0 20 Z" fill="none" stroke="currentColor" strokeWidth="0.5"/>
@@ -29,11 +29,9 @@ export default function HeroSlider() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const charactersRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -61,8 +59,8 @@ export default function HeroSlider() {
         if (validSlides.length === 0) {
           validSlides = [{
             id: 'fallback-1',
-            title: "",
-            description: "Minimal design. Maximum confidence. Discover premium essentials crafted for modern Bangladeshi men.",
+            title: "Premium Men's Fashion<br/>for Everyday Confidence",
+            description: "Discover premium shirts, polos, oversized tees and timeless essentials crafted for modern Bangladeshi men.",
             image_url: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2000',
             primary_button_text: 'Shop Now',
             primary_button_url: '/shop',
@@ -73,22 +71,24 @@ export default function HeroSlider() {
           } as HeroSlide];
         }
         
-        // Pad array to ensure we have at least 3 slides for the 3-character layout
+        // Pad array to ensure we have enough slides for the 3D carousel effect
         let padded = [...validSlides];
         if (padded.length === 1) {
-            padded = [padded[0], padded[0], padded[0]];
+            padded = [padded[0], padded[0], padded[0], padded[0]];
         } else if (padded.length === 2) {
-            padded = [padded[0], padded[1], padded[0]];
+            padded = [padded[0], padded[1], padded[0], padded[1]];
+        } else if (padded.length === 3) {
+            padded = [padded[0], padded[1], padded[2], padded[0]];
         }
         
         setSlides(padded);
       } catch (err) {
         console.error('Error fetching hero slides:', err);
         // Fallback on error
-        const fallback = {
+        setSlides([{
           id: 'error-fallback',
-          title: "",
-          description: "Minimal design. Maximum confidence.",
+          title: "Premium Men's Fashion<br/>for Everyday Confidence",
+          description: "Discover premium shirts, polos, oversized tees and timeless essentials crafted for modern Bangladeshi men.",
           image_url: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2000',
           primary_button_text: 'Shop Now',
           primary_button_url: '/shop',
@@ -96,36 +96,13 @@ export default function HeroSlider() {
           secondary_button_url: '/shop',
           is_active: true,
           display_order: 0
-        } as HeroSlide;
-        setSlides([fallback, fallback, fallback]);
+        } as HeroSlide].flatMap(x => [x, x, x, x]));
       } finally {
         setLoading(false);
       }
     };
     fetchSlides();
   }, []);
-
-  // Mouse parallax effect
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!charactersRef.current || isMobile) return;
-      const { clientX, clientY } = e;
-      const { innerWidth, innerHeight } = window;
-      
-      const xPos = (clientX / innerWidth - 0.5) * 20; // max 20px movement
-      const yPos = (clientY / innerHeight - 0.5) * 20;
-
-      gsap.to(charactersRef.current, {
-        x: xPos,
-        y: yPos,
-        duration: 1,
-        ease: 'power2.out'
-      });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [isMobile]);
 
   const navigate = (dir: 'next' | 'prev') => {
     if (isAnimating || slides.length <= 1) return;
@@ -195,14 +172,14 @@ export default function HeroSlider() {
   };
 
   if (loading) {
-    return <div className="w-full h-[85vh] min-h-[500px] lg:min-h-[600px] bg-[#111111] flex items-center justify-center text-[#F5F2ED] animate-pulse mt-4 md:mt-8">Loading Premium Collection...</div>;
+    return <div className="w-full h-[85vh] bg-[#0a0a0a] flex items-center justify-center text-[#E5D5C5] animate-pulse">Loading Premium Collection...</div>;
   }
 
   if (slides.length === 0) return null;
 
   const currentSlide = slides[activeIndex];
-  const title = currentSlide.title || "";
-  const desc = currentSlide.description || "Minimal design. Maximum confidence.";
+  const title = currentSlide.title || "PREMIUM COLLECTION";
+  const desc = currentSlide.description || "Experience unparalleled quality and style with our latest curated selections.";
   const primaryText = currentSlide.primary_button_text || "Shop Now";
   const primaryUrl = currentSlide.primary_button_url || "/shop";
   const secondaryText = currentSlide.secondary_button_text || "Explore";
@@ -210,8 +187,9 @@ export default function HeroSlider() {
 
   const getStyleForRole = (index: number) => {
     if (index === activeIndex) {
+      // Center Main
       return {
-        transform: 'translateX(-50%) scale(1.15) rotateY(0deg)',
+        transform: 'translateX(-50%) scale(1) rotateY(0deg)',
         left: '50%',
         opacity: 1,
         zIndex: 20,
@@ -222,9 +200,10 @@ export default function HeroSlider() {
     
     const prevIndex = (activeIndex + slides.length - 1) % slides.length;
     if (index === prevIndex || (slides.length === 2 && index !== activeIndex)) {
+      // Left
       return {
-        transform: 'translateX(-50%) scale(0.95) rotateY(-25deg)',
-        left: '20%',
+        transform: 'translateX(-50%) scale(0.85) rotateY(-35deg)',
+        left: isMobile ? '15%' : '20%',
         opacity: 0.6,
         zIndex: 10,
         filter: 'blur(4px) brightness(0.6)',
@@ -234,9 +213,10 @@ export default function HeroSlider() {
     
     const nextIndex = (activeIndex + 1) % slides.length;
     if (index === nextIndex && slides.length > 2) {
+      // Right
       return {
-        transform: 'translateX(-50%) scale(0.95) rotateY(25deg)',
-        left: '80%',
+        transform: 'translateX(-50%) scale(0.85) rotateY(35deg)',
+        left: isMobile ? '85%' : '80%',
         opacity: 0.6,
         zIndex: 10,
         filter: 'blur(4px) brightness(0.6)',
@@ -244,6 +224,7 @@ export default function HeroSlider() {
       };
     }
     
+    // Hidden Back
     return {
       transform: 'translateX(-50%) scale(0.7) rotateY(0deg)',
       left: '50%',
@@ -255,10 +236,9 @@ export default function HeroSlider() {
   };
 
   return (
-    <div className="w-full flex justify-center px-4 sm:px-6 md:px-8 mt-4 lg:mt-6 mb-8">
+    <div className="w-full flex justify-center px-4 md:px-8 mt-4 md:mt-8">
       <div 
-        ref={containerRef}
-        className="relative w-full max-w-[1180px] h-auto lg:h-[70vh] lg:max-h-[650px] min-h-[400px] lg:min-h-[500px] bg-[#111111] text-[#F5F2ED] font-sans overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]"
+        className="relative w-full max-w-[1320px] h-[85vh] min-h-[550px] md:min-h-[650px] bg-[#111111] text-[#F5F2ED] flex flex-col md:flex-row items-center font-sans overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         style={{ perspective: '1200px' }}
@@ -271,40 +251,76 @@ export default function HeroSlider() {
 
           {/* Floor reflection gradient */}
           <div className="absolute bottom-0 left-0 right-0 h-[30%] bg-gradient-to-t from-[#0a0a0a] via-[#111111]/80 to-transparent z-30 pointer-events-none" />
-          <div className="relative w-full h-full flex flex-col lg:grid lg:grid-cols-12 lg:grid-rows-[1fr_auto_auto_auto_auto_auto_1fr] z-40 px-5 sm:px-10 lg:px-12 xl:px-16 pt-6 pb-5 lg:py-0 items-center lg:items-start text-center lg:text-left gap-0">
+
+          {/* Inner Content Wrapper */}
+          <div className="relative w-full h-full flex flex-col md:flex-row items-center justify-between z-40 px-6 md:px-12 lg:px-20 pt-10 md:pt-0 pb-6 md:pb-0 gap-6 md:gap-10 lg:gap-12">
               
-              {/* Label */}
-              <div className="lg:col-span-6 lg:row-start-2 flex justify-center lg:justify-start mb-0 lg:mb-2 z-50">
-                  <div className="flex flex-wrap justify-center lg:justify-start gap-2">
+              {/* Left Side (Content) */}
+              <div className="w-full md:w-[45%] flex flex-col justify-center items-center md:items-start text-center md:text-left z-50">
+                  
+                  {/* Trust Badges */}
+                  <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-4 md:mb-6">
                       <div className="flex items-center gap-1.5 text-[9px] md:text-[10px] font-bold tracking-[0.2em] text-[#D4AF37] uppercase bg-[#1A1A1A] px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-white/10 backdrop-blur-md shadow-lg">
-                          <Award className="w-3 h-3" /> Premium Quality
+                          <Award className="w-3 h-3" /> Premium
                       </div>
                       <div className="flex items-center gap-1.5 text-[9px] md:text-[10px] font-bold tracking-[0.2em] text-white/80 uppercase bg-[#1A1A1A] px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-white/10 backdrop-blur-md shadow-lg">
                           <ShieldCheck className="w-3 h-3" /> Limited
                       </div>
                   </div>
+
+                  {/* Headline */}
+                  <div className="overflow-hidden mb-3 md:mb-5 w-full">
+                      <h1 ref={titleRef} className="text-[2.2rem] sm:text-4xl md:text-5xl lg:text-[4rem] font-serif leading-[1.05] text-[#F5F2ED] tracking-tight w-full" dangerouslySetInnerHTML={{ __html: title.replace(/\n/g, '<br/>') }} />
+                  </div>
+                  
+                  {/* Description */}
+                  <div className="overflow-hidden max-w-sm mb-6 md:mb-8">
+                      <p ref={descRef} className="text-[13px] md:text-sm text-gray-400 font-light leading-relaxed">
+                          {desc}
+                      </p>
+                  </div>
+
+                  {/* Buttons */}
+                  <div ref={buttonsRef} className="flex flex-wrap justify-center md:justify-start gap-3 md:gap-4 items-center">
+                      {primaryText && (
+                          <Link to={primaryUrl} className="group relative px-7 py-3.5 md:px-8 md:py-4 bg-[#F5F2ED] text-[#111111] text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase overflow-hidden rounded-full transition-transform hover:scale-105 duration-300">
+                              <span className="relative z-10">{primaryText}</span>
+                              <div className="absolute inset-0 bg-[#D4AF37] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          </Link>
+                      )}
+                      {secondaryText && (
+                          <Link to={secondaryUrl} className="group px-7 py-3.5 md:px-8 md:py-4 border border-white/20 text-white text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-white/10 hover:border-white/40 transition-all duration-300 rounded-full">
+                              {secondaryText}
+                          </Link>
+                      )}
+                  </div>
+
+                  {/* Desktop Navigation Arrows */}
+                  {slides.length > 1 && (
+                      <div className="hidden md:flex gap-3 mt-12 lg:mt-16">
+                          <button onClick={() => navigate('prev')} className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/10 bg-white/5 flex items-center justify-center hover:bg-white/10 hover:border-white/30 transition-all duration-300 group backdrop-blur-md" aria-label="Previous">
+                              <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-400 group-hover:text-white transition-colors" />
+                          </button>
+                          <button onClick={() => navigate('next')} className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/10 bg-white/5 flex items-center justify-center hover:bg-white/10 hover:border-white/30 transition-all duration-300 group backdrop-blur-md" aria-label="Next">
+                              <ArrowRight className="w-4 h-4 md:w-5 md:h-5 text-gray-400 group-hover:text-white transition-colors" />
+                          </button>
+                      </div>
+                  )}
               </div>
 
-              {/* Headline */}
-              {title && (
-                  <div className="lg:col-span-7 lg:row-start-3 flex justify-center lg:justify-start mb-0 lg:mb-2.5 z-50">
-                      <h1 ref={titleRef} className="text-[2.25rem] sm:text-4xl md:text-5xl lg:text-[3.75rem] xl:text-[4.25rem] font-serif leading-[1.05] text-[#F5F2ED] text-center lg:text-left tracking-tight w-full line-clamp-2 drop-shadow-md" dangerouslySetInnerHTML={{ __html: title.replace(/\n/g, '<br/>') }} />
-                  </div>
-              )}
-
-              {/* Character */}
-              <div className="lg:col-start-5 lg:col-span-8 lg:row-start-1 lg:row-span-7 h-[36vh] sm:h-[40vh] lg:h-full w-full relative flex items-end justify-center z-40 mb-2 mt-[-5px] lg:my-0 lg:-ml-6 xl:-ml-10" style={{ transformStyle: 'preserve-3d' }}>
+              {/* Right Side (Fake-3D Fashion Character Showcase) */}
+              <div className="w-full md:w-[55%] h-[40vh] sm:h-[45vh] md:h-full relative overflow-visible flex items-end justify-center z-20 mt-2 md:mt-0" style={{ transformStyle: 'preserve-3d' }}>
                   
                   {/* Center Spotlight */}
-                  <div className="absolute bottom-[10%] lg:bottom-[15%] left-1/2 -translate-x-1/2 w-[70%] h-[70%] lg:w-[60%] lg:h-[60%] bg-[#D4AF37]/15 blur-[50px] lg:blur-[80px] rounded-full pointer-events-none" />
+                  <div className="absolute bottom-[5%] md:bottom-[15%] left-1/2 -translate-x-1/2 w-[60%] h-[60%] md:w-[70%] md:h-[70%] bg-[#D4AF37]/15 blur-[50px] md:blur-[80px] rounded-full pointer-events-none" />
 
-                  <div ref={charactersRef} className="absolute inset-0 flex items-end justify-center" style={{ transformStyle: 'preserve-3d' }}>
+                  <div className="absolute inset-0 flex items-end justify-center" style={{ transformStyle: 'preserve-3d' }}>
                       {slides.map((slide, index) => {
                           const imageUrl = isMobile ? (slide.mobile_image || slide.image_url) : (slide.desktop_image || slide.image_url);
                           return (
                               <div 
                                   key={`${slide.id}-${index}`}
-                                  className="absolute bottom-0 w-[75%] sm:w-[65%] md:w-[55%] lg:w-[85%] xl:w-[80%] origin-bottom pointer-events-none transition-all ease-[cubic-bezier(0.25,1,0.5,1)]"
+                                  className="absolute bottom-0 w-[60%] sm:w-[50%] md:w-[75%] lg:w-[65%] xl:w-[55%] origin-bottom pointer-events-none transition-all ease-[cubic-bezier(0.25,1,0.5,1)]"
                                   style={{
                                       ...getStyleForRole(index),
                                       transitionDuration: '800ms',
@@ -314,7 +330,7 @@ export default function HeroSlider() {
                                   <img 
                                       src={imageUrl} 
                                       alt={slide.title || "Fashion Image"} 
-                                      className="w-full h-auto max-h-[36vh] sm:max-h-[40vh] lg:max-h-[70vh] object-contain object-bottom select-none drop-shadow-[0_15px_25px_rgba(0,0,0,0.6)] lg:drop-shadow-[0_20px_35px_rgba(0,0,0,0.8)]"
+                                      className="w-full h-auto object-contain object-bottom select-none drop-shadow-[0_15px_25px_rgba(0,0,0,0.6)] md:drop-shadow-[0_20px_35px_rgba(0,0,0,0.8)]"
                                       draggable={false}
                                   />
                               </div>
@@ -323,47 +339,13 @@ export default function HeroSlider() {
                   </div>
               </div>
 
-              {/* Description */}
-              <div className="lg:col-span-5 lg:row-start-4 flex justify-center lg:justify-start mb-3 lg:mb-3 z-50">
-                  <p ref={descRef} className="text-[13px] md:text-sm text-center lg:text-left text-gray-400 font-light leading-relaxed line-clamp-2 max-w-[280px] sm:max-w-sm lg:max-w-none">
-                      {desc}
-                  </p>
-              </div>
-
-              {/* Buttons */}
-              <div className="lg:col-span-6 lg:row-start-5 flex justify-center lg:justify-start mb-4 lg:mb-0 z-50 w-full sm:w-auto">
-                  <div ref={buttonsRef} className="flex flex-row justify-center lg:justify-start gap-3 w-full sm:w-auto items-center">
-                      {primaryText && (
-                          <Link to={primaryUrl} className="group relative w-full sm:w-auto text-center px-6 py-3 md:px-7 md:py-3.5 bg-[#F5F2ED] text-[#111111] text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase overflow-hidden rounded-full transition-transform hover:scale-105 duration-300 shadow-lg flex-1 sm:flex-none">
-                              <span className="relative z-10">{primaryText}</span>
-                              <div className="absolute inset-0 bg-[#D4AF37] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                          </Link>
-                      )}
-                      {secondaryText && (
-                          <Link to={secondaryUrl} className="group w-full sm:w-auto text-center px-6 py-3 md:px-7 md:py-3.5 border border-white/20 text-white text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-white/10 hover:border-white/40 transition-all duration-300 rounded-full backdrop-blur-sm shadow-lg flex-1 sm:flex-none">
-                              {secondaryText}
-                          </Link>
-                      )}
-                  </div>
-              </div>
-
-              {/* Desktop Nav */}
-              <div className="hidden lg:flex lg:col-span-6 lg:row-start-6 mt-8 xl:mt-10 z-50 gap-3">
-                  <button onClick={() => navigate('prev')} className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center hover:bg-white/10 hover:border-white/30 transition-all duration-300 group backdrop-blur-md" aria-label="Previous">
-                      <ArrowLeft className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
-                  </button>
-                  <button onClick={() => navigate('next')} className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center hover:bg-white/10 hover:border-white/30 transition-all duration-300 group backdrop-blur-md" aria-label="Next">
-                      <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
-                  </button>
-              </div>
-
-              {/* Mobile Nav */}
+              {/* Mobile Navigation Arrows */}
               {slides.length > 1 && (
-                  <div className="flex lg:hidden justify-center z-50 gap-4">
-                      <button onClick={() => navigate('prev')} className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center backdrop-blur-md" aria-label="Previous">
+                  <div className="flex md:hidden absolute bottom-4 left-1/2 -translate-x-1/2 gap-4 z-50">
+                      <button onClick={() => navigate('prev')} className="w-10 h-10 rounded-full border border-white/10 bg-[#111]/60 flex items-center justify-center backdrop-blur-md" aria-label="Previous">
                           <ArrowLeft className="w-4 h-4 text-white" />
                       </button>
-                      <button onClick={() => navigate('next')} className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center backdrop-blur-md" aria-label="Next">
+                      <button onClick={() => navigate('next')} className="w-10 h-10 rounded-full border border-white/10 bg-[#111]/60 flex items-center justify-center backdrop-blur-md" aria-label="Next">
                           <ArrowRight className="w-4 h-4 text-white" />
                       </button>
                   </div>
