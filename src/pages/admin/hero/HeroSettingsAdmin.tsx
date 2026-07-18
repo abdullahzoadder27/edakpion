@@ -63,7 +63,7 @@ const DEFAULT_SETTINGS: HeroSettings = {
   mobile_gap_char_desc: 'mb-3',
   mobile_btn_width: 'w-full',
 
-  seo_h1: 'Premium Streetwear Made to Stand Out',
+  seo_h1: '',
   updated_at: new Date().toISOString()
 };
 
@@ -87,7 +87,7 @@ export default function HeroSettingsAdmin() {
         
       if (error && error.code !== 'PGRST116') throw error;
       if (data && data.value) {
-        setSettings({ ...DEFAULT_SETTINGS, ...data.value });
+        setSettings({ ...DEFAULT_SETTINGS, ...data.value, seo_h1: "" });
       }
     } catch (err) {
       console.error('Error fetching hero settings:', err);
@@ -268,8 +268,6 @@ export default function HeroSettingsAdmin() {
           </div>
 
           <div>
-            <label className="block text-gray-400 mb-1">SEO H1 Heading</label>
-            <input type="text" name="seo_h1" value={settings.seo_h1} onChange={handleChange} className="w-full bg-[#111111] border border-white/10 rounded p-2 text-white" />
           </div>
         </div>
 

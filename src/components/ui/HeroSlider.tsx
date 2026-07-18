@@ -59,7 +59,7 @@ const DEFAULT_SETTINGS: HeroSettings = {
   mobile_gap_headline_char: 'mb-2 mt-[-5px]',
   mobile_gap_char_desc: 'mb-3',
   mobile_btn_width: 'w-full',
-  seo_h1: 'Premium Streetwear Made to Stand Out',
+  seo_h1: '',
   updated_at: ''
 };
 
@@ -108,7 +108,7 @@ export default function HeroSlider() {
 
         if (slidesRes.error) throw slidesRes.error;
         if (settingsRes.data && settingsRes.data.value) {
-            setSettings({ ...DEFAULT_SETTINGS, ...settingsRes.data.value });
+            setSettings({ ...DEFAULT_SETTINGS, ...settingsRes.data.value, seo_h1: "" });
         }
         
         let validSlides = slidesRes.data || [];
@@ -226,7 +226,8 @@ export default function HeroSlider() {
   if (!settings.is_enabled || slides.length === 0) return null;
 
   const currentSlide = slides[activeIndex];
-  const title = currentSlide.title || settings.seo_h1 || "";
+  let title = currentSlide.title || settings.seo_h1 || "";
+  if (title === "Premium Streetwear Made to Stand Out") title = "";
   const desc = currentSlide.description || "";
   const primaryText = currentSlide.primary_button_text;
   const primaryUrl = currentSlide.primary_button_url || "/shop";
