@@ -218,3 +218,74 @@ export type ProductReview = {
   created_at: string;
   updated_at: string;
 };
+
+export interface HeroSettings {
+  id: string;
+  is_enabled: boolean;
+  desktop_layout: string;
+  tablet_layout: string;
+  mobile_layout: string;
+  desktop_height: string;
+  tablet_height: string;
+  mobile_height: string;
+  container_width: string;
+  content_alignment: string;
+  character_position: string;
+  character_size: string;
+  section_padding: string;
+  gap_text_character: string;
+
+  bg_image_url?: string;
+  bg_mobile_image_url?: string;
+  bg_color: string;
+  overlay_color: string;
+  overlay_opacity: number;
+  gradient_style: string;
+  enable_spotlight: boolean;
+  enable_jamdani: boolean;
+
+  color_primary: string;
+  color_secondary: string;
+  color_accent: string;
+  color_button_bg: string;
+  color_button_text: string;
+  color_button_hover: string;
+  color_text_primary: string;
+  color_text_secondary: string;
+
+  font_family: string;
+  heading_size_desktop: string;
+  heading_size_tablet: string;
+  heading_size_mobile: string;
+  desc_size_desktop: string;
+  desc_size_mobile: string;
+  font_weight_heading: string;
+  letter_spacing: string;
+  line_height: string;
+
+  anim_floating: boolean;
+  anim_mouse_parallax: boolean;
+  anim_fade: boolean;
+  anim_slide: boolean;
+  anim_character_scale: boolean;
+  anim_speed: string;
+  anim_duration: string;
+
+  desktop_char_width: string;
+  tablet_char_width: string;
+  mobile_char_width: string;
+  desktop_text_width: string;
+  mobile_text_align: string;
+  mobile_char_align: string;
+  mobile_gap_headline_char: string;
+  mobile_gap_char_desc: string;
+  mobile_btn_width: string;
+
+  seo_h1: string;
+  seo_meta_title?: string;
+  seo_meta_desc?: string;
+  seo_image_alt?: string;
+  seo_og_image?: string;
+  
+  updated_at: string;
+}
