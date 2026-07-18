@@ -258,28 +258,30 @@ export default function HeroSlider() {
     <div className="w-full flex justify-center px-4 sm:px-6 md:px-8 mt-4 lg:mt-6 mb-8">
       <div 
         ref={containerRef}
-        className="relative w-full max-w-[1180px] h-auto lg:h-[70vh] lg:max-h-[650px] min-h-[400px] lg:min-h-[500px] bg-[#111111] text-[#F5F2ED] font-sans overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]"
+        className="relative w-full max-w-[1180px] h-auto lg:h-[70vh] lg:max-h-[650px] min-h-[400px] lg:min-h-[500px] bg-gradient-to-br from-[#0F0F10] via-[#0F0F10] to-[#1B1B1D] text-[#F8F5EF] font-sans overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         style={{ perspective: '1200px' }}
       >
-          <JamdaniPattern />
+          <div className="absolute inset-0 opacity-10 mix-blend-overlay">
+             <JamdaniPattern />
+          </div>
           
           {/* Cinematic lighting effect */}
-          <div className="absolute top-[-10%] left-[20%] w-[40vw] h-[40vw] rounded-full bg-[#ffffff]/5 blur-[120px] pointer-events-none mix-blend-screen" />
-          <div className="absolute bottom-[-20%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-[#D4AF37]/5 blur-[120px] pointer-events-none mix-blend-screen" />
+          <div className="absolute top-[-10%] left-[20%] w-[40vw] h-[40vw] rounded-full bg-[#E7B74C]/5 blur-[120px] pointer-events-none mix-blend-screen" />
+          <div className="absolute bottom-[-20%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-[#C89A2B]/10 blur-[120px] pointer-events-none mix-blend-screen" />
 
           {/* Floor reflection gradient */}
-          <div className="absolute bottom-0 left-0 right-0 h-[30%] bg-gradient-to-t from-[#0a0a0a] via-[#111111]/80 to-transparent z-30 pointer-events-none" />
+          <div className="absolute bottom-0 left-0 right-0 h-[30%] bg-gradient-to-t from-[#0F0F10] via-[#0F0F10]/80 to-transparent z-30 pointer-events-none" />
           <div className="relative w-full h-full flex flex-col lg:grid lg:grid-cols-12 lg:grid-rows-[1fr_auto_auto_auto_auto_auto_1fr] z-40 px-5 sm:px-10 lg:px-12 xl:px-16 pt-6 pb-5 lg:py-0 items-center lg:items-start text-center lg:text-left gap-0">
-              
+               
               {/* Label */}
               <div className="lg:col-span-6 lg:row-start-2 flex justify-center lg:justify-start mb-0 lg:mb-2 z-50">
                   <div className="flex flex-wrap justify-center lg:justify-start gap-2">
-                      <div className="flex items-center gap-1.5 text-[9px] md:text-[10px] font-bold tracking-[0.2em] text-[#D4AF37] uppercase bg-[#1A1A1A] px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-white/10 backdrop-blur-md shadow-lg">
+                      <div className="flex items-center gap-1.5 text-[9px] md:text-[10px] font-bold tracking-[0.2em] text-[#E7B74C] uppercase bg-[rgba(255,255,255,0.03)] px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-[rgba(255,255,255,0.08)] backdrop-blur-md shadow-lg">
                           <Award className="w-3 h-3" /> Premium Quality
                       </div>
-                      <div className="flex items-center gap-1.5 text-[9px] md:text-[10px] font-bold tracking-[0.2em] text-white/80 uppercase bg-[#1A1A1A] px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-white/10 backdrop-blur-md shadow-lg">
+                      <div className="flex items-center gap-1.5 text-[9px] md:text-[10px] font-bold tracking-[0.2em] text-[#D9D2C7] uppercase bg-[rgba(255,255,255,0.03)] px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-[rgba(255,255,255,0.08)] backdrop-blur-md shadow-lg">
                           <ShieldCheck className="w-3 h-3" /> Limited
                       </div>
                   </div>
@@ -288,7 +290,7 @@ export default function HeroSlider() {
               {/* Headline */}
               {title && (
                   <div className="lg:col-span-7 lg:row-start-3 flex justify-center lg:justify-start mb-0 lg:mb-2.5 z-50">
-                      <h1 ref={titleRef} className="text-[2.25rem] sm:text-4xl md:text-5xl lg:text-[3.75rem] xl:text-[4.25rem] font-serif leading-[1.05] text-[#F5F2ED] text-center lg:text-left tracking-tight w-full line-clamp-2 drop-shadow-md" dangerouslySetInnerHTML={{ __html: title.replace(/\n/g, '<br/>') }} />
+                      <h1 ref={titleRef} className="text-[2.25rem] sm:text-4xl md:text-5xl lg:text-[3.75rem] xl:text-[4.25rem] font-serif leading-[1.05] text-[#F8F5EF] text-center lg:text-left tracking-tight w-full line-clamp-2 drop-shadow-md" dangerouslySetInnerHTML={{ __html: title.replace(/\n/g, '<br/>') }} />
                   </div>
               )}
 
@@ -296,7 +298,7 @@ export default function HeroSlider() {
               <div className="lg:col-start-5 lg:col-span-8 lg:row-start-1 lg:row-span-7 h-[36vh] sm:h-[40vh] lg:h-full w-full relative flex items-end justify-center z-40 mb-2 mt-[-5px] lg:my-0 lg:-ml-6 xl:-ml-10" style={{ transformStyle: 'preserve-3d' }}>
                   
                   {/* Center Spotlight */}
-                  <div className="absolute bottom-[10%] lg:bottom-[15%] left-1/2 -translate-x-1/2 w-[70%] h-[70%] lg:w-[60%] lg:h-[60%] bg-[#D4AF37]/15 blur-[50px] lg:blur-[80px] rounded-full pointer-events-none" />
+                  <div className="absolute bottom-[10%] lg:bottom-[15%] left-1/2 -translate-x-1/2 w-[70%] h-[70%] lg:w-[60%] lg:h-[60%] bg-[#E7B74C]/15 blur-[50px] lg:blur-[80px] rounded-full pointer-events-none" />
 
                   <div ref={charactersRef} className="absolute inset-0 flex items-end justify-center" style={{ transformStyle: 'preserve-3d' }}>
                       {slides.map((slide, index) => {
@@ -314,7 +316,7 @@ export default function HeroSlider() {
                                   <img 
                                       src={imageUrl} 
                                       alt={slide.title || "Fashion Image"} 
-                                      className="w-full h-auto max-h-[36vh] sm:max-h-[40vh] lg:max-h-[70vh] object-contain object-bottom select-none drop-shadow-[0_15px_25px_rgba(0,0,0,0.6)] lg:drop-shadow-[0_20px_35px_rgba(0,0,0,0.8)]"
+                                      className="w-full h-auto max-h-[36vh] sm:max-h-[40vh] lg:max-h-[70vh] object-contain object-bottom select-none drop-shadow-[0_15px_25px_rgba(231,183,76,0.15)] lg:drop-shadow-[0_20px_35px_rgba(231,183,76,0.2)]"
                                       draggable={false}
                                   />
                               </div>
@@ -325,7 +327,7 @@ export default function HeroSlider() {
 
               {/* Description */}
               <div className="lg:col-span-5 lg:row-start-4 flex justify-center lg:justify-start mb-3 lg:mb-3 z-50">
-                  <p ref={descRef} className="text-[13px] md:text-sm text-center lg:text-left text-gray-400 font-light leading-relaxed line-clamp-2 max-w-[280px] sm:max-w-sm lg:max-w-none">
+                  <p ref={descRef} className="text-[13px] md:text-sm text-center lg:text-left text-[#D9D2C7] font-light leading-relaxed line-clamp-2 max-w-[280px] sm:max-w-sm lg:max-w-none">
                       {desc}
                   </p>
               </div>
@@ -334,13 +336,13 @@ export default function HeroSlider() {
               <div className="lg:col-span-6 lg:row-start-5 flex justify-center lg:justify-start mb-4 lg:mb-0 z-50 w-full sm:w-auto">
                   <div ref={buttonsRef} className="flex flex-row justify-center lg:justify-start gap-3 w-full sm:w-auto items-center">
                       {primaryText && (
-                          <Link to={primaryUrl} className="group relative w-full sm:w-auto text-center px-6 py-3 md:px-7 md:py-3.5 bg-[#F5F2ED] text-[#111111] text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase overflow-hidden rounded-full transition-transform hover:scale-105 duration-300 shadow-lg flex-1 sm:flex-none">
+                          <Link to={primaryUrl} className="group relative w-full sm:w-auto text-center px-6 py-3 md:px-7 md:py-3.5 bg-[#E7B74C] text-[#0F0F10] text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase overflow-hidden rounded-full transition-transform hover:scale-105 duration-300 shadow-lg flex-1 sm:flex-none">
                               <span className="relative z-10">{primaryText}</span>
-                              <div className="absolute inset-0 bg-[#D4AF37] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                              <div className="absolute inset-0 bg-[#F0C75A] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                           </Link>
                       )}
                       {secondaryText && (
-                          <Link to={secondaryUrl} className="group w-full sm:w-auto text-center px-6 py-3 md:px-7 md:py-3.5 border border-white/20 text-white text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-white/10 hover:border-white/40 transition-all duration-300 rounded-full backdrop-blur-sm shadow-lg flex-1 sm:flex-none">
+                          <Link to={secondaryUrl} className="group w-full sm:w-auto text-center px-6 py-3 md:px-7 md:py-3.5 border border-[rgba(255,255,255,0.08)] text-[#F8F5EF] text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-[rgba(255,255,255,0.03)] hover:border-[#E7B74C] hover:text-[#E7B74C] transition-all duration-300 rounded-full backdrop-blur-sm shadow-lg flex-1 sm:flex-none">
                               {secondaryText}
                           </Link>
                       )}
@@ -349,22 +351,22 @@ export default function HeroSlider() {
 
               {/* Desktop Nav */}
               <div className="hidden lg:flex lg:col-span-6 lg:row-start-6 mt-8 xl:mt-10 z-50 gap-3">
-                  <button onClick={() => navigate('prev')} className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center hover:bg-white/10 hover:border-white/30 transition-all duration-300 group backdrop-blur-md" aria-label="Previous">
-                      <ArrowLeft className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
+                  <button onClick={() => navigate('prev')} className="w-10 h-10 rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] flex items-center justify-center hover:bg-[rgba(255,255,255,0.08)] hover:border-[#E7B74C] transition-all duration-300 group backdrop-blur-md" aria-label="Previous">
+                      <ArrowLeft className="w-4 h-4 text-[#D9D2C7] group-hover:text-[#E7B74C] transition-colors" />
                   </button>
-                  <button onClick={() => navigate('next')} className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center hover:bg-white/10 hover:border-white/30 transition-all duration-300 group backdrop-blur-md" aria-label="Next">
-                      <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
+                  <button onClick={() => navigate('next')} className="w-10 h-10 rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] flex items-center justify-center hover:bg-[rgba(255,255,255,0.08)] hover:border-[#E7B74C] transition-all duration-300 group backdrop-blur-md" aria-label="Next">
+                      <ArrowRight className="w-4 h-4 text-[#D9D2C7] group-hover:text-[#E7B74C] transition-colors" />
                   </button>
               </div>
 
               {/* Mobile Nav */}
               {slides.length > 1 && (
                   <div className="flex lg:hidden justify-center z-50 gap-4">
-                      <button onClick={() => navigate('prev')} className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center backdrop-blur-md" aria-label="Previous">
-                          <ArrowLeft className="w-4 h-4 text-white" />
+                      <button onClick={() => navigate('prev')} className="w-10 h-10 rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] flex items-center justify-center backdrop-blur-md" aria-label="Previous">
+                          <ArrowLeft className="w-4 h-4 text-[#F8F5EF]" />
                       </button>
-                      <button onClick={() => navigate('next')} className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center backdrop-blur-md" aria-label="Next">
-                          <ArrowRight className="w-4 h-4 text-white" />
+                      <button onClick={() => navigate('next')} className="w-10 h-10 rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] flex items-center justify-center backdrop-blur-md" aria-label="Next">
+                          <ArrowRight className="w-4 h-4 text-[#F8F5EF]" />
                       </button>
                   </div>
               )}
