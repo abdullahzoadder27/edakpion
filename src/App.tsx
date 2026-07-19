@@ -69,7 +69,7 @@ const DeliveryZonesManage = lazy(() => import('./pages/admin/DeliveryZonesManage
 const SettingsManage = lazy(() => import('./pages/admin/SettingsManage'));
 
 const HeroSlidesManage = lazy(() => import('./pages/admin/HeroSlidesManage'));
-const HeroSettingsAdmin = lazy(() => import('./pages/admin/hero/HeroSettingsAdmin'));
+const HeroManagerAdmin = lazy(() => import('./pages/admin/hero/HeroManagerAdmin'));
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
 
 export default function App() {
@@ -132,8 +132,8 @@ export default function App() {
           <Route path="subscribers" element={<SubscribersManage />} />
           <Route path="testimonials" element={<TestimonialsManage />} />
           <Route path="content" element={<ContentManage />} />
-          <Route path="hero-settings" element={<HeroSettingsAdmin />} />
-          <Route path="hero-slides" element={<HeroSlidesManage />} />
+          <Route path="hero-manager" element={<HeroManagerAdmin />} />
+          
           <Route path="support" element={<SupportManage />} />
           <Route path="support/:id" element={<SupportTicketAdmin />} />
           <Route path="notifications" element={<NotificationsManage />} />
