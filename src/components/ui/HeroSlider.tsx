@@ -1,254 +1,273 @@
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { HeroSlide, HeroSettings, Product } from '../../types';
+import { HeroSlide } from '../../types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, StarHalf, ArrowRight, Play, Check } from 'lucide-react';
-
-const JamdaniPattern = () => (
-  <svg className="absolute inset-0 w-full h-full opacity-[0.03] pointer-events-none" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <pattern id="jamdani-hero" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-        <path d="M20 0 L40 20 L20 40 L0 20 Z" fill="none" stroke="currentColor" strokeWidth="0.5"/>
-        <circle cx="20" cy="20" r="2" fill="currentColor"/>
-      </pattern>
-    </defs>
-    <rect x="0" y="0" width="100%" height="100%" fill="url(#jamdani-hero)"/>
-  </svg>
-);
-
-const getColorHex = (colorName: string) => {
-  const map: Record<string, string> = {
-    'Navy': '#000080',
-    'White': '#FFFFFF',
-    'Black/White': '#111111',
-    'Green/White': '#228B22',
-    'Blue Pattern': '#4169E1',
-    'Khaki': '#F0E68C',
-    'Black': '#000000',
-    'Green': '#008000',
-    'Red': '#FF0000',
-    'Yellow': '#FFFF00',
-    'Purple': '#800080'
-  };
-  return map[colorName] || '#cccccc';
-}
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function HeroSlider() {
   const [slides, setSlides] = useState<HeroSlide[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [settings, setSettings] = useState<any>(null);
-  
   const [activeIndex, setActiveIndex] = useState(0);
-  const [selectedColor, setSelectedColor] = useState<string>('');
   const [loading, setLoading] = useState(true);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+  
+  const [primaryColor, setPrimaryColor] = useState('#000000');
+  const [accentColor, setAccentColor] = useState('#D4AF37'); // Default gold/luxury accent
+  
+  // Touch handling
+  const touchStartX = useRef<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch settings first to know which products to fetch
-        const { data: settingsData } = await supabase.from('store_settings').select('key, value').in('key', ['hero_settings', 'hero_manager']);
-        
-        let finalSettings = null;
-        if (settingsData) {
-          const managerData = settingsData.find(s => s.key === 'hero_manager')?.value;
-          const legacyData = settingsData.find(s => s.key === 'hero_settings')?.value;
-          finalSettings = managerData || legacyData;
-          if (finalSettings) setSettings(finalSettings);
-        }
-
-        let productQuery = supabase.from('products').select('*').eq('status', 'active');
-        
-        if (finalSettings?.products?.selection_mode === 'multiple' && finalSettings.products.selected_product_ids?.length > 0) {
-          productQuery = productQuery.in('id', finalSettings.products.selected_product_ids);
-        } else {
-          productQuery = productQuery.order('created_at', { ascending: false }).limit(4);
-        }
-
-        const [slidesRes, productsRes] = await Promise.all([
-          supabase.from('hero_slides').select('*').eq('is_active', true).order('display_order', { ascending: true }),
-          productQuery
+        const [slidesRes, settingsRes] = await Promise.all([
+          supabase
+            .from('hero_slides')
+            .select('*')
+            .eq('is_active', true)
+            .order('display_order', { ascending: true }),
+          supabase
+            .from('store_settings')
+            .select('key, value')
+            .in('key', ['hero_settings', 'hero_manager'])
         ]);
         
-        if (slidesRes.data) setSlides(slidesRes.data);
-        if (productsRes.data && productsRes.data.length > 0) {
-          // If we had selected IDs, preserve their order
-          let finalProducts = productsRes.data;
-          if (finalSettings?.products?.selected_product_ids?.length > 0) {
-            finalProducts = [...productsRes.data].sort((a, b) => {
-               return finalSettings.products.selected_product_ids.indexOf(a.id) - finalSettings.products.selected_product_ids.indexOf(b.id);
-            });
-          }
-          setProducts(finalProducts);
-          if (finalProducts[0].colors?.length > 0) {
-            setSelectedColor(finalProducts[0].colors[0]);
+        if (slidesRes.data) {
+          // Filter out slides that haven't reached start_date or have passed end_date
+          const now = new Date();
+          const validSlides = slidesRes.data.filter(slide => {
+            if (slide.start_date && new Date(slide.start_date) > now) return false;
+            if (slide.end_date && new Date(slide.end_date) < now) return false;
+            return true;
+          });
+          setSlides(validSlides);
+        }
+
+        if (settingsRes.data) {
+          const managerData = settingsRes.data.find(s => s.key === 'hero_manager')?.value;
+          const legacyData = settingsRes.data.find(s => s.key === 'hero_settings')?.value;
+          const settings = managerData || legacyData || {};
+          
+          if (settings.color_primary) setPrimaryColor(settings.color_primary);
+          if (settings.color_accent || settings.design?.accent_color) {
+            setAccentColor(settings.color_accent || settings.design?.accent_color);
           }
         }
       } catch (err) {
         console.error('Error fetching hero data:', err);
       } finally {
         setLoading(false);
-        setTimeout(() => setIsInitialLoad(false), 2000);
       }
     };
     fetchData();
   }, []);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (typeof window === 'undefined') return;
-    const { clientX, clientY } = e;
-    const { innerWidth, innerHeight } = window;
-    const x = (clientX / innerWidth - 0.5) * 15;
-    const y = (clientY / innerHeight - 0.5) * 15;
-    setMousePos({ x, y });
-  };
-
-  const handleProductChange = (idx: number) => {
-    if (idx === activeIndex) return;
-    setActiveIndex(idx);
-    const p = products[idx];
-    if (p?.colors?.length > 0) {
-      setSelectedColor(p.colors[0]);
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    
+    let interval: NodeJS.Timeout;
+    if (!isHovered) {
+      interval = setInterval(() => {
+        setActiveIndex((prev) => (prev + 1) % slides.length);
+      }, 5000);
     }
+    
+    return () => clearInterval(interval);
+  }, [slides.length, isHovered]);
+
+  const handleNext = () => setActiveIndex((prev) => (prev + 1) % slides.length);
+  const handlePrev = () => setActiveIndex((prev) => (prev - 1 + slides.length) % slides.length);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
   };
 
-  if (loading) return <div className="w-full min-h-[100svh] bg-transparent" />;
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX.current - touchEndX;
+    
+    // Swipe left
+    if (diff > 50) {
+      handleNext();
+    }
+    // Swipe right
+    else if (diff < -50) {
+      handlePrev();
+    }
+    touchStartX.current = null;
+  };
 
-  const primaryColor = settings?.color_primary || '#E7B74C';
-  const accentColor = settings?.design?.accent_color || settings?.color_accent || '#F0C75A';
-  const buttonBg = settings?.design?.primary_color || settings?.color_button_bg || primaryColor;
-  const textColor = settings?.design?.text_color || settings?.color_text_primary || '#F8F5EF';
-  const descColor = settings?.design?.text_color || settings?.color_text_secondary || '#D9D2C7';
-  
-  const slide = slides[0] || {} as any;
-              
-  const activeProduct = products[activeIndex];
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowLeft') handlePrev();
+    if (e.key === 'ArrowRight') handleNext();
+  };
 
-  const getStaggerDelay = (base: number) => isInitialLoad ? base : 0;
+  if (loading) {
+    return (
+      <div className="w-full h-[55vh] sm:h-[65vh] md:h-[75vh] lg:h-[85vh] bg-gray-100 animate-pulse flex items-center justify-center">
+        <span className="sr-only">Loading...</span>
+      </div>
+    );
+  }
+
+  if (slides.length === 0) {
+    return (
+      <div className="w-full h-[55vh] sm:h-[65vh] md:h-[75vh] lg:h-[85vh] bg-gray-50 flex flex-col items-center justify-center text-gray-400">
+        <div className="w-16 h-16 mb-4 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
+          <span className="text-2xl">📸</span>
+        </div>
+        <p>No active slides found.</p>
+      </div>
+    );
+  }
+
+  const activeSlide = slides[activeIndex];
 
   return (
     <section 
-      onMouseMove={handleMouseMove}
-      className="relative w-full min-h-[100svh] flex flex-col justify-center overflow-hidden pt-20 pb-8 lg:py-0"
-      style={{
-        backgroundColor: settings?.media?.background_type === 'solid' ? settings?.media?.background_color : undefined,
-        backgroundImage: settings?.media?.background_type === 'image' ? `url(${settings?.media?.background_image_url})` : undefined,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      }}
+      className="relative w-full h-[55vh] sm:h-[65vh] md:h-[75vh] lg:h-[85vh] overflow-hidden bg-black focus:outline-none group"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      aria-label="Hero Image Slider"
     >
-      {/* Background */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.5, ease: "easeOut" }}
-        className="absolute inset-0 z-0 pointer-events-none"
-      >
-        {settings?.media?.background_type === 'gradient' && (
-           <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black/10" />
-        )}
-        <motion.div 
-          animate={{ scale: [1, 1.1, 1], opacity: [0.08, 0.12, 0.08] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[10%] left-[-10%] w-[60vw] h-[60vw] rounded-full blur-[140px] mix-blend-screen" 
-          style={{ backgroundColor: primaryColor }} 
-        />
-        <motion.div 
-          animate={{ scale: [1, 1.2, 1], opacity: [0.05, 0.1, 0.05] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute bottom-[-10%] right-[-10%] w-[70vw] h-[70vw] rounded-full blur-[120px] mix-blend-screen" 
-          style={{ backgroundColor: accentColor }} 
-        />
-        {settings?.media?.enable_animated_shapes !== false && <JamdaniPattern />}
-        <div className="absolute inset-0 backdrop-blur-[2px] bg-black/10" />
-      </motion.div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeSlide.id}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+          className="absolute inset-0 w-full h-full"
+        >
+          {/* Background Image with Ken Burns Effect */}
+          <motion.div
+            initial={{ scale: 1 }}
+            animate={{ scale: 1.05 }}
+            transition={{ duration: 6, ease: "linear" }}
+            className="absolute inset-0 w-full h-full"
+          >
+            <picture className="absolute inset-0 w-full h-full">
+              <source 
+                media="(min-width: 768px)" 
+                srcSet={activeSlide.desktop_image || activeSlide.image_url || ''} 
+              />
+              <img 
+                src={activeSlide.mobile_image || activeSlide.desktop_image || activeSlide.image_url || ''}
+                alt={activeSlide.title || 'Hero Background'}
+                className="w-full h-full object-cover"
+                loading={activeIndex === 0 ? "eager" : "lazy"}
+                fetchPriority={activeIndex === 0 ? "high" : "auto"}
+              />
+            </picture>
+          </motion.div>
 
-      <div className="relative z-10 w-full h-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 flex flex-col items-center justify-center min-h-full">
-        {activeProduct && (
-          <div className="w-full flex flex-col items-center justify-center relative z-20 flex-1 h-full pt-10">
-            
-            {/* Featured Product Image */}
-            <div className="relative w-[85%] sm:w-[70%] max-w-xl mx-auto aspect-square flex-shrink-0 flex items-center justify-center">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeProduct.id}
-                  initial={{ opacity: 0, scale: 0.85, y: 30 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 1.05, filter: "blur(10px)" }}
-                  transition={{ duration: 0.7, delay: getStaggerDelay(0.1), ease: [0.25, 1, 0.5, 1] }}
-                  className="relative w-full h-full flex items-center justify-center perspective-[1200px]"
-                >
-                  <motion.div
-                    animate={{ y: [0, -15, 0], rotateZ: [0, 1.5, -1.5, 0] }}
-                    transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-                    whileHover={{ scale: 1.05, rotateX: mousePos.y, rotateY: -mousePos.x }}
-                    className="relative z-20 w-full h-full flex items-center justify-center will-change-transform cursor-pointer"
+          {/* Gradient Overlay for Text Readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/60 pointer-events-none" />
+
+          {/* Content Container */}
+          <div className="absolute inset-0 flex items-end">
+            <div className="w-full max-w-[1440px] mx-auto px-[20px] pb-[24px] sm:px-[5%] sm:pb-[8%] lg:px-[7%] lg:pb-[10%] relative z-10">
+              <motion.div 
+                className="max-w-2xl text-white flex flex-col items-start"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              >
+                {activeSlide.badge && (
+                  <span 
+                    className="uppercase tracking-[0.2em] text-[10px] sm:text-xs font-semibold mb-3 sm:mb-4 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full border border-white/20"
+                    style={{ color: accentColor }}
                   >
-                    <img 
-                      src={activeProduct.images[0]} 
-                      alt={activeProduct.name}
-                      className="w-full h-full object-contain drop-shadow-[0_30px_45px_rgba(0,0,0,0.5)]"
-                      draggable={false}
-                      fetchPriority="high"
-                      loading="eager"
-                    />
-                    <motion.div 
-                      className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 mix-blend-overlay pointer-events-none"
-                      whileHover={{ opacity: 1, x: mousePos.x * 3, y: mousePos.y * 3 }}
-                      transition={{ duration: 0.4 }}
-                    />
-                  </motion.div>
+                    {activeSlide.badge}
+                  </span>
+                )}
+                
+                {activeSlide.title && (
+                  <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight mb-3 sm:mb-5 line-clamp-2 drop-shadow-md">
+                    {activeSlide.title}
+                  </h2>
+                )}
+                
+                {activeSlide.description && (
+                  <p className="text-base sm:text-lg lg:text-xl text-white/90 mb-6 sm:mb-8 line-clamp-2 font-medium drop-shadow-md max-w-xl">
+                    {activeSlide.description}
+                  </p>
+                )}
+
+                <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                  {activeSlide.primary_button_text && (
+                    <Link
+                      to={activeSlide.primary_button_url || '#'}
+                      className="w-full sm:w-auto text-center px-8 py-3.5 hover:opacity-90 hover:scale-[1.02] active:scale-95 transition-all duration-300 font-semibold rounded-full shadow-lg"
+                      style={{ backgroundColor: primaryColor, color: '#FFFFFF' }}
+                      target={activeSlide.primary_button_url?.startsWith('http') ? '_blank' : undefined}
+                      rel={activeSlide.primary_button_url?.startsWith('http') ? 'noopener noreferrer' : undefined}
+                    >
+                      {activeSlide.primary_button_text}
+                    </Link>
+                  )}
                   
-                  {/* Floor Shadow */}
-                  <motion.div 
-                    className="absolute bottom-[-5%] left-1/2 -translate-x-1/2 w-[65%] h-[20px] bg-black/70 blur-[24px] rounded-[100%] pointer-events-none -z-10"
-                    animate={{ scaleX: [1, 0.85, 1], opacity: [0.7, 0.4, 0.7] }}
-                    transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-                  />
-                </motion.div>
-              </AnimatePresence>
+                  {activeSlide.secondary_button_text && (
+                    <Link
+                      to={activeSlide.secondary_button_url || '#'}
+                      className="w-full sm:w-auto text-center px-8 py-3.5 bg-black/20 hover:bg-white hover:text-black backdrop-blur-md border border-white text-white hover:scale-[1.02] active:scale-95 transition-all duration-300 font-semibold rounded-full shadow-lg"
+                      target={activeSlide.secondary_button_url?.startsWith('http') ? '_blank' : undefined}
+                      rel={activeSlide.secondary_button_url?.startsWith('http') ? 'noopener noreferrer' : undefined}
+                    >
+                      {activeSlide.secondary_button_text}
+                    </Link>
+                  )}
+                </div>
+              </motion.div>
             </div>
-
-            {/* Thumbnails */}
-            <div className="w-full flex justify-center items-end pointer-events-none mt-auto pb-4 lg:pb-8">
-              <div className="w-full max-w-[90vw] sm:max-w-[80vw] lg:w-auto pointer-events-auto shrink-0 mx-auto">
-                <motion.div 
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: getStaggerDelay(0.3), ease: "easeOut" }}
-                  className="flex gap-3 lg:gap-4 overflow-x-auto pb-4 pt-4 snap-x snap-mandatory px-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] mx-auto justify-start lg:justify-center"
-                >
-                  {products.map((p, idx) => {
-                    const isActive = idx === activeIndex;
-                    return (
-                      <button 
-                        key={p.id}
-                        onClick={() => handleProductChange(idx)}
-                        className={`relative group flex flex-col items-center shrink-0 w-[85px] sm:w-[110px] xl:w-[120px] rounded-[2rem] pt-3 pb-2.5 transition-all duration-500 snap-center
-                          ${isActive ? 'bg-white/10 border-white/30 scale-105 shadow-[0_15px_30px_rgba(0,0,0,0.3)]' : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/20 shadow-lg'}
-                          border backdrop-blur-md
-                        `}
-                      >
-                        <div className="w-14 h-14 sm:w-20 sm:h-20 relative flex items-center justify-center mb-1.5">
-                          <img src={p.images[0]} alt={p.name} loading="lazy" className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500 drop-shadow-lg" />
-                        </div>
-                        <span className="text-xs sm:text-sm font-bold text-white mt-1">৳{p.price}</span>
-                        <div className="mt-1.5 w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors duration-300" style={{ backgroundColor: isActive ? primaryColor : 'rgba(255,255,255,0.1)', color: isActive ? '#000' : '#fff' }}>
-                           {isActive ? <Check className="w-3 h-3 sm:w-4 sm:h-4" /> : <span className="text-base sm:text-lg leading-none font-light mb-0.5">+</span>}
-                        </div>
-                      </button>
-                    )
-                  })}
-                </motion.div>
-              </div>
-            </div>
-
           </div>
-        )}
+        </motion.div>
+      </AnimatePresence>
 
-      </div>
+      {/* Desktop Navigation Arrows */}
+      {slides.length > 1 && (
+        <>
+          <button 
+            onClick={(e) => { e.preventDefault(); handlePrev(); }}
+            className="hidden lg:flex absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          
+          <button 
+            onClick={(e) => { e.preventDefault(); handleNext(); }}
+            className="hidden lg:flex absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Next slide"
+          >
+            <ChevronRight size={24} />
+          </button>
+        </>
+      )}
+
+      {/* Pagination Dots */}
+      {slides.length > 1 && (
+        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
+          {slides.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setActiveIndex(idx)}
+              aria-label={`Go to slide ${idx + 1}`}
+              aria-current={idx === activeIndex}
+              className={`transition-all duration-500 rounded-full ${
+                idx === activeIndex 
+                  ? 'w-8 h-1.5 bg-white' 
+                  : 'w-1.5 h-1.5 bg-white/50 hover:bg-white/80'
+              }`}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 }

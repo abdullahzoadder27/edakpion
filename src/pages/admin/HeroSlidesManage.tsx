@@ -224,12 +224,12 @@ export default function HeroSlidesManage() {
       const filePath = `hero_slides/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('products') // using existing bucket if hero_slides doesn't exist
+        .from('product-images')
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
-      const { data } = supabase.storage.from('products').getPublicUrl(filePath);
+      const { data } = supabase.storage.from('product-images').getPublicUrl(filePath);
       
       setFormData(prev => ({
         ...prev,
