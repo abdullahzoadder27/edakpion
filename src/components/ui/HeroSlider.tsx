@@ -37,7 +37,7 @@ const getColorHex = (colorName: string) => {
 export default function HeroSlider() {
   const [slides, setSlides] = useState<HeroSlide[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
-  const [settings, setSettings] = useState<HeroSettings | null>(null);
+  const [settings, setSettings] = useState<any>(null);
   
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedColor, setSelectedColor] = useState<string>('');
