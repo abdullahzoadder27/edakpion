@@ -9,6 +9,7 @@ import BlogCard from '../components/ui/BlogCard';
 import { supabase } from '../lib/supabase';
 
 import HeroSlider from '../components/ui/HeroSlider';
+import NewsletterSection from '../components/ui/NewsletterSection';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('New Arrival');
@@ -308,39 +309,8 @@ export default function Home() {
             </div>
           )}
         </div>
-
-        {/* Subscribe Section */}
-        <div className="px-6 mb-8">
-          <div className="bg-white border border-[#E8E4DE] rounded-[32px] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between relative overflow-hidden">
-             <div className="md:w-1/2 relative z-10 mb-8 md:mb-0">
-               <h2 className="text-4xl md:text-5xl font-serif text-[#0F3D2E] mb-2 leading-tight">SUBSCRIBE<br/>& GET 10% OFF</h2>
-               <p className="text-gray-500 mb-8 text-sm font-light">On Your First Order</p>
-               
-               <form onSubmit={handleSubscribe} className="flex w-full max-w-md bg-[#F5F2ED] rounded-full p-1 border border-[#E8E4DE]">
-                 <input 
-                   type="email" 
-                   value={email}
-                   onChange={e => setEmail(e.target.value)}
-                   placeholder="Your Email Address" 
-                   className="flex-1 px-4 py-3 outline-none rounded-l-full text-sm bg-transparent"
-                   required
-                 />
-                 <button 
-                   type="submit" 
-                   className="bg-[#0F3D2E] text-white px-6 py-2 rounded-full font-bold text-xs tracking-widest uppercase hover:bg-[#154636] transition-colors"
-                 >
-                   SUBSCRIBE
-                 </button>
-               </form>
-             </div>
-             
-             <div className="md:w-1/2 flex justify-end">
-                <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1000&auto=format&fit=crop" alt="App Preview" className="w-64 h-auto rounded-3xl shadow-lg mix-blend-multiply border-4 border-white" />
-             </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  );
+</div>
+<NewsletterSection />
+</div>
+);
 }
