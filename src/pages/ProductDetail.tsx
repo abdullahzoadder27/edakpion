@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { getBaseOrganization, getBaseWebSite, getBreadcrumbList, getProductSchema } from '../lib/schema';
+
 import { Star, Truck, RefreshCcw, Shield, Heart } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useCartStore } from '../lib/store';
@@ -151,9 +153,23 @@ export default function ProductDetail() {
   return (
     <div className="bg-[#F5F2ED] min-h-screen py-12">
       <Helmet>
-        <title>{product.name} | Premium Streetwear Bangladesh</title>
-        <meta name="description" content={`Buy ${product.name} at Edakpion, the best premium streetwear brand in Bangladesh. Quality urban fashion.`} />
+        <title>{product.name} | EDAKPION - Premium Men's Clothing</title>
+        <meta name="description" content={`Buy ${product.name} at EDAKPION, the premium men's clothing brand in Bangladesh. Quality fashion and everyday essentials.`} />
         
+      
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              getBaseOrganization(),
+              getBaseWebSite(),
+              getBreadcrumbList([
+                { name: "Home", url: "/" },
+                { name: "Shop", url: "/shop" },
+                { name: product.name, url: `/product/${product.id}` }
+              ]),
+              getProductSchema(product, [])
+            ]
+          }) }} />
       </Helmet>
       <div className="max-w-7xl mx-auto px-6">
         

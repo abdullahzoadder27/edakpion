@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { getBaseOrganization, getBaseWebSite, getBreadcrumbList } from '../lib/schema';
+
 import { ThumbsUp, Truck, RefreshCcw, ShieldCheck, DollarSign, Clock, HelpCircle, Star } from 'lucide-react';
 import { getProducts, getPublishedBlogs } from '../lib/api';
 import { Product, Blog } from '../types';
@@ -27,7 +29,7 @@ export default function Home() {
     
     const fetchSettings = async () => {
       try {
-        const { data } = await supabase.from('store_settings').select('value').eq('key', 'homepage_cms').single();
+        const { data } = await supabase.from('store_settings').select('value').eq('key', 'homepage_cms').maybeSingle();
         if (data && data.value) setContent(data.value);
       } catch (err) {
         console.warn('Error fetching homepage CMS:', err);
@@ -56,126 +58,40 @@ export default function Home() {
   return (
     <div className="bg-[#F5F2ED] pb-16">
       <Helmet>
-        <title>Premium Men's Fashion Bangladesh | EDAKPION</title>
-        <meta name="description" content="EDAKPION is a premium men's fashion & clothing brand in Bangladesh offering timeless shirts, polos, panjabis, hoodies and modern essentials crafted with premium quality, comfort and confidence." />
-        <script type="application/ld+json">
-          {`{
+        <title>EDAKPION | Premium Men's Clothing Online in Bangladesh</title>
+        <meta name="description" content="Discover premium men's shirts, t-shirts, pants, and everyday essentials at EDAKPION. Shop high-quality men's clothing online in Bangladesh with modern styles, secure checkout, and fast nationwide delivery." />
+        <meta name="keywords" content="Premium Men's Clothing Online in Bangladesh, Men's Clothing Online Bangladesh, Buy Men's Clothing Online Bangladesh, Premium Men's Shirts Bangladesh, Men's T-Shirts Bangladesh, Men's Pants Bangladesh, Online Fashion Store Bangladesh" />
+        <meta property="og:title" content="EDAKPION | Premium Men's Clothing Online in Bangladesh" />
+        <meta property="og:description" content="Discover premium men's shirts, t-shirts, pants, and everyday essentials at EDAKPION. Shop high-quality men's clothing online in Bangladesh with modern styles, secure checkout, and fast nationwide delivery." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://edakpion.com/" />
+        <meta property="og:image" content="https://edakpion.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="EDAKPION | Premium Men's Clothing Online in Bangladesh" />
+        <meta name="twitter:description" content="Discover premium men's shirts, t-shirts, pants, and everyday essentials at EDAKPION. Shop high-quality men's clothing online in Bangladesh with modern styles, secure checkout, and fast nationwide delivery." />
+        <meta name="twitter:image" content="https://edakpion.com/og-image.jpg" />
+        <link rel="canonical" href="https://edakpion.com/" />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
             "@context": "https://schema.org",
             "@graph": [
-              {
-                "@type": ["Organization", "Brand", "ClothingBrand"],
-                "@id": "https://edakpion.com/#organization",
-                "name": "EDAKPION",
-                "alternateName": "EDAKPION – Premium Men's Fashion & Clothing Brand in Bangladesh",
-                "url": "https://edakpion.com/",
-                "logo": {
-                  "@type": "ImageObject",
-                  "@id": "https://edakpion.com/#logo",
-                  "inLanguage": "en-BD",
-                  "url": "https://edakpion.com/logo.png",
-                  "contentUrl": "https://edakpion.com/logo.png",
-                  "width": 512,
-                  "height": 512,
-                  "caption": "EDAKPION Logo"
-                },
-                "image": {
-                  "@id": "https://edakpion.com/#logo"
-                },
-                "description": "EDAKPION is a premium men's fashion & clothing brand in Bangladesh offering timeless shirts, polos, panjabis, hoodies and modern essentials crafted with premium quality, comfort and confidence.",
-                "sameAs": [
-                  "https://www.facebook.com/edakpion",
-                  "https://www.instagram.com/edakpion"
-                ]
-              },
-              {
-                "@type": "WebSite",
-                "@id": "https://edakpion.com/#website",
-                "url": "https://edakpion.com/",
-                "name": "EDAKPION",
-                "description": "Premium Men's Fashion Bangladesh",
-                "publisher": {
-                  "@id": "https://edakpion.com/#organization"
-                },
-                "inLanguage": "en-BD",
-                "potentialAction": {
-                  "@type": "SearchAction",
-                  "target": {
-                    "@type": "EntryPoint",
-                    "urlTemplate": "https://edakpion.com/shop?q={search_term_string}"
-                  },
-                  "query-input": "required name=search_term_string"
-                }
-              },
+              getBaseOrganization(),
+              getBaseWebSite(),
+              getBreadcrumbList([{ name: "Home", url: "/" }]),
               {
                 "@type": "WebPage",
                 "@id": "https://edakpion.com/#webpage",
                 "url": "https://edakpion.com/",
-                "name": "Premium Men's Fashion Bangladesh | EDAKPION",
-                "description": "EDAKPION is a premium men's fashion & clothing brand in Bangladesh offering timeless shirts, polos, panjabis, hoodies and modern essentials crafted with premium quality, comfort and confidence.",
+                "name": "EDAKPION | Premium Men's Clothing Online in Bangladesh",
+                "description": "Discover premium men's shirts, t-shirts, pants, and everyday essentials at EDAKPION. Shop high-quality men's clothing online in Bangladesh with modern styles, secure checkout, and fast nationwide delivery.",
                 "isPartOf": {
                   "@id": "https://edakpion.com/#website"
                 },
                 "about": {
                   "@id": "https://edakpion.com/#organization"
-                },
-                "primaryImageOfPage": {
-                  "@type": "ImageObject",
-                  "@id": "https://edakpion.com/#primaryimage",
-                  "inLanguage": "en-BD",
-                  "url": "https://images.unsplash.com/photo-1516826957135-700ede19c6ce?q=80&w=1200&auto=format&fit=crop",
-                  "contentUrl": "https://images.unsplash.com/photo-1516826957135-700ede19c6ce?q=80&w=1200&auto=format&fit=crop",
-                  "caption": "EDAKPION Premium Men's Fashion"
-                },
-                "image": {
-                  "@id": "https://edakpion.com/#primaryimage"
-                },
-                "inLanguage": "en-BD",
-                "potentialAction": {
-                  "@type": "ReadAction",
-                  "target": ["https://edakpion.com/"]
-                },
-                "mainEntity": {
-                  "@id": "https://edakpion.com/#onlinestore"
-                }
-              },
-              {
-                "@type": "OnlineStore",
-                "@id": "https://edakpion.com/#onlinestore",
-                "name": "EDAKPION Online Store",
-                "description": "Shop premium men's fashion, including shirts, polos, panjabis, hoodies and modern essentials at EDAKPION.",
-                "url": "https://edakpion.com/shop",
-                "parentOrganization": {
-                  "@id": "https://edakpion.com/#organization"
-                },
-                "image": {
-                  "@id": "https://edakpion.com/#primaryimage"
-                },
-                "areaServed": "BD"
-              },
-              {
-                "@type": "BreadcrumbList",
-                "@id": "https://edakpion.com/#breadcrumb",
-                "itemListElement": [
-                  {
-                    "@type": "ListItem",
-                    "position": 1,
-                    "name": "Home",
-                    "item": "https://edakpion.com/"
-                  }
-                ]
-              },
-              {
-                "@type": "WebPageElement",
-                "@id": "https://edakpion.com/#hero",
-                "name": "Hero Section",
-                "description": "Featured premium fashion collections and modern essentials.",
-                "isPartOf": {
-                  "@id": "https://edakpion.com/#webpage"
                 }
               }
             ]
-          }`}
-        </script>
+          }) }} />
       </Helmet>
       {/* Hero Section */}
       <div className="px-6 pt-6">
@@ -214,6 +130,16 @@ export default function Home() {
           </div>
         </div>
 
+        
+        {/* Brand Intro / SEO Section */}
+        <div className="px-6 mb-16 text-center max-w-4xl mx-auto">
+          <h1 className="text-3xl md:text-4xl font-serif text-[#0F3D2E] mb-6">
+            EDAKPION | Premium Men's Clothing Online in Bangladesh
+          </h1>
+          <p className="text-gray-600 text-sm md:text-base leading-relaxed">
+            Discover the ultimate destination for <strong>premium men's clothing online in Bangladesh</strong>. At EDAKPION, we blend contemporary fashion with unparalleled comfort, offering an exclusive collection of high-quality shirts, t-shirts, pants, and everyday essentials. Whether you're looking for sharp casual wear or timeless urban styles, our carefully crafted pieces are designed to elevate your wardrobe. Experience modern styles, a secure checkout process, and fast nationwide delivery every time you shop with us.
+          </p>
+        </div>
         {/* Filter Tabs & Products */}
         <div className="px-6 mb-16">
           <div className="flex items-center justify-between mb-6 shrink-0">

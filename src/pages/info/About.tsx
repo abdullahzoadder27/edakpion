@@ -1,12 +1,27 @@
 import { Helmet } from 'react-helmet-async';
+import { getBaseOrganization, getBaseWebSite, getBreadcrumbList, getAboutPageSchema } from '../../lib/schema';
+
 import { Link } from 'react-router-dom';
 
 export default function About() {
   return (
     <div className="w-full">
       <Helmet>
-        <title>About EDAKPION | Premium Clothing</title>
-        <meta name="description" content="Learn about EDAKPION, a premium clothing brand focused on timeless style and unmatched quality." />
+        <title>About EDAKPION | Premium Men's Clothing</title>
+        <meta name="description" content="Learn about EDAKPION, a premium men's clothing brand in Bangladesh focused on timeless style and unmatched quality." />
+      
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              getBaseOrganization(),
+              getBaseWebSite(),
+              getBreadcrumbList([
+                { name: "Home", url: "/" },
+                { name: "About", url: "/about" }
+              ]),
+              getAboutPageSchema()
+            ]
+          }) }} />
       </Helmet>
       
       

@@ -6,6 +6,8 @@ import { ArrowLeft, Calendar, User } from 'lucide-react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Helmet } from 'react-helmet-async';
+import { getBaseOrganization, getBaseWebSite, getBreadcrumbList, getBlogPostingSchema } from '../lib/schema';
+
 
 export default function BlogDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -40,6 +42,20 @@ export default function BlogDetail() {
       <Helmet>
         <title>{blog.title} | Edakpion Streetwear</title>
         <meta name="description" content={blog.excerpt || `Read about ${blog.title} at Edakpion.`} />
+      
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              getBaseOrganization(),
+              getBaseWebSite(),
+              getBreadcrumbList([
+                { name: "Home", url: "/" },
+                { name: "Blog", url: "/blog" },
+                { name: blog.title, url: `/blog/${blog.id}` }
+              ]),
+              getBlogPostingSchema(blog)
+            ]
+          }) }} />
       </Helmet>
       {blog.cover_image_url && (
         <div className="w-full h-[400px] md:h-[600px] relative">

@@ -164,9 +164,7 @@ export default function ProductReviews({ productId, productName, productImage, p
     <div className="py-12 border-t border-gray-100" id="reviews">
       {structuredData && (
         <Helmet>
-          <script type="application/ld+json">
-            {JSON.stringify(structuredData)}
-          </script>
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
         </Helmet>
       )}
 

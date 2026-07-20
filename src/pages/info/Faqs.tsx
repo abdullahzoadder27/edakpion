@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { getBaseOrganization, getBaseWebSite, getBreadcrumbList, getFAQPageSchema } from '../../lib/schema';
+
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 const faqData = [
@@ -49,6 +51,19 @@ export default function Faqs() {
       <Helmet>
         <title>FAQs | EDAKPION</title>
         <meta name="description" content="Find answers to common questions about ordering, payment, shipping, returns, and sizing." />
+      
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              getBaseOrganization(),
+              getBaseWebSite(),
+              getBreadcrumbList([
+                { name: "Home", url: "/" },
+                { name: "FAQs", url: "/faqs" }
+              ]),
+              getFAQPageSchema(faqData)
+            ]
+          }) }} />
       </Helmet>
       
       

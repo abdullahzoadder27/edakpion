@@ -4,6 +4,8 @@ import { Blog } from '../types';
 import BlogCard from '../components/ui/BlogCard';
 import { Search } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
+import { getBaseOrganization, getBaseWebSite, getBreadcrumbList, getBlogSchema } from '../lib/schema';
+
 
 export default function BlogList() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -33,6 +35,19 @@ export default function BlogList() {
       <Helmet>
         <title>Streetwear Blog & Style Guides | Edakpion Bangladesh</title>
         <meta name="description" content="Read the latest news, style guides, and fashion trends from Edakpion. Your source for premium streetwear culture in Bangladesh." />
+      
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              getBaseOrganization(),
+              getBaseWebSite(),
+              getBreadcrumbList([
+                { name: "Home", url: "/" },
+                { name: "Blog", url: "/blog" }
+              ]),
+              getBlogSchema("/blog", "EDAKPION Blog", "Stories, style guides, and news from the world of EDAKPION.", blogs)
+            ]
+          }) }} />
       </Helmet>
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-12">

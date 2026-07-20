@@ -1,4 +1,6 @@
 import { Helmet } from 'react-helmet-async';
+import { getBaseOrganization, getBaseWebSite, getBreadcrumbList, getMerchantReturnPolicy } from '../../lib/schema';
+
 import { Link } from 'react-router-dom';
 import { RefreshCcw, CheckCircle, XCircle } from 'lucide-react';
 
@@ -8,6 +10,19 @@ export default function Returns() {
       <Helmet>
         <title>Return Policy | EDAKPION</title>
         <meta name="description" content="Learn about EDAKPION's 7-day return and exchange policy." />
+      
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              getBaseOrganization(),
+              getBaseWebSite(),
+              getBreadcrumbList([
+                { name: "Home", url: "/" },
+                { name: "Return Policy", url: "/returns" }
+              ]),
+              getMerchantReturnPolicy()
+            ]
+          }) }} />
       </Helmet>
       
       

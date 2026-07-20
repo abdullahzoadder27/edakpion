@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Filter, ChevronDown, Loader2 } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { getBaseOrganization, getBaseWebSite, getBreadcrumbList, getCollectionSchema } from '../lib/schema';
+
 import { getProducts } from '../lib/api';
 import { Product } from '../types';
 import ProductCard from '../components/ui/ProductCard';
@@ -56,8 +58,21 @@ export default function Shop() {
   return (
     <div className="bg-[#F5F2ED] min-h-screen pb-16">
       <Helmet>
-        <title>Shop {getPageTitle()} | Premium Streetwear Bangladesh | Edakpion</title>
-        <meta name="description" content="Shop premium streetwear in Bangladesh. Explore oversized tees, hoodies, and the latest urban clothing collections at Edakpion." />
+        <title>Shop {getPageTitle()} | EDAKPION - Premium Men's Clothing</title>
+        <meta name="description" content="Shop premium men's clothing in Bangladesh. Explore high-quality shirts, t-shirts, and everyday essentials at EDAKPION." />
+      
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              getBaseOrganization(),
+              getBaseWebSite(),
+              getBreadcrumbList([
+                { name: "Home", url: "/" },
+                { name: "Shop", url: "/shop" }
+              ]),
+              getCollectionSchema("/shop", "Shop EDAKPION", "Premium Men's Clothing in Bangladesh", products)
+            ]
+          }) }} />
       </Helmet>
       {/* Shop Header */}
       <div className="bg-[#0F3D2E] text-white py-12 md:py-20 mb-8">

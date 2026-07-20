@@ -72,7 +72,9 @@ export default function HeroSlider() {
       }, 5000);
     }
     
-    return () => clearInterval(interval);
+    
+
+  return () => clearInterval(interval);
   }, [slides.length, isHovered]);
 
   const handleNext = () => setActiveIndex((prev) => (prev + 1) % slides.length);
@@ -104,7 +106,9 @@ export default function HeroSlider() {
   };
 
   if (loading) {
-    return (
+    
+
+  return (
       <div className="w-full h-[55vh] sm:h-[65vh] md:h-[75vh] lg:h-[85vh] bg-gray-100 animate-pulse flex items-center justify-center">
         <span className="sr-only">Loading...</span>
       </div>
@@ -112,16 +116,34 @@ export default function HeroSlider() {
   }
 
   if (slides.length === 0) {
-    return (
-      <div className="w-full h-[55vh] sm:h-[65vh] md:h-[75vh] lg:h-[85vh] bg-gray-50 flex flex-col items-center justify-center text-gray-400">
-        <div className="w-16 h-16 mb-4 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
-          <span className="text-2xl">📸</span>
+    
+
+  return (
+      <section className="relative w-full h-[55vh] sm:h-[65vh] md:h-[75vh] lg:h-[85vh] overflow-hidden bg-[#0F3D2E] flex items-center">
+        <div className="absolute inset-0 w-full h-full">
+          <img src="https://images.unsplash.com/photo-1516257984-b1b4d707412e?q=80&w=2000&auto=format&fit=crop" alt="Premium Men's Clothing Online in Bangladesh" className="w-full h-full object-cover opacity-40" />
         </div>
-        <p>No active slides found.</p>
-      </div>
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 w-full flex flex-col items-start">
+          <span className="uppercase tracking-[0.2em] text-[10px] sm:text-xs font-semibold mb-3 sm:mb-4 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full border border-white/20 text-white">
+            EDAKPION EXCLUSIVE
+          </span>
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight mb-3 sm:mb-5 line-clamp-3 drop-shadow-md text-white max-w-3xl">
+            Premium Men's Clothing Online in Bangladesh
+          </h2>
+          <p className="text-base sm:text-lg lg:text-xl text-white/90 mb-6 sm:mb-8 font-medium drop-shadow-md max-w-xl">
+            Discover modern styles, everyday essentials, and superior quality crafted for the modern man. Shop the finest urban fashion today.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+            <Link to="/shop" className="w-full sm:w-auto text-center px-8 py-3.5 bg-white text-[#0F3D2E] hover:opacity-90 hover:scale-[1.02] active:scale-95 transition-all duration-300 font-semibold rounded-full shadow-lg">
+              Shop Collection
+            </Link>
+          </div>
+        </div>
+      </section>
     );
   }
 
+  
   const activeSlide = slides[activeIndex];
 
   return (
@@ -194,8 +216,13 @@ export default function HeroSlider() {
                 )}
                 
                 {activeSlide.description && (
-                  <p className="text-base sm:text-lg lg:text-xl text-white/90 mb-6 sm:mb-8 line-clamp-2 font-medium drop-shadow-md max-w-xl">
-                    {activeSlide.description}
+                  <p className="text-base sm:text-lg lg:text-xl text-white/90 mb-6 sm:mb-8 line-clamp-3 font-medium drop-shadow-md max-w-xl">
+                    {activeSlide.description} Discover premium men's clothing online in Bangladesh.
+                  </p>
+                )}
+                {!activeSlide.description && (
+                  <p className="text-base sm:text-lg lg:text-xl text-white/90 mb-6 sm:mb-8 line-clamp-3 font-medium drop-shadow-md max-w-xl">
+                    Discover premium men's clothing online in Bangladesh with modern styles and fast delivery.
                   </p>
                 )}
 
