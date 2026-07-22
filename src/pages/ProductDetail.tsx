@@ -26,6 +26,35 @@ export default function ProductDetail() {
   const [activeTab, setActiveTab] = useState('description');
   const addItem = useCartStore((state) => state.addItem);
 
+  // Gallery state
+  const [activeImage, setActiveImage] = useState<string>('');
+  const [validImages, setValidImages] = useState<string[]>([]);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStart === null) return;
+    const touchEnd = e.changedTouches[0].clientX;
+    const diff = touchStart - touchEnd;
+    
+    if (Math.abs(diff) > 50 && validImages.length > 1) {
+      const currentIndex = validImages.indexOf(activeImage);
+      if (diff > 0) {
+        // Swipe left -> next image
+        const nextIndex = (currentIndex + 1) % validImages.length;
+        setActiveImage(validImages[nextIndex]);
+      } else {
+        // Swipe right -> prev image
+        const prevIndex = (currentIndex - 1 + validImages.length) % validImages.length;
+        setActiveImage(validImages[prevIndex]);
+      }
+    }
+    setTouchStart(null);
+  };
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -41,6 +70,14 @@ export default function ProductDetail() {
         setProduct(productData);
         
         if (productData) {
+          const imgs = Array.from(new Set((productData.images || []).filter((img: any) => typeof img === 'string' && img.trim() !== ''))) as string[];
+          setValidImages(imgs);
+          if (imgs.length > 0) {
+            setActiveImage(imgs[0]);
+          } else {
+            setActiveImage('https://placehold.co/800x1000/F5F2ED/0F3D2E?text=No+Image');
+          }
+
           setSelectedSize(productData.sizes?.[0] || '');
           setSelectedColor(productData.colors?.[0] || '');
           
@@ -184,18 +221,49 @@ export default function ProductDetail() {
 
         <div className="flex flex-col md:flex-row gap-12 mb-20">
           {/* Images */}
-          <div className="md:w-1/2 flex gap-4">
-            <div className="flex flex-col gap-4 w-20">
-              {product.images?.map((img, i) => (
-                <div key={i} className="w-20 h-24 bg-white border border-[#E8E4DE] rounded-xl overflow-hidden cursor-pointer hover:border-[#0F3D2E]">
-                  <img loading="lazy" decoding="async" src={img} alt="" className="w-full h-full object-cover" />
-                </div>
-              ))}
-            </div>
-            <div className="flex-1 bg-white border border-[#E8E4DE] rounded-[32px] overflow-hidden h-[600px]">
-              {product.images?.[0] && (
-                <SeoImage src={product.images[0]} title={product.name} className="w-full h-full object-cover" />
-              )}
+          <div className="md:w-1/2 flex flex-col-reverse md:flex-row gap-4 lg:gap-6">
+            {validImages.length > 1 && (
+              <div className="flex md:flex-col gap-3 md:gap-4 overflow-x-auto md:overflow-y-auto w-full md:w-24 snap-x snap-mandatory scrollbar-hide py-2 md:py-0 pr-4 md:pr-0">
+                {validImages.map((img, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActiveImage(img)}
+                    className={`shrink-0 w-20 md:w-24 h-24 md:h-28 bg-white border-2 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 snap-center focus:outline-none ${
+                      activeImage === img
+                        ? 'border-[#0F3D2E] scale-105 shadow-md ring-2 ring-[#0F3D2E]/20'
+                        : 'border-[#E8E4DE] hover:border-[#0F3D2E]/50 hover:scale-[1.02]'
+                    }`}
+                    aria-label={`View image ${i + 1}`}
+                  >
+                    <img 
+                      loading="lazy" 
+                      decoding="async" 
+                      src={img} 
+                      alt={`${product.name} thumbnail ${i + 1}`} title={`${product.name} thumbnail ${i + 1}`} 
+                      className="w-full h-full object-cover" 
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://placehold.co/400x500/F5F2ED/0F3D2E?text=Error';
+                      }}
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+            
+            <div 
+              className="flex-1 bg-white border border-[#E8E4DE] rounded-[32px] overflow-hidden h-[450px] sm:h-[500px] md:h-[650px] relative group touch-pan-y"
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+            >
+              <img 
+                key={activeImage}
+                src={activeImage} 
+                alt={product.name} title={product.name} 
+                className="w-full h-full object-cover animate-in fade-in duration-300 transition-transform duration-700 ease-out group-hover:scale-105" 
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://placehold.co/800x1000/F5F2ED/0F3D2E?text=Error';
+                }}
+              />
             </div>
           </div>
           

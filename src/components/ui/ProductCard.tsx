@@ -121,16 +121,22 @@ export default function ProductCard({ product }: { product: Product }) {
         
         {/* Images with Hover Effect */}
         <img loading="lazy" decoding="async" 
-          src={(product.images && product.images[0])} 
-          alt={product.name} 
+          src={(product.images && product.images[0]) || 'https://placehold.co/400x500/F5F2ED/0F3D2E?text=No+Image'} 
+          alt={product.name} title={product.name} 
           className={`w-full h-full object-cover transition-opacity duration-500 ${(product.images && product.images[1]) ? 'group-hover:opacity-0' : 'group-hover:scale-105'}`}
           onLoad={() => setImageLoaded(true)}
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = 'https://placehold.co/400x500/F5F2ED/0F3D2E?text=Error';
+          }}
         />
         {(product.images && product.images[1]) && (
           <img loading="lazy" decoding="async" 
-            src={(product.images && product.images[1])} 
-            alt={product.name} 
+            src={(product.images && product.images[1]) || 'https://placehold.co/400x500/F5F2ED/0F3D2E?text=No+Image'} 
+            alt={product.name} title={product.name} 
             className="w-full h-full object-cover absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 group-hover:scale-105"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = 'https://placehold.co/400x500/F5F2ED/0F3D2E?text=Error';
+            }}
           />
         )}
       </div>

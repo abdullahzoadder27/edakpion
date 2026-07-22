@@ -216,7 +216,7 @@ export default function Checkout() {
                 <div key={index} className="flex gap-4 border-b border-[#E8E4DE] pb-4 last:border-0 last:pb-0">
                   <div className="w-20 h-24 bg-gray-100 rounded-lg overflow-hidden shrink-0">
                     {item.product.images?.[0] && (
-                      <img loading="lazy" decoding="async" src={item.product.images[0]} alt={item.product.name} className="w-full h-full object-cover" />
+                      <img loading="lazy" decoding="async" src={item.product.images[0] || 'https://placehold.co/400x500/F5F2ED/0F3D2E?text=No+Image'} alt={item.product.name} title={item.product.name} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/400x500/F5F2ED/0F3D2E?text=Error'; }} />
                     )}
                   </div>
                   <div className="flex-1">

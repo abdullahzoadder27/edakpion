@@ -424,7 +424,7 @@ export default function OrderDetailAdmin() {
                   <div key={item.id || index} className="py-4 flex flex-col sm:flex-row sm:items-center gap-4">
                     <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden shrink-0">
                       {item.products?.images?.[0] ? (
-                        <img loading="lazy" decoding="async" src={item.products.images[0]} alt={item.product_name} className="w-full h-full object-cover" />
+                        <img loading="lazy" decoding="async" src={item.products.images[0]} alt={item.product_name} title={item.product_name} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/400x500/F5F2ED/0F3D2E?text=Error'; }} />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-400">
                           <Package className="w-6 h-6" />

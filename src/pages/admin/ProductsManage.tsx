@@ -108,7 +108,7 @@ export default function ProductsManage() {
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-lg bg-gray-100 overflow-hidden shrink-0">
                           {product.images?.[0] && (
-                            <img loading="lazy" decoding="async" src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                            <img loading="lazy" decoding="async" src={product.images[0]} alt={product.name} title={product.name} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/400x500/F5F2ED/0F3D2E?text=Error'; }} />
                           )}
                         </div>
                         <div>

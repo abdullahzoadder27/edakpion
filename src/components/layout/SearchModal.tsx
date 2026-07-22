@@ -122,7 +122,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                     >
                       <div className="w-16 h-16 bg-gray-100 rounded overflow-hidden">
                         {product.images && product.images[0] && (
-                          <img loading="lazy" decoding="async" src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                          <img loading="lazy" decoding="async" src={product.images[0]} alt={product.name} title={product.name} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/400x500/F5F2ED/0F3D2E?text=Error'; }} />
                         )}
                       </div>
                       <div className="flex-1">
